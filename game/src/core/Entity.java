@@ -116,7 +116,7 @@ public final class Entity implements Comparable<Entity> {
    * @param klass Class of the component.
    * @param <T> The type of the (given and returned) component.
    * @return The requested component
-   * @throws java.util.NoSuchElementException If the component does not exist on the Entity
+   * @throws MissingComponentException If the component does not exist on the Entity
    * @see Optional
    */
   public <T extends Component> T fetchOrThrow(final Class<T> klass) {
