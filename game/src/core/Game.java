@@ -275,7 +275,7 @@ public final class Game {
   /**
    * Get a particular system.
    *
-   * @return The requested {@link System}.
+   * @return The requested {@link System} or null, if no system of the given class exists.
    */
   public static <T extends System> T getSystem(final Class<T> klass) {
     T system = (T) ECSManagment.systems().get(klass);
