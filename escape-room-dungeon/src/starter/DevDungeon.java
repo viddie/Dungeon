@@ -83,7 +83,7 @@ public class DevDungeon {
   private static void onSetup() {
     Game.userOnSetup(
       () -> {
-        LevelSystem levelSystem = (LevelSystem) ECSManagment.systems().get(LevelSystem.class);
+        LevelSystem levelSystem = Game.getSystem(LevelSystem.class);
         levelSystem.onEndTile(DUNGEON_LOADER::loadNextLevel);
 
         createSystems();
