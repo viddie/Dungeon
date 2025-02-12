@@ -1,6 +1,7 @@
 package core;
 
 import core.game.ECSManagment;
+import core.utils.components.MissingComponentException;
 import dsl.annotation.DSLContextPush;
 import dsl.annotation.DSLType;
 import java.util.HashMap;
@@ -107,6 +108,19 @@ public final class Entity implements Comparable<Entity> {
    */
   public <T extends Component> Optional<T> fetch(final Class<T> klass) {
     return Optional.ofNullable(klass.cast(components.get(klass)));
+  }
+
+  /**
+   * Actually gets the component not as Optional.
+   *
+   * @param klass Class of the component.
+   * @param <T> The type of the (given and returned) component.
+   * @return The requested component
+   * @throws java.util.NoSuchElementException If the component does not exist on the Entity
+   * @see Optional
+   */
+  public <T extends Component> T fetchOrThrow(final Class<T> klass) {
+    return Optional.ofNullable(klass.cast(components.get(klass))).orElseThrow(() -> MissingComponentException.build(this, klass));
   }
 
   /**

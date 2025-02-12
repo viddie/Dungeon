@@ -273,6 +273,16 @@ public final class Game {
   }
 
   /**
+   * Get a particular system.
+   *
+   * @return The requested {@link System}.
+   */
+  public static <T extends System> T getSystem(final Class<T> klass) {
+    T system = (T) ECSManagment.systems().get(klass);
+    return system;
+  }
+
+  /**
    * Remove all registered systems from the game.
    *
    * <p>Will trigger {@link System#onEntityRemove} for each entity in each system.
