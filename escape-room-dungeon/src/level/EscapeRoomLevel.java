@@ -1,7 +1,5 @@
 package level;
 
-import contrib.hud.DialogUtils;
-import core.Game;
 import core.level.Tile;
 import core.level.TileLevel;
 import core.level.elements.tile.DoorTile;
@@ -19,7 +17,7 @@ import java.util.stream.IntStream;
 import level.devlevel.*;
 import level.utils.ITickable;
 import level.utils.MissingLevelException;
-import starter.DevDungeon;
+import starter.EscapeRoomDungeon;
 
 /**
  * Represents a level in the DevDungeon game. This class extends the {@link TileLevel} class and
@@ -59,27 +57,9 @@ public abstract class EscapeRoomLevel extends TileLevel implements ITickable {
   @Override
   public final void onTick(boolean isFirstTick) {
     if (isFirstTick) {
-      DialogUtils.showTextPopup(
-          description,
-          "Level " + DevDungeon.DUNGEON_LOADER.currentLevelIndex() + ": " + levelName,
-          () -> {
-            // Workaround for tutorial popup
-            if (levelName.equalsIgnoreCase("tutorial")) {
-              onFirstTick();
-            }
-          });
       ((ExitTile) endTile()).close(); // close exit at start (to force defeating the boss)
       doorTiles().forEach(DoorTile::close);
-      pitTiles()
-          .forEach(
-              pit -> {
-                pit.timeToOpen(50L * Game.currentLevel().RANDOM.nextInt(1, 5));
-                pit.close();
-              });
-
-      if (!levelName.equalsIgnoreCase("tutorial")) {
-        onFirstTick();
-      }
+      onFirstTick();
     }
     onTick();
   }
@@ -142,7 +122,7 @@ public abstract class EscapeRoomLevel extends TileLevel implements ITickable {
 
       EscapeRoomLevel newLevel;
       newLevel =
-          getDevLevel(DevDungeon.DUNGEON_LOADER.currentLevel(), layout, designLabel, customPoints);
+          getDevLevel(EscapeRoomDungeon.DUNGEON_LOADER.currentLevel(), layout, designLabel, customPoints);
 
       // Set Hero Position
       Tile heroTile = newLevel.tileAt(heroPos);

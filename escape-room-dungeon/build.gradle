@@ -12,7 +12,7 @@ sourceSets.main.java.srcDirs = ['src/']
 sourceSets.main.resources.srcDirs = ['assets/']
 
 tasks.register('runEscapeRoom', JavaExec) {
-    mainClass = 'starter.DevDungeon'
+    mainClass = 'starter.EscapeRoomDungeon'
     classpath = sourceSets.main.runtimeClasspath
 }
 tasks.register('buildEscapeRoomJar', Jar) {
@@ -27,7 +27,7 @@ tasks.register('buildEscapeRoomJar', Jar) {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
     manifest {
-        attributes 'Main-Class': 'starter.DevDungeon'
+        attributes 'Main-Class': 'starter.EscapeRoomDungeon'
     }
 
     archiveFileName = 'EscapeRoom.jar'

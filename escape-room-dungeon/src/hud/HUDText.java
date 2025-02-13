@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 import contrib.hud.elements.CombinableGUI;
 import contrib.hud.elements.GUICombination;
+import core.Component;
 import core.Game;
 import core.utils.components.path.IPath;
 import core.utils.components.path.SimpleIPath;
@@ -93,6 +94,13 @@ public class HUDText extends CombinableGUI {
   protected Vector2 preferredSize(GUICombination.AvailableSpace availableSpace) {
     GlyphLayout glyphLayout = new GlyphLayout(bitmapFont, this.text);
     return new Vector2(glyphLayout.width, glyphLayout.height);
+  }
+
+  public void setText(String text) {
+    this.text = text;
+  }
+  public String getText() {
+    return text;
   }
 
   public enum Anchor {

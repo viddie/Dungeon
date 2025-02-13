@@ -1,12 +1,20 @@
 package level.devlevel;
 
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import components.DrawTextComponent;
 import contrib.components.HealthComponent;
 import contrib.components.InventoryComponent;
 import contrib.components.UIComponent;
 import contrib.configuration.KeyboardConfig;
 import contrib.entities.MiscFactory;
 import contrib.hud.DialogUtils;
+import contrib.hud.UIUtils;
 import contrib.hud.elements.GUICombination;
 import contrib.item.HealthPotionType;
 import contrib.item.concreteItem.ItemPotionHealth;
@@ -26,12 +34,14 @@ import core.utils.MissingHeroException;
 import core.utils.Point;
 import core.utils.components.MissingComponentException;
 import entities.MonsterType;
+import hud.DebugOverlay;
 import hud.HUDText;
 import item.concreteItem.ItemPotionWater;
 import item.concreteItem.ItemResourceMushroomRed;
 import java.io.IOException;
 import java.util.List;
 import level.EscapeRoomLevel;
+import systems.TickableSystem;
 import utils.EntityUtils;
 
 /** The Tutorial Level. */
@@ -70,24 +80,29 @@ public class TutorialLevel extends EscapeRoomLevel {
             + Input.Keys.toString(core.configuration.KeyboardConfig.MOVEMENT_LEFT.value())
             + Input.Keys.toString(core.configuration.KeyboardConfig.MOVEMENT_DOWN.value())
             + Input.Keys.toString(core.configuration.KeyboardConfig.MOVEMENT_RIGHT.value());
-    DialogUtils.showTextPopup(
-        "Verwende " + movementKeys + " (oder RMB), um dich zu bewegen.", "Bewegung");
+    String message = "Verwende " + movementKeys + " (oder RMB),\num dich zu bewegen.";
 
-    Entity chest;
-    try {
-      chest = MiscFactory.newChest(MiscFactory.FILL_CHEST.EMPTY);
-    } catch (IOException e) {
-      throw new RuntimeException("Failed to create tutorial chest");
-    }
 
-    Entity debugOverlay = new Entity();
-    HUDText hudText = new HUDText("This is a test string",  HUDText.Anchor.TopLeft, 2);
-    HUDText hudText2 = new HUDText("A different text",  HUDText.Anchor.BottomLeft, 2);
-    HUDText hudText3 = new HUDText("A third text anchored\nelsewhere",  HUDText.Anchor.BottomRight, 2);
-    debugOverlay.add(new UIComponent(new GUICombination(hudText, hudText2, hudText3), false, false));
-    Game.add(debugOverlay);
+    DebugOverlay overlay = new DebugOverlay();
+    overlay.addDebugOverlayToGame(1.5f);
+    TickableSystem.register(overlay);
 
-    setupChest(chest);
+    Entity inWorldText = new Entity();
+    inWorldText.add(new DrawTextComponent(message, 0.7f, Color.WHITE));
+    inWorldText.add(new PositionComponent(5, 6));
+    Game.add(inWorldText);
+
+    Entity inWorldText2 = new Entity();
+    inWorldText2.add(new DrawTextComponent("Click stuff with left mouse button", 0.7f, Color.WHITE));
+    inWorldText2.add(new PositionComponent(20, 6));
+    Game.add(inWorldText2);
+
+    Entity iwt3 = new Entity();
+    iwt3.add(new DrawTextComponent("Very long text message\nDisplayed in the game", 0.5f, Color.RED));
+    iwt3.fetchOrThrow(DrawTextComponent.class).displayRadius(7);
+    iwt3.fetchOrThrow(DrawTextComponent.class).maxAlpha(0.2f);
+    iwt3.add(new PositionComponent(30, 9));
+    Game.add(iwt3);
   }
 
   @Override

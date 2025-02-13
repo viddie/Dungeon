@@ -18,7 +18,6 @@ import contrib.utils.components.skill.SkillTools;
 import core.Entity;
 import core.Game;
 import core.System;
-import core.game.ECSManagment;
 import core.systems.LevelSystem;
 import core.utils.components.path.SimpleIPath;
 import entities.BurningFireballSkill;
@@ -36,7 +35,7 @@ import systems.EventScheduler;
 /**
  * Starter class for the DevDungeon game.
  */
-public class DevDungeon {
+public class EscapeRoomDungeon {
 
   /**
    * The {@link DungeonLoader} that loads the levels of the game.
@@ -145,10 +144,11 @@ public class DevDungeon {
     Game.add(new SpikeSystem());
     Game.add(new IdleSoundSystem());
     Game.add(new PathSystem());
-    Game.add(new LevelTickSystem());
+    Game.add(new TickableSystem());
     Game.add(new TeleporterSystem());
     Game.add(EventScheduler.getInstance());
     Game.add(new LeverSystem());
+    Game.add(new DrawTextSystem());
 
     /* Cheats */
     if (ENABLE_CHEATS) {

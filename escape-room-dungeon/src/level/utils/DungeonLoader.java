@@ -12,6 +12,7 @@ import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 import level.EscapeRoomLevel;
+import systems.TickableSystem;
 
 /**
  * The DungeonLoader class is used to load levels in the game. It is used to load levels in a
@@ -151,7 +152,12 @@ public class DungeonLoader {
   public void loadNextLevel() {
     this.currentLevel++;
     try {
-      Game.currentLevel(getRandomVariant(levelOrder[currentLevel]));
+      ILevel level = getRandomVariant(levelOrder[currentLevel]);
+      if (level instanceof ITickable tickable) {
+        TickableSystem.clear();
+        TickableSystem.register(tickable);
+      }
+      Game.currentLevel(level);
     } catch (MissingLevelException | ArrayIndexOutOfBoundsException e) {
       System.out.println("Game Over!");
       System.out.println("You have passed all " + currentLevel + " levels!");
@@ -166,7 +172,12 @@ public class DungeonLoader {
    */
   public void loadLevel(String levelName) {
     setCurrentLevelByLevelName(levelName);
-    Game.currentLevel(getRandomVariant(levelName));
+    ILevel level = getRandomVariant(levelName);
+    if (level instanceof ITickable tickable) {
+      TickableSystem.clear();
+      TickableSystem.register(tickable);
+    }
+    Game.currentLevel(level);
   }
 
   private void setCurrentLevelByLevelName(String levelName) {
