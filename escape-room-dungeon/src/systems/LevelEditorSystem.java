@@ -11,6 +11,8 @@ import core.level.utils.LevelElement;
 import core.systems.LevelSystem;
 import core.utils.Point;
 import java.util.Queue;
+
+import hud.DebugOverlay;
 import level.EscapeRoomLevel;
 import level.utils.DungeonSaver;
 
@@ -28,11 +30,11 @@ public class LevelEditorSystem extends System {
   private static final int HOLE_BUTTON = Input.Keys.NUM_5;
   private static final int EXIT_BUTTON = Input.Keys.NUM_6;
   private static final int DOOR_BUTTON = Input.Keys.NUM_7;
-  private static final int CUSTOM_POINT = Input.Keys.NUM_8;
   private static final int FILL_WITH_FLOOR = Input.Keys.NUM_9;
+  private static final int TOGGLE_ACTIVE = Input.Keys.NUM_0;
   private static final int SAVE_BUTTON = Input.Keys.Y;
   private static final int maxFillRange = 100;
-  private static boolean active = true;
+  private static boolean active = false;
 
   /**
    * Gets the active status of the LevelEditorSystem.
@@ -54,6 +56,14 @@ public class LevelEditorSystem extends System {
 
   @Override
   public void execute() {
+    if (Gdx.input.isKeyJustPressed(TOGGLE_ACTIVE)) {
+      active = !active;
+      if (active){
+        DebugOverlay.setText(2, "~ EDIT MODE ~");
+      } else {
+        DebugOverlay.setText(2, "");
+      }
+    }
     if (!active) {
       return;
     }
@@ -77,9 +87,6 @@ public class LevelEditorSystem extends System {
     }
     if (Gdx.input.isKeyJustPressed(DOOR_BUTTON)) {
       setTile(LevelElement.DOOR);
-    }
-    if (Gdx.input.isKeyJustPressed(CUSTOM_POINT)) {
-      setCustomPoint();
     }
     if (Gdx.input.isKeyJustPressed(SAVE_BUTTON)) {
       if (Game.currentLevel() instanceof EscapeRoomLevel) {
@@ -144,23 +151,5 @@ public class LevelEditorSystem extends System {
       return;
     }
     LevelSystem.level().changeTileElementType(mouseTile, element);
-  }
-
-  private void setCustomPoint() {
-    Point mosPos = SkillTools.cursorPositionAsPoint();
-    mosPos = new Point(mosPos.x - 0.5f, mosPos.y - 0.25f);
-    Tile mouseTile = LevelSystem.level().tileAt(mosPos);
-    if (mouseTile == null) {
-      return;
-    }
-    if (Game.currentLevel() instanceof EscapeRoomLevel escapeRoomLevel) {
-      if (escapeRoomLevel.customPoints().contains(mouseTile.coordinate())) {
-        java.lang.System.out.println("[-] Custom point: " + mouseTile.coordinate());
-        escapeRoomLevel.removeCustomPoint(mouseTile.coordinate());
-      } else {
-        java.lang.System.out.println("[+] Custom point: " + mouseTile.coordinate());
-        escapeRoomLevel.addCustomPoint(mouseTile.coordinate());
-      }
-    }
   }
 }

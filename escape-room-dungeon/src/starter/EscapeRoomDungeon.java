@@ -149,6 +149,7 @@ public class EscapeRoomDungeon {
     Game.add(EventScheduler.getInstance());
     Game.add(new LeverSystem());
     Game.add(new DrawTextSystem());
+    Game.add(new LevelEditorSystem());
 
     /* Cheats */
     if (ENABLE_CHEATS) {

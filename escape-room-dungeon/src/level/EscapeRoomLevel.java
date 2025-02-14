@@ -27,31 +27,17 @@ import starter.EscapeRoomDungeon;
 public abstract class EscapeRoomLevel extends TileLevel implements ITickable {
 
   protected static final Random RANDOM = new Random();
-  private final List<Coordinate> customPoints = new ArrayList<>();
-  private final List<Coordinate> tpTargets = new ArrayList<>();
-
-  private final String levelName;
-  private final String description;
 
   /**
    * Constructs a new DevDungeonLevel with the given layout, design label, and custom points.
    *
    * @param layout The layout of the level, represented as a 2D array of LevelElements.
    * @param designLabel The design label of the level.
-   * @param customPoints A list of custom points to be added to the level.
-   * @param levelName The name of the level. (can be empty)
-   * @param description The description of the level. (only set if levelName is not empty)
    */
   public EscapeRoomLevel(
       LevelElement[][] layout,
-      DesignLabel designLabel,
-      List<Coordinate> customPoints,
-      String levelName,
-      String description) {
+      DesignLabel designLabel) {
     super(layout, designLabel);
-    this.customPoints.addAll(customPoints);
-    this.levelName = levelName;
-    this.description = description;
   }
 
   @Override
@@ -108,10 +94,6 @@ public abstract class EscapeRoomLevel extends TileLevel implements ITickable {
       String heroPosLine = readLine(reader);
       Point heroPos = parseHeroPosition(heroPosLine);
 
-      // Custom Points
-      String customPointsLine = readLine(reader);
-      List<Coordinate> customPoints = parseCustomPoints(customPointsLine);
-
       // Parse LAYOUT
       List<String> layoutLines = new ArrayList<>();
       String line;
@@ -121,8 +103,7 @@ public abstract class EscapeRoomLevel extends TileLevel implements ITickable {
       LevelElement[][] layout = loadLevelLayoutFromString(layoutLines);
 
       EscapeRoomLevel newLevel;
-      newLevel =
-          getDevLevel(EscapeRoomDungeon.DUNGEON_LOADER.currentLevel(), layout, designLabel, customPoints);
+      newLevel = getDevLevel(EscapeRoomDungeon.DUNGEON_LOADER.currentLevel(), layout, designLabel);
 
       // Set Hero Position
       Tile heroTile = newLevel.tileAt(heroPos);
@@ -169,25 +150,6 @@ public abstract class EscapeRoomLevel extends TileLevel implements ITickable {
     }
   }
 
-  private static List<Coordinate> parseCustomPoints(String customPointsLine) {
-    List<Coordinate> customPoints = new ArrayList<>();
-    if (customPointsLine.isEmpty()) return customPoints;
-    String[] points = customPointsLine.split(";");
-    for (String point : points) {
-      if (point.isEmpty()) continue;
-      String[] parts = point.split(",");
-      if (parts.length != 2) throw new RuntimeException("Invalid Custom Point: " + point);
-      try {
-        int x = Integer.parseInt(parts[0]);
-        int y = Integer.parseInt(parts[1]);
-        customPoints.add(new Coordinate(x, y));
-      } catch (NumberFormatException e) {
-        throw new RuntimeException("Invalid Custom Point: " + point);
-      }
-    }
-    return customPoints;
-  }
-
   private static DesignLabel parseDesignLabel(String line) {
     if (line.isEmpty()) return DesignLabel.randomDesign();
     try {
@@ -202,7 +164,8 @@ public abstract class EscapeRoomLevel extends TileLevel implements ITickable {
 
     for (int y = 0; y < lines.size(); y++) {
       for (int x = 0; x < lines.getFirst().length(); x++) {
-        char c = lines.get(y).charAt(x);
+        //(0,0) is at the bottom left, so at the *end* of the file
+        char c = lines.get(lines.size() - y - 1).charAt(x);
         switch (c) {
           case 'F':
             layout[y][x] = LevelElement.FLOOR;
@@ -237,62 +200,11 @@ public abstract class EscapeRoomLevel extends TileLevel implements ITickable {
   private static EscapeRoomLevel getDevLevel(
       String levelName,
       LevelElement[][] layout,
-      DesignLabel designLabel,
-      List<Coordinate> customPoints) {
+      DesignLabel designLabel) {
     return switch (levelName) {
-      case "tutorial" -> new TutorialLevel(layout, designLabel, customPoints);
+      case "tutorial" -> new TutorialLevel(layout, designLabel);
       default ->
           throw new IllegalArgumentException("Invalid level name for levelHandler: " + levelName);
     };
-  }
-
-  /**
-   * Gets the custom points that are within the given bounds.
-   *
-   * @param start The start index of the custom points list.
-   * @param end The end index of the custom points list. (inclusive)
-   * @return An array of custom points within the given bounds.
-   */
-  protected Coordinate[] getCoordinates(int start, int end) {
-    return IntStream.rangeClosed(start, end)
-        .mapToObj(customPoints()::get)
-        .toArray(Coordinate[]::new);
-  }
-
-  /**
-   * Returns the list of custom points.
-   *
-   * @return A list of custom points.
-   */
-  public List<Coordinate> customPoints() {
-    return customPoints;
-  }
-
-  /**
-   * Adds a new custom point to the list.
-   *
-   * @param point The custom point to be added.
-   */
-  public void addCustomPoint(Coordinate point) {
-    customPoints.add(point);
-  }
-
-  /**
-   * Removes a custom point from the list.
-   *
-   * @param point The custom point to be removed.
-   */
-  public void removeCustomPoint(Coordinate point) {
-    customPoints.remove(point);
-  }
-
-  /**
-   * Checks if a custom point is in the list.
-   *
-   * @param point The custom point to be checked.
-   * @return True if the custom point is in the list, false otherwise.
-   */
-  public boolean hasCustomPoint(Coordinate point) {
-    return customPoints.contains(point);
   }
 }

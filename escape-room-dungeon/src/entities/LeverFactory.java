@@ -11,6 +11,8 @@ import core.utils.components.draw.Animation;
 import core.utils.components.path.IPath;
 import core.utils.components.path.SimpleIPath;
 import java.util.Map;
+
+import utils.Constants;
 import utils.ICommand;
 
 /** The LeverFactory class is responsible for creating lever entities. */
@@ -33,7 +35,7 @@ public class LeverFactory {
   public static Entity createLever(Point pos, ICommand onInteract) {
     Entity lever = new Entity("lever");
 
-    lever.add(new PositionComponent(pos));
+    lever.add(new PositionComponent(pos.add(Constants.X_OFFSET, Constants.Y_OFFSET)));
     DrawComponent dc = new DrawComponent(Animation.fromSingleImage(LEVER_TEXTURE_OFF));
     Map<String, Animation> animationMap =
         Map.of("off", dc.currentAnimation(), "on", Animation.fromSingleImage(LEVER_TEXTURE_ON));

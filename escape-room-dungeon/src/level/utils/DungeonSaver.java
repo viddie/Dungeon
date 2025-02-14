@@ -7,9 +7,9 @@ import core.level.utils.Coordinate;
 import core.level.utils.LevelElement;
 import core.utils.Point;
 import core.utils.components.MissingComponentException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
+
+import java.util.*;
+
 import level.EscapeRoomLevel;
 
 /**
@@ -48,35 +48,16 @@ public class DungeonSaver {
     Entity hero = Game.hero().orElse(null);
     Point heroPos;
     if (hero != null) {
-      heroPos =
-          hero.fetch(PositionComponent.class)
-              .orElseThrow(
-                  () -> MissingComponentException.build(Game.hero().get(), PositionComponent.class))
-              .position();
+      heroPos = hero.fetchOrThrow(PositionComponent.class).position();
     } else {
       heroPos = new Point(0, 0);
     }
-    List<Coordinate> customPoints = new ArrayList<>();
-    if (Game.currentLevel() instanceof EscapeRoomLevel) {
-      customPoints = ((EscapeRoomLevel) Game.currentLevel()).customPoints();
-    }
-    StringBuilder customPointsString = new StringBuilder();
-    for (Coordinate customPoint : customPoints) {
-      customPointsString.append(customPoint.x).append(",").append(customPoint.y).append(";");
-    }
 
     // Compress the layout of the current level by removing all lines that only contain 'S'
-    String dunLayout = compressDungeonLayout(Game.currentLevel().printLevel());
+    String dunLayout = reverseLineOrder(compressDungeonLayout(Game.currentLevel().printLevel()));
 
-    String result =
-        designLabel
-            + "\n"
-            + heroPos.x
-            + ","
-            + heroPos.y
-            + "\n"
-            + customPointsString
-            + "\n"
+    String result = designLabel + "\n"
+            + heroPos.x + "," + heroPos.y + "\n"
             + dunLayout;
 
     System.out.println(result);
@@ -93,5 +74,12 @@ public class DungeonSaver {
    */
   private static String compressDungeonLayout(String layout) {
     return layout.replaceAll("(?m)^S+$\\n", "");
+  }
+
+  public static String reverseLineOrder(String input) {
+    String[] lines = input.split("\n");
+    List<String> lineList = Arrays.asList(lines);
+    Collections.reverse(lineList);
+    return String.join("\n", lineList);
   }
 }

@@ -5,6 +5,7 @@ import core.System;
 import core.level.elements.ILevel;
 import level.EscapeRoomLevel;
 import level.utils.ITickable;
+import puzzles.simpleLevers.SimpleLeverPuzzle;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,6 +35,10 @@ public class TickableSystem extends System {
   public static void clear(){
     tickables.clear();
     hasTicked.clear();
+  }
+
+  public static void remove(ITickable tickable) {
+    tickables.remove(tickable);
   }
 
   @Override

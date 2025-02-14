@@ -33,6 +33,7 @@ import core.level.utils.LevelElement;
 import core.utils.MissingHeroException;
 import core.utils.Point;
 import core.utils.components.MissingComponentException;
+import entities.DrawTextFactory;
 import entities.MonsterType;
 import hud.DebugOverlay;
 import hud.HUDText;
@@ -41,33 +42,21 @@ import item.concreteItem.ItemResourceMushroomRed;
 import java.io.IOException;
 import java.util.List;
 import level.EscapeRoomLevel;
+import puzzles.simpleLevers.SimpleLeverPuzzle;
 import systems.TickableSystem;
 import utils.EntityUtils;
 
 /** The Tutorial Level. */
 public class TutorialLevel extends EscapeRoomLevel {
 
-  // Entity spawn points
-  private final Point chestSpawn;
-  private Coordinate lastHeroCoords = new Coordinate(0, 0);
-
   /**
    * Constructs the Tutorial Level.
    *
    * @param layout The layout of the level.
    * @param designLabel The design label of the level.
-   * @param customPoints The custom points of the level.
    */
-  public TutorialLevel(
-      LevelElement[][] layout, DesignLabel designLabel, List<Coordinate> customPoints) {
-    super(
-        layout,
-        designLabel,
-        customPoints,
-        "Tutorial",
-        "Willkommen im Tutorial! Hier lernst Du die Grundlagen des Spiels kennen.");
-
-    this.chestSpawn = customPoints.get(0).toCenteredPoint();
+  public TutorialLevel(LevelElement[][] layout, DesignLabel designLabel) {
+    super(layout, designLabel);
   }
 
   @Override
@@ -87,84 +76,16 @@ public class TutorialLevel extends EscapeRoomLevel {
     overlay.addDebugOverlayToGame(1.5f);
     TickableSystem.register(overlay);
 
-    Entity inWorldText = new Entity();
-    inWorldText.add(new DrawTextComponent(message, 0.7f, Color.WHITE));
-    inWorldText.add(new PositionComponent(5, 6));
-    Game.add(inWorldText);
+    Game.add(DrawTextFactory.createTextEntity(message, new Point(5, 6), 0.7f));
+    Game.add(DrawTextFactory.createTextEntity("Manche Sachen kannst du\nmit LMB anklicken", new Point(20, 6), 0.7f));
+    Game.add(DrawTextFactory.createTextEntity("Lange Nachricht die etwas\nversteckter im Level ist", new Point(30, 9), 0.5f, Color.RED, 7, 0.2f));
 
-    Entity inWorldText2 = new Entity();
-    inWorldText2.add(new DrawTextComponent("Click stuff with left mouse button", 0.7f, Color.WHITE));
-    inWorldText2.add(new PositionComponent(20, 6));
-    Game.add(inWorldText2);
-
-    Entity iwt3 = new Entity();
-    iwt3.add(new DrawTextComponent("Very long text message\nDisplayed in the game", 0.5f, Color.RED));
-    iwt3.fetchOrThrow(DrawTextComponent.class).displayRadius(7);
-    iwt3.fetchOrThrow(DrawTextComponent.class).maxAlpha(0.2f);
-    iwt3.add(new PositionComponent(30, 9));
-    Game.add(iwt3);
+    SimpleLeverPuzzle puzzle = new SimpleLeverPuzzle(new Point(59, 4));
+    puzzle.load();
   }
 
   @Override
   protected void onTick() {
-    if (lastHeroCoords != null && !lastHeroCoords.equals(EntityUtils.getHeroCoords())) {
-      // Only handle text popups if the hero has moved
-      handleTextPopups();
-    }
-    handleDoors();
-    this.lastHeroCoords = EntityUtils.getHeroCoords();
-  }
 
-  private void handleTextPopups() {
-    DoorTile frontDoor = (DoorTile) tileAt(customPoints().get(1));
-    if (EntityUtils.getHeroCoords() == null) return;
-    Tile heroTile = tileAt(EntityUtils.getHeroCoords());
-    if (heroTile == null) return;
-
-    if (frontDoor.coordinate().equals(heroTile.coordinate())) {
-      DialogUtils.showTextPopup(
-          "Mit "
-              + Input.Keys.toString(KeyboardConfig.FIRST_SKILL.value())
-              + " (oder LMB) kannst du angreifen.",
-          "Kampf");
-    }
-  }
-
-  /**
-   * Handles the opening of the doors. Except for the mob door, this is handle in the onDeath of the
-   * mob.
-   */
-  private void handleDoors() {
-    DoorTile frontDoor = (DoorTile) tileAt(customPoints().get(1));
-    Point heroPos;
-    try {
-      heroPos = SkillTools.heroPositionAsPoint();
-    } catch (MissingHeroException e) {
-      return;
-    }
-    if (!frontDoor.isOpen() && frontDoor.position().distance(heroPos) < 2) {
-      frontDoor.open();
-    }
-
-    Entity hero = Game.hero().orElseThrow(MissingHeroException::new);
-    InventoryComponent ic =
-        hero.fetch(InventoryComponent.class)
-            .orElseThrow(() -> MissingComponentException.build(hero, InventoryComponent.class));
-  }
-
-  /**
-   * Sets up the chest with the necessary items for the tutorial.
-   *
-   * @param chest The chest to set up
-   */
-  private void setupChest(Entity chest) {
-    PositionComponent pc = chest.fetchOrThrow(PositionComponent.class);
-    InventoryComponent ic = chest.fetchOrThrow(InventoryComponent.class);
-
-    pc.position(chestSpawn);
-    ic.add(new ItemPotionWater());
-    ic.add(new ItemResourceMushroomRed());
-
-    Game.add(chest);
   }
 }

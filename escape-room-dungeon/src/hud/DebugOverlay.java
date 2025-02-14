@@ -2,6 +2,7 @@ package hud;
 
 import contrib.components.UIComponent;
 import contrib.hud.elements.GUICombination;
+import contrib.utils.components.skill.SkillTools;
 import core.Entity;
 import core.Game;
 import core.components.PositionComponent;
@@ -55,6 +56,10 @@ public class DebugOverlay implements ITickable {
   @Override
   public void onTick(boolean isFirstTick) {
     Point heroPos = Game.hero().orElseThrow().fetchOrThrow(PositionComponent.class).position();
-    setText(0, "Hero position: "+heroPos);
+
+    Point mosPos = SkillTools.cursorPositionAsPoint();
+    mosPos = new Point(mosPos.x - 0.5f, mosPos.y - 0.25f);
+
+    setText(0, "Hero position: "+heroPos+"\nMouse position: "+mosPos);
   }
 }

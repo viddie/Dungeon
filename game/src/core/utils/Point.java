@@ -100,6 +100,17 @@ public final class Point {
   }
 
   /**
+   * Creates a new Point which has the sum of the Points.
+   *
+   * @param x x value to add
+   * @param y y value to add
+   * @return Point where the values for x and y are added
+   */
+  public Point add(float x, float y) {
+    return new Point(this.x + x, this.y + y);
+  }
+
+  /**
    * Two points are equal, if they have the same x and y values.
    *
    * @param other Point to compare with
