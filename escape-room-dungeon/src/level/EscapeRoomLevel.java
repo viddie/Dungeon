@@ -4,7 +4,6 @@ import core.level.Tile;
 import core.level.TileLevel;
 import core.level.elements.tile.DoorTile;
 import core.level.elements.tile.ExitTile;
-import core.level.utils.Coordinate;
 import core.level.utils.DesignLabel;
 import core.level.utils.LevelElement;
 import core.utils.Point;
@@ -12,9 +11,12 @@ import core.utils.components.path.IPath;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
-import java.util.stream.IntStream;
+
+import core.utils.components.path.SimpleIPath;
 import level.devlevel.*;
+import level.utils.DungeonLoader;
 import level.utils.ITickable;
 import level.utils.MissingLevelException;
 import starter.EscapeRoomDungeon;
@@ -26,7 +28,6 @@ import starter.EscapeRoomDungeon;
  */
 public abstract class EscapeRoomLevel extends TileLevel implements ITickable {
 
-  protected static final Random RANDOM = new Random();
 
   /**
    * Constructs a new DevDungeonLevel with the given layout, design label, and custom points.
@@ -66,17 +67,24 @@ public abstract class EscapeRoomLevel extends TileLevel implements ITickable {
    */
   protected abstract void onTick();
 
+  private static boolean isRunningFromJar() {
+    return Objects.requireNonNull(
+        EscapeRoomLevel.class.getResource(EscapeRoomLevel.class.getSimpleName() + ".class"))
+      .toString()
+      .startsWith("jar:");
+  }
+
   /**
-   * Loads a DevDungeonLevel from the given path.
-   *
-   * @param path The path to the level file.
-   * @return The loaded DevDungeonLevel.
+   * Loads a new EscapeRoomLevel.
+   * @param label The level type
+   * @param path The path of the level to load
+   * @return
    */
-  public static EscapeRoomLevel loadFromPath(IPath path) {
+  public static EscapeRoomLevel loadFromPath(DungeonLoader.LevelLabel label, IPath path) {
     try {
       BufferedReader reader;
-      if (path.pathString().startsWith("jar:")) {
-        InputStream is = EscapeRoomLevel.class.getResourceAsStream(path.pathString().substring(4));
+      if (isRunningFromJar()) {
+        InputStream is = EscapeRoomLevel.class.getResourceAsStream(path.pathString());
         reader = new BufferedReader(new InputStreamReader(is));
       } else {
         File file = new File(path.pathString());
@@ -103,7 +111,7 @@ public abstract class EscapeRoomLevel extends TileLevel implements ITickable {
       LevelElement[][] layout = loadLevelLayoutFromString(layoutLines);
 
       EscapeRoomLevel newLevel;
-      newLevel = getDevLevel(EscapeRoomDungeon.DUNGEON_LOADER.currentLevel(), layout, designLabel);
+      newLevel = getLevelMapping(label, layout, designLabel);
 
       // Set Hero Position
       Tile heroTile = newLevel.tileAt(heroPos);
@@ -197,14 +205,14 @@ public abstract class EscapeRoomLevel extends TileLevel implements ITickable {
     return layout;
   }
 
-  private static EscapeRoomLevel getDevLevel(
-      String levelName,
+  private static EscapeRoomLevel getLevelMapping(
+      DungeonLoader.LevelLabel label,
       LevelElement[][] layout,
       DesignLabel designLabel) {
-    return switch (levelName) {
-      case "tutorial" -> new TutorialLevel(layout, designLabel);
+    return switch (label) {
+      case Tutorial -> new TutorialLevel(layout, designLabel);
       default ->
-          throw new IllegalArgumentException("Invalid level name for levelHandler: " + levelName);
+          throw new IllegalArgumentException("Invalid level name for levelHandler: " + label.name());
     };
   }
 }

@@ -37,19 +37,7 @@ import systems.EventScheduler;
  */
 public class EscapeRoomDungeon {
 
-  /**
-   * The {@link DungeonLoader} that loads the levels of the game.
-   *
-   * <p>It defines the order of the levels and the levels themselves.
-   */
-  public static final DungeonLoader DUNGEON_LOADER =
-    new DungeonLoader(
-      new String[]{
-        "tutorial", "damagedBridge", "torchRiddle", "illusionRiddle", "bridgeGuard", "finalBoss"
-      });
-
   private static final String BACKGROUND_MUSIC = "sounds/background.wav";
-  private static final boolean SKIP_TUTORIAL = false;
   private static final boolean ENABLE_CHEATS = false;
 
   /**
@@ -69,21 +57,17 @@ public class EscapeRoomDungeon {
         // Reset all levers
         LeverSystem leverSystem = Game.getSystem(LeverSystem.class);
         leverSystem.clear();
-        // Remove all teleporters
-        TeleporterSystem teleporterSystem = (TeleporterSystem) Game.systems().get(TeleporterSystem.class);
-        teleporterSystem.clearTeleporters();
       });
 
     // build and start game
     Game.run();
-    Game.windowTitle("Dev Dungeon");
   }
 
   private static void onSetup() {
     Game.userOnSetup(
       () -> {
         LevelSystem levelSystem = Game.getSystem(LevelSystem.class);
-        levelSystem.onEndTile(DUNGEON_LOADER::loadNextLevel);
+        levelSystem.onEndTile(DungeonLoader::loadNextLevel);
 
         createSystems();
 
@@ -94,12 +78,8 @@ public class EscapeRoomDungeon {
           throw new RuntimeException(e);
         }
         setupMusic();
-        Crafting.loadRecipes();
-        if (SKIP_TUTORIAL) {
-          DUNGEON_LOADER.loadLevel(DUNGEON_LOADER.levelOrder()[1]); // First Level
-        } else {
-          DUNGEON_LOADER.loadLevel(DUNGEON_LOADER.levelOrder()[0]); // Tutorial
-        }
+
+        DungeonLoader.loadLevel(DungeonLoader.LevelLabel.Tutorial, 0);
       });
   }
 
@@ -123,16 +103,6 @@ public class EscapeRoomDungeon {
     Game.frameRate(60);
     Game.disableAudio(true);
     Game.windowTitle("Escape Room");
-
-    // Set up random item generator for chests and monsters
-    ItemGenerator ig = new ItemGenerator();
-    ig.addItem(() -> new ItemPotionHealth(HealthPotionType.randomType()), 1);
-    ig.addItem(ItemPotionWater::new, 1);
-    ig.addItem(ItemResourceBerry::new, 2);
-    ig.addItem(ItemResourceMushroomRed::new, 2);
-
-    MiscFactory.randomItemGenerator(ig);
-    MonsterFactory.randomItemGenerator(ig);
   }
 
   private static void createSystems() {

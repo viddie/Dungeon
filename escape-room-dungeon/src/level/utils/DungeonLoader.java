@@ -4,6 +4,8 @@ import core.Game;
 import core.level.elements.ILevel;
 import core.utils.components.path.IPath;
 import core.utils.components.path.SimpleIPath;
+
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -23,183 +25,96 @@ import systems.TickableSystem;
  */
 public class DungeonLoader {
 
-  private static final Logger LOGGER = Logger.getLogger(DungeonLoader.class.getSimpleName());
-  private static final Random RANDOM = new Random();
-  private static final String LEVEL_PATH_PREFIX = "/levels";
-  private static final Map<String, List<String>> LEVELS = new HashMap<>();
+  private static final String LEVELS_PATH_PREFIX = "/levels";
 
-  static {
-    getAllLevelFilePaths();
-  }
+  private static LevelLabel currentLabel;
+  private static EscapeRoomLevel currentLevel;
 
-  private final String[] levelOrder;
-  private int currentLevel = 0;
-
-  /**
-   * Constructs a new DungeonLoader with the specified level order.
-   *
-   * <p>This constructor takes an array of level names and converts them to lowercase. This is done
-   * because all level names in the game are expected to be in lowercase. The level order array is
-   * used to determine the order in which levels are loaded in the game.
-   *
-   * @param levelOrder An array of level names in the order they should be loaded.
-   */
-  public DungeonLoader(String[] levelOrder) {
-    for (int i = 0; i < levelOrder.length; i++) {
-      levelOrder[i] = levelOrder[i].toLowerCase(); // all level names should be lowercase
-    }
-
-    this.levelOrder = levelOrder;
-  }
-
-  private static void getAllLevelFilePaths() {
-    if (isRunningFromJar()) {
-      try {
-        getAllLevelFilePathsFromJar();
-      } catch (IOException | URISyntaxException e) {
-        LOGGER.warning("Failed to load level files from jar: " + e.getMessage());
-      }
-    } else {
-      try {
-        getAllLevelFilePathsFromFileSystem();
-      } catch (IOException | URISyntaxException e) {
-        LOGGER.warning("Failed to load level files from file system: " + e.getMessage());
-      }
-    }
-  }
+  public DungeonLoader() {}
 
   private static boolean isRunningFromJar() {
     return Objects.requireNonNull(
-            DungeonLoader.class.getResource(DungeonLoader.class.getSimpleName() + ".class"))
-        .toString()
-        .startsWith("jar:");
+        DungeonLoader.class.getResource(DungeonLoader.class.getSimpleName() + ".class"))
+      .toString()
+      .startsWith("jar:");
   }
 
-  private static void getAllLevelFilePathsFromFileSystem() throws IOException, URISyntaxException {
-    URI uri = Objects.requireNonNull(DungeonLoader.class.getResource(LEVEL_PATH_PREFIX)).toURI();
-    Path path = Paths.get(uri);
-    parseLevelFiles(path, false);
-  }
+  private static String getLevelPathFromFiles(String fileName) {
+    try{
+      URI uri = Objects.requireNonNull(DungeonLoader.class.getResource(LEVELS_PATH_PREFIX)).toURI();
+      Path path = Paths.get(uri);
+      return path.resolve(fileName).toString();
+    } catch (URISyntaxException ignored){}
+    return null;
+}
 
-  private static void getAllLevelFilePathsFromJar() throws IOException, URISyntaxException {
-    URI uri = Objects.requireNonNull(DungeonLoader.class.getResource(LEVEL_PATH_PREFIX)).toURI();
-    FileSystem fileSystem = FileSystems.newFileSystem(uri, Collections.emptyMap());
-    Path path = fileSystem.getPath(LEVEL_PATH_PREFIX);
-    parseLevelFiles(path, true);
-  }
-
-  private static void parseLevelFiles(Path path, boolean isJar) throws IOException {
-    try (Stream<Path> paths = Files.walk(path)) {
-      paths
-          .filter(Files::isRegularFile)
-          .forEach(
-              file -> {
-                String fileName = file.getFileName().toString();
-                if (fileName.endsWith(".level")) {
-                  String[] parts = fileName.split("_");
-                  if (parts.length == 2) {
-                    String levelName = parts[0];
-                    String levelFilePath = file.toString();
-                    LEVELS
-                        .computeIfAbsent(levelName, k -> new ArrayList<>())
-                        .add(isJar ? "jar:" + levelFilePath : levelFilePath);
-                  } else {
-                    LOGGER.warning("Invalid level file name: " + fileName);
-                  }
-                }
-              });
-    }
+  private static String getLevelPathFromJar(String fileName) {
+    try{
+      URI uri = Objects.requireNonNull(DungeonLoader.class.getResource(LEVELS_PATH_PREFIX)).toURI();
+      FileSystem fileSystem = FileSystems.newFileSystem(uri, Collections.emptyMap());
+      Path path = fileSystem.getPath(LEVELS_PATH_PREFIX);
+      return path.resolve(fileName).toString();
+    } catch (IOException | URISyntaxException ignored){}
+    return null;
   }
 
   /**
-   * Returns the current level order.
-   *
-   * @return The current level order.
+   * Loads a new level
+   * @param label The level type or floor to load
+   * @param player For which player (1 or 2) this level should load. Pass 0 if there is no difference between players
+   * @return The newly created level
    */
-  public String[] levelOrder() {
-    return levelOrder;
-  }
-
-  /**
-   * Returns the name of the current level (in lowercase).
-   *
-   * @return The name of the current level.
-   */
-  public String currentLevel() {
-    return levelOrder()[currentLevel];
-  }
-
-  private ILevel getRandomVariant(String levelName) {
-    List<String> levelVariants = LEVELS.get(levelName);
-
-    if (levelVariants == null || levelVariants.isEmpty()) {
-      throw new MissingLevelException(levelName);
+  public static void loadLevel(LevelLabel label, int player){
+    String fileName = label.fileName + ".level";
+    //All floors will be split for the players
+    if(player > 0) {
+      fileName = player + "_" + fileName;
     }
 
-    // Random Level Variant Path
-    IPath levelPath = new SimpleIPath(levelVariants.get(RANDOM.nextInt(levelVariants.size())));
+    //Get full file path
+    String absPath = isRunningFromJar() ? getLevelPathFromJar(fileName) : getLevelPathFromFiles(fileName);
 
-    return EscapeRoomLevel.loadFromPath(levelPath);
+    EscapeRoomLevel level = EscapeRoomLevel.loadFromPath(label, new SimpleIPath(absPath));
+    TickableSystem.clear();
+    TickableSystem.register(level);
+
+    currentLabel = label;
+    currentLevel = level;
+
+    Game.currentLevel(level);
   }
 
-  /**
-   * Loads the next level in the level order.
-   *
-   * <p>If the current level is the last level in the level order, the game will exit.
-   *
-   * <p>It chooses a random variant of the next level.
-   */
-  public void loadNextLevel() {
-    this.currentLevel++;
+  public static void loadNextLevel(){
+    //Player stepped on an end tile in any level
     try {
-      ILevel level = getRandomVariant(levelOrder[currentLevel]);
-      if (level instanceof ITickable tickable) {
-        TickableSystem.clear();
-        TickableSystem.register(tickable);
-      }
-      Game.currentLevel(level);
-    } catch (MissingLevelException | ArrayIndexOutOfBoundsException e) {
-      System.out.println("Game Over!");
-      System.out.println("You have passed all " + currentLevel + " levels!");
+      LevelLabel next = currentLabel.next();
+      loadLevel(next, 0); //TODO: Load current player state via static GameState
+    } catch (MissingLevelException e){
+      System.out.println("No next level found, exiting game...");
       Game.exit();
     }
   }
 
   /**
-   * Loads a specific level (with a random variant).
-   *
-   * @param levelName The name of the level.
+   * Holds all available Levels
    */
-  public void loadLevel(String levelName) {
-    setCurrentLevelByLevelName(levelName);
-    ILevel level = getRandomVariant(levelName);
-    if (level instanceof ITickable tickable) {
-      TickableSystem.clear();
-      TickableSystem.register(tickable);
-    }
-    Game.currentLevel(level);
-  }
+  public enum LevelLabel {
+    MainMenu("main_menu"), //End tile: Exit game
+    Settings("settings"), //End tile: Back to main menu
+    Tutorial("tutorial"), //End tile: Back to main menu
+    Floor1("floor1"), //To next floor
+    ;
 
-  private void setCurrentLevelByLevelName(String levelName) {
-    this.currentLevel = -1;
-    for (int i = 0; i < levelOrder.length; i++) {
-      if (levelOrder[i].equals(levelName)) {
-        this.currentLevel = i;
-        break;
-      }
+    public final String fileName;
+    private LevelLabel(String fileName){
+      this.fileName = fileName;
     }
 
-    if (currentLevel == -1) {
-      throw new MissingLevelException(levelName);
+    public LevelLabel next(){
+      return switch (this){
+        case Settings, Tutorial -> MainMenu;
+        default -> throw new MissingLevelException("");
+      };
     }
-  }
-
-  /**
-   * Returns the index of the current level.
-   *
-   * @return The index of the current level.
-   */
-  public int currentLevelIndex() {
-    return currentLevel;
   }
 }
