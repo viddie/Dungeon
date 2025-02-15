@@ -49,7 +49,8 @@ public class VicinitySystem extends System {
 
     DebugOverlay.renderCircle(d.pc.position(), radius, isInRange ? Color.GREEN : Color.WHITE);
     if(distance <= 10){
-      DebugOverlay.renderLine(d.pc.position(), otherPos, isInRange ? Color.GREEN : Color.WHITE);
+//      DebugOverlay.renderArrow(d.pc.position(), otherPos, Color.WHITE);
+//      DebugOverlay.renderLine(d.pc.position(), otherPos, isInRange ? Color.GREEN : Color.WHITE);
     }
     DebugOverlay.renderRect(d.pc.position(), 1, 1);
   }

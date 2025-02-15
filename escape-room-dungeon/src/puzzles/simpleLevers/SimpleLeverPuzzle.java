@@ -62,7 +62,8 @@ public class SimpleLeverPuzzle extends PuzzleController implements ITickable {
           Point p = pc.position();
           Point heroPos = Game.hero().orElseThrow().fetchOrThrow(PositionComponent.class).position();
           float push = -Interpolation.exp5.apply(0, 1, 1 - (2 / (float)distance));
-          Point v = Point.unitDirectionalVector(p, heroPos).mult(push * 5);
+          Point v = Point.unitDirectionalVector(p, heroPos).mult(push * 4);
+          DebugOverlay.renderArrow(p, p.add(v.mult(15)));
           pc.position(p.add(v));
         }
       }, Game.hero().orElseThrow()));
@@ -130,6 +131,5 @@ public class SimpleLeverPuzzle extends PuzzleController implements ITickable {
     DebugOverlay.drawText(leverState);
 
     DebugOverlay.renderCircle(Constants.offset(this.position), 0.25f);
-    DebugOverlay.renderLine(Constants.offset(this.position), Game.hero().orElseThrow().fetchOrThrow(PositionComponent.class).position());
   }
 }

@@ -3,6 +3,9 @@ package components;
 import core.Component;
 import core.Entity;
 
+/**
+ * This component is used to control bevhavior for two entities getting close to each other.
+ */
 public class VicinityComponent implements Component {
 
   private Entity watchEntity;

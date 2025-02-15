@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector2;
 import contrib.utils.components.skill.SkillTools;
 import core.Game;
 import core.components.PositionComponent;
@@ -93,6 +94,40 @@ public class DebugOverlay implements ITickable {
     renderer.line(point.x, point.y, other.x, other.y);
     renderer.end();
   }
+
+  public static void renderArrow(Point point, Point other){
+    renderArrow(point, other, Color.WHITE);
+  }
+  public static void renderArrow(Point point, Point other, Color color){
+    if(!SHOW_BOXES) return;
+
+    renderCircle(point, 0.1f, color);
+
+    //Arrow body
+    renderLine(point, other, color);
+
+    //Arrow head
+    Point dir = Point.unitDirectionalVector(point, other);
+    Vector2 vDir = new Vector2(dir.x, dir.y);
+    Vector2 rotated = vDir.cpy().rotate90(1).setLength(0.15f);
+    vDir.scl(-1).setLength(0.3f);
+
+    Point offset = other.add(-vDir.x, -vDir.y);
+    Point left = offset.add(rotated.x, rotated.y);
+    Point right = offset.add(-rotated.x, -rotated.y);
+
+    other = Constants.toffset(other);
+    left = Constants.toffset(left);
+    right = Constants.toffset(right);
+
+    ShapeRenderer renderer = new ShapeRenderer();
+    renderer.setProjectionMatrix(CameraSystem.camera().combined);
+    renderer.begin(ShapeRenderer.ShapeType.Filled);
+    renderer.setColor(color);
+    renderer.triangle(other.x, other.y, left.x, left.y, right.x, right.y);
+    renderer.end();
+  }
+
 
   public static void drawText(String text){
     INSTANCE.addText(text);
