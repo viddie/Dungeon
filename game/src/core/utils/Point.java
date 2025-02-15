@@ -100,6 +100,16 @@ public final class Point {
   }
 
   /**
+   * Creates a new Point which has the difference of the Points.
+   *
+   * @param other which point to subtract this point off of
+   * @return Point where the values for x and y are subtracted
+   */
+  public Point sub(final Point other) {
+    return new Point(other.x - this.x, other.y - this.y);
+  }
+
+  /**
    * Creates a new Point which has the sum of the Points.
    *
    * @param x x value to add
@@ -108,6 +118,15 @@ public final class Point {
    */
   public Point add(float x, float y) {
     return new Point(this.x + x, this.y + y);
+  }
+
+  /**
+   * Multiplies x and y by the scalar. Used for vector stuff.
+   * @param scalar The scalar to multiply by
+   * @return new Point with the multiplication applied
+   */
+  public Point mult(float scalar) {
+    return new Point(this.x * scalar, this.y * scalar);
   }
 
   /**
