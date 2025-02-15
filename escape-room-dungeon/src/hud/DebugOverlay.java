@@ -1,65 +1,177 @@
 package hud;
 
-import contrib.components.UIComponent;
-import contrib.hud.elements.GUICombination;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Matrix4;
 import contrib.utils.components.skill.SkillTools;
-import core.Entity;
 import core.Game;
 import core.components.PositionComponent;
+import core.systems.CameraSystem;
 import core.utils.Point;
+import core.utils.components.path.IPath;
+import core.utils.components.path.SimpleIPath;
 import level.utils.ITickable;
+import utils.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class DebugOverlay implements ITickable {
 
+  private static SpriteBatch BATCH = new SpriteBatch();
+  private static final IPath FONT_FNT = new SimpleIPath("skin/myFont.fnt");
+  private static final IPath FONT_PNG = new SimpleIPath("skin/myFont.png");
+  private static final BitmapFont bitmapFont;
+  private static final float OUTLINE_WIDTH = 1;
+  private static final float MARGIN = 10;
+  static {
+    bitmapFont =
+      new BitmapFont(
+        Gdx.files.internal(FONT_FNT.pathString()),
+        Gdx.files.internal(FONT_PNG.pathString()),
+        false);
+    bitmapFont.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+  }
+  private static boolean SHOW_BOXES = false;
+
   public static DebugOverlay INSTANCE = null;
   public DebugOverlay(){
     INSTANCE = this;
   }
 
-  private Entity entity;
-  private final List<HUDText> texts = new ArrayList<>();
+  private final List<String> toDraw = new ArrayList<>();
 
-  public void addDebugOverlayToGame(float scale){
-    if (entity != null){
-      Game.remove(entity);
+  public static void renderRect(Point point, Point point2){
+    Point diff = point.sub(point2);
+    renderRect(point, diff.x, diff.y, Color.WHITE);
+  }
+  public static void renderRect(Point point, float width, float height){
+    renderRect(point, width, height, Color.WHITE);
+  }
+  public static void renderRect(Point point, float width, float height, Color color){
+    if(!SHOW_BOXES) return;
+//    point = Constants.offset(point);
+    ShapeRenderer renderer = new ShapeRenderer();
+    renderer.setProjectionMatrix(CameraSystem.camera().combined);
+    renderer.begin(ShapeRenderer.ShapeType.Line);
+    renderer.setColor(color);
+    renderer.rect(point.x, point.y, width, height);
+    renderer.end();
+  }
+
+  public static void renderCircle(Point point, float radius){
+    renderCircle(point, radius, Color.WHITE);
+  }
+  public static void renderCircle(Point point, float radius, Color color){
+    if(!SHOW_BOXES) return;
+    point = Constants.toffset(point);
+    ShapeRenderer renderer = new ShapeRenderer();
+    renderer.setProjectionMatrix(CameraSystem.camera().combined);
+    renderer.begin(ShapeRenderer.ShapeType.Line);
+    renderer.setColor(color);
+    renderer.circle(point.x, point.y, radius, 30);
+    renderer.end();
+  }
+
+  public static void renderLine(Point point, Point other){
+    renderLine(point, other, Color.WHITE);
+  }
+  public static void renderLine(Point point, Point other, Color color){
+    if(!SHOW_BOXES) return;
+    point = Constants.toffset(point);
+    other = Constants.toffset(other);
+    ShapeRenderer renderer = new ShapeRenderer();
+    renderer.setProjectionMatrix(CameraSystem.camera().combined);
+    renderer.begin(ShapeRenderer.ShapeType.Line);
+    renderer.setColor(color);
+    renderer.line(point.x, point.y, other.x, other.y);
+    renderer.end();
+  }
+
+  public static void drawText(String text){
+    INSTANCE.addText(text);
+  }
+  public void addText(String text){
+    toDraw.add(text);
+  }
+
+  private void drawTexts(){
+    HUDText.Anchor[] anchors = new HUDText.Anchor[] {HUDText.Anchor.TopLeft, HUDText.Anchor.BottomLeft, HUDText.Anchor.BottomRight, HUDText.Anchor.TopRight};
+
+    BATCH.begin();
+
+    Matrix4 matrix = new Matrix4();
+    matrix.setToOrtho2D(0, 0, Game.windowWidth(), Game.windowHeight());
+    BATCH.setProjectionMatrix(matrix);
+
+    for(int textIndex = 0; textIndex < toDraw.size(); textIndex++){
+      if(textIndex >= 4) break;
+
+      HUDText.Anchor anchor = anchors[textIndex];
+      String text = toDraw.get(textIndex);
+      GlyphLayout glyphLayout = new GlyphLayout(bitmapFont, text);
+
+      float x = 0, y = 0;
+      switch (anchor) {
+        case TopLeft -> {
+          x = MARGIN;
+          y = Game.windowHeight() - MARGIN;
+        }
+        case BottomLeft -> {
+          x = MARGIN;
+          y = glyphLayout.height + MARGIN;
+        }
+        case TopRight -> {
+          x = Game.windowWidth() - glyphLayout.width - MARGIN;
+          y = Game.windowHeight() - MARGIN;
+        }
+        case BottomRight -> {
+          x = Game.windowWidth() - glyphLayout.width - MARGIN;
+          y = glyphLayout.height + MARGIN;
+        }
+      }
+
+      bitmapFont.setColor(Color.BLACK);
+      //Draw black outline
+      for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+          if (i == 1 && j == 1) continue;
+          float scale = 1;
+          float drawX = x - OUTLINE_WIDTH * (i - 1) * scale;
+          float drawY = y - OUTLINE_WIDTH * (j - 1) * scale;
+          bitmapFont.draw(BATCH, text, drawX, drawY);
+        }
+      }
+
+      bitmapFont.setColor(Color.WHITE);
+      bitmapFont.draw(BATCH, text, x, y);
     }
+    BATCH.end();
 
-    entity = new Entity();
-    HUDText hudText = new HUDText("",  HUDText.Anchor.TopLeft, scale);
-    texts.add(hudText);
-    HUDText hudText2 = new HUDText("",  HUDText.Anchor.BottomLeft, scale);
-    texts.add(hudText2);
-    HUDText hudText3 = new HUDText("",  HUDText.Anchor.BottomRight, scale);
-    texts.add(hudText3);
-    entity.add(new UIComponent(new GUICombination(hudText, hudText2, hudText3), false, false));
-    Game.add(entity);
-  }
-
-  public static void setText(int textIndex, String text){
-    DebugOverlay instance = INSTANCE;
-    if(instance == null) return;
-
-    if(textIndex < 0 || textIndex >= instance.texts.size()) return;
-    HUDText hud = instance.texts.get(textIndex);
-    hud.setText(text);
-  }
-
-  public void text(int textIndex, String text){
-    if(textIndex < 0 || textIndex >= texts.size()) return;
-    HUDText hud = texts.get(textIndex);
-    hud.setText(text);
+    toDraw.clear();
   }
 
   @Override
   public void onTick(boolean isFirstTick) {
+    if(Gdx.input.isKeyJustPressed(Input.Keys.O)){
+      SHOW_BOXES = !SHOW_BOXES;
+    }
+    if(Gdx.input.isKeyJustPressed(Input.Keys.P)){
+      Game.hero().orElseThrow().fetchOrThrow(PositionComponent.class).position(new Point(15.462f, 12.279f));
+    }
+
     Point heroPos = Game.hero().orElseThrow().fetchOrThrow(PositionComponent.class).position();
-
     Point mosPos = SkillTools.cursorPositionAsPoint();
-    mosPos = new Point(mosPos.x - 0.5f, mosPos.y - 0.25f);
+    mosPos = new Point(mosPos.x, mosPos.y);
 
-    setText(0, "Hero position: "+heroPos+"\nMouse position: "+mosPos);
+    drawText("Hero position: "+heroPos+"\nMouse position: "+mosPos);
+
+    drawTexts();
   }
 }

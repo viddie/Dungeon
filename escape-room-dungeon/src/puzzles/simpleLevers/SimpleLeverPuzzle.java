@@ -1,11 +1,15 @@
 package puzzles.simpleLevers;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Interpolation;
 import components.DrawTextComponent;
 import components.LeverComponent;
+import components.VicinityComponent;
+import contrib.components.CollideComponent;
 import core.Entity;
 import core.Game;
 import core.System;
+import core.components.PositionComponent;
 import core.level.Tile;
 import core.level.elements.tile.DoorTile;
 import core.level.utils.LevelElement;
@@ -17,6 +21,7 @@ import hud.DebugOverlay;
 import level.utils.ITickable;
 import puzzles.PuzzleController;
 import systems.TickableSystem;
+import utils.Constants;
 import utils.ICommand;
 
 import java.util.ArrayList;
@@ -37,7 +42,7 @@ public class SimpleLeverPuzzle extends PuzzleController implements ITickable {
 
   @Override
   public void loadEntities() {
-    TickableSystem.register(this);
+    TickableSystem.registerInLevel(this);
 
     for(int i = 0; i < 5; i++){
       Entity lever = LeverFactory.createLever(this.position.add((i-2) * 3, 0), new ICommand() {
@@ -46,6 +51,21 @@ public class SimpleLeverPuzzle extends PuzzleController implements ITickable {
         @Override
         public void undo() { checkLeverState(); }
       });
+      lever.add(new VicinityComponent(2, new VicinityComponent.IVicinityCommand() {
+        @Override
+        public void onEnterRange() {}
+        @Override
+        public void onLeaveRange() {}
+        @Override
+        public void onInRange(double distance) {
+          PositionComponent pc = lever.fetchOrThrow(PositionComponent.class);
+          Point p = pc.position();
+          Point heroPos = Game.hero().orElseThrow().fetchOrThrow(PositionComponent.class).position();
+          float push = -Interpolation.exp5.apply(0, 1, 1 - (2 / (float)distance));
+          Point v = Point.unitDirectionalVector(p, heroPos).mult(push * 5);
+          pc.position(p.add(v));
+        }
+      }, Game.hero().orElseThrow()));
       levers.add(lever);
       Game.add(lever);
     }
@@ -107,6 +127,9 @@ public class SimpleLeverPuzzle extends PuzzleController implements ITickable {
       LeverComponent lc = lever.fetchOrThrow(LeverComponent.class);
       leverState += lc.isOn() + " ";
     }
-    DebugOverlay.setText(1, leverState);
+    DebugOverlay.drawText(leverState);
+
+    DebugOverlay.renderCircle(Constants.offset(this.position), 0.25f);
+    DebugOverlay.renderLine(Constants.offset(this.position), Game.hero().orElseThrow().fetchOrThrow(PositionComponent.class).position());
   }
 }

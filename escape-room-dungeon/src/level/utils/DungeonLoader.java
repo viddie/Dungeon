@@ -1,7 +1,9 @@
 package level.utils;
 
 import core.Game;
+import core.components.PositionComponent;
 import core.level.elements.ILevel;
+import core.utils.Point;
 import core.utils.components.path.IPath;
 import core.utils.components.path.SimpleIPath;
 
@@ -65,6 +67,16 @@ public class DungeonLoader {
    * @return The newly created level
    */
   public static void loadLevel(LevelLabel label, int player){
+    loadLevel(label, player, null);
+  }
+  public static void loadLevel(LevelLabel label, int player, Point point){
+    if(label == currentLabel){
+      if(point != null) {
+        Game.hero().orElseThrow().fetchOrThrow(PositionComponent.class).position(point);
+      }
+      return;
+    }
+
     String fileName = label.fileName + ".level";
     //All floors will be split for the players
     if(player > 0) {
@@ -75,13 +87,17 @@ public class DungeonLoader {
     String absPath = isRunningFromJar() ? getLevelPathFromJar(fileName) : getLevelPathFromFiles(fileName);
 
     EscapeRoomLevel level = EscapeRoomLevel.loadFromPath(label, new SimpleIPath(absPath));
-    TickableSystem.clear();
-    TickableSystem.register(level);
+    TickableSystem.clearLevel();
+    TickableSystem.registerInLevel(level);
 
     currentLabel = label;
     currentLevel = level;
 
     Game.currentLevel(level);
+
+    if(point != null){
+      Game.hero().orElseThrow().fetchOrThrow(PositionComponent.class).position(point);
+    }
   }
 
   public static void loadNextLevel(){

@@ -18,9 +18,11 @@ import contrib.utils.components.skill.SkillTools;
 import core.Entity;
 import core.Game;
 import core.System;
+import core.game.GameLoop;
 import core.systems.LevelSystem;
 import core.utils.components.path.SimpleIPath;
 import entities.BurningFireballSkill;
+import hud.DebugOverlay;
 import item.concreteItem.ItemPotionWater;
 import item.concreteItem.ItemResourceBerry;
 import item.concreteItem.ItemResourceMushroomRed;
@@ -39,6 +41,7 @@ public class EscapeRoomDungeon {
 
   private static final String BACKGROUND_MUSIC = "sounds/background.wav";
   private static final boolean ENABLE_CHEATS = false;
+  private static DebugOverlay DEBUG_OVERLAY;
 
   /**
    * Main method to start the game.
@@ -50,6 +53,7 @@ public class EscapeRoomDungeon {
     Game.initBaseLogger(Level.WARNING);
     configGame();
     onSetup();
+
 
     Game.userOnLevelLoad(
       (firstTime) -> {
@@ -79,7 +83,10 @@ public class EscapeRoomDungeon {
         }
         setupMusic();
 
-        DungeonLoader.loadLevel(DungeonLoader.LevelLabel.Tutorial, 0);
+        DEBUG_OVERLAY = new DebugOverlay();
+        TickableSystem.register(DEBUG_OVERLAY, TickableSystem.TIMING_LAST);
+
+        DungeonLoader.loadLevel(DungeonLoader.LevelLabel.MainMenu, 0);
       });
   }
 
@@ -106,20 +113,16 @@ public class EscapeRoomDungeon {
   }
 
   private static void createSystems() {
-    Game.add(new CollisionSystem());
-    Game.add(new AISystem());
     Game.add(new ProjectileSystem());
-    Game.add(new HealthBarSystem());
     Game.add(new HudSystem());
-    Game.add(new SpikeSystem());
-    Game.add(new IdleSoundSystem());
-    Game.add(new PathSystem());
-    Game.add(new TickableSystem());
-    Game.add(new TeleporterSystem());
+
     Game.add(EventScheduler.getInstance());
+
+    Game.add(new TickableSystem());
     Game.add(new LeverSystem());
     Game.add(new DrawTextSystem());
     Game.add(new LevelEditorSystem());
+    Game.add(new VicinitySystem());
 
     /* Cheats */
     if (ENABLE_CHEATS) {

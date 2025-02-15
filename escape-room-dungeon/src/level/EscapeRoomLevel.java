@@ -12,14 +12,12 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Random;
 
-import core.utils.components.path.SimpleIPath;
-import level.devlevel.*;
+import level.levels.MainMenuLevel;
+import level.levels.TutorialLevel;
 import level.utils.DungeonLoader;
 import level.utils.ITickable;
 import level.utils.MissingLevelException;
-import starter.EscapeRoomDungeon;
 
 /**
  * Represents a level in the DevDungeon game. This class extends the {@link TileLevel} class and
@@ -210,6 +208,7 @@ public abstract class EscapeRoomLevel extends TileLevel implements ITickable {
       LevelElement[][] layout,
       DesignLabel designLabel) {
     return switch (label) {
+      case MainMenu -> new MainMenuLevel(layout, designLabel);
       case Tutorial -> new TutorialLevel(layout, designLabel);
       default ->
           throw new IllegalArgumentException("Invalid level name for levelHandler: " + label.name());

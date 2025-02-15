@@ -1,4 +1,4 @@
-package level.devlevel;
+package level.levels;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
@@ -35,6 +35,7 @@ import core.utils.Point;
 import core.utils.components.MissingComponentException;
 import entities.DrawTextFactory;
 import entities.MonsterType;
+import entities.TeleporterFactory;
 import hud.DebugOverlay;
 import hud.HUDText;
 import item.concreteItem.ItemPotionWater;
@@ -42,6 +43,7 @@ import item.concreteItem.ItemResourceMushroomRed;
 import java.io.IOException;
 import java.util.List;
 import level.EscapeRoomLevel;
+import level.utils.DungeonLoader;
 import puzzles.simpleLevers.SimpleLeverPuzzle;
 import systems.TickableSystem;
 import utils.EntityUtils;
@@ -72,13 +74,11 @@ public class TutorialLevel extends EscapeRoomLevel {
     String message = "Verwende " + movementKeys + " (oder RMB),\num dich zu bewegen.";
 
 
-    DebugOverlay overlay = new DebugOverlay();
-    overlay.addDebugOverlayToGame(1.5f);
-    TickableSystem.register(overlay);
-
     Game.add(DrawTextFactory.createTextEntity(message, new Point(5, 6), 0.7f));
     Game.add(DrawTextFactory.createTextEntity("Manche Sachen kannst du\nmit LMB anklicken", new Point(20, 6), 0.7f));
     Game.add(DrawTextFactory.createTextEntity("Lange Nachricht die etwas\nversteckter im Level ist", new Point(30, 9), 0.5f, Color.RED, 7, 0.2f));
+
+    Game.add(TeleporterFactory.createTeleporter(new Point(1, 4), DungeonLoader.LevelLabel.MainMenu, new Point(9.5f, 7.5f)));
 
     SimpleLeverPuzzle puzzle = new SimpleLeverPuzzle(new Point(59, 4));
     puzzle.load();

@@ -58,14 +58,11 @@ public class LevelEditorSystem extends System {
   public void execute() {
     if (Gdx.input.isKeyJustPressed(TOGGLE_ACTIVE)) {
       active = !active;
-      if (active){
-        DebugOverlay.setText(2, "~ EDIT MODE ~");
-      } else {
-        DebugOverlay.setText(2, "");
-      }
     }
     if (!active) {
       return;
+    } else {
+      DebugOverlay.drawText("~ EDIT MODE ~");
     }
     if (Gdx.input.isKeyPressed(SKIP_BUTTON)) {
       setTile(LevelElement.SKIP);

@@ -70,10 +70,13 @@ public class DrawTextSystem extends System {
     float displayRadius = data.dtc.displayRadius();
     float maxAlpha = data.dtc.maxAlpha();
 
-    float alpha = 0;
-    if(displayRadius != 0 && heroPos.distance(pos) < displayRadius){
-      alpha = Interpolation.exp5Out.apply(1 - (float)heroPos.distance(pos) / displayRadius);
-      alpha = MathUtils.lerp(0, maxAlpha, alpha);
+    float alpha = 1;
+    if(displayRadius != 0){
+      alpha = 0;
+      if(heroPos.distance(pos) < displayRadius){
+        alpha = Interpolation.exp5Out.apply(1 - (float)heroPos.distance(pos) / displayRadius);
+        alpha = MathUtils.lerp(0, maxAlpha, alpha);
+      }
     }
 
     x = x / (SCALE_CORRECTION * scale);
