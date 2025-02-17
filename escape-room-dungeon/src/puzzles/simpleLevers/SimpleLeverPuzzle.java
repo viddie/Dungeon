@@ -2,13 +2,14 @@ package puzzles.simpleLevers;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.utils.Array;
 import components.DrawTextComponent;
 import components.LeverComponent;
 import components.VicinityComponent;
-import contrib.components.CollideComponent;
 import core.Entity;
 import core.Game;
 import core.System;
+import core.components.DrawComponent;
 import core.components.PositionComponent;
 import core.level.Tile;
 import core.level.elements.tile.DoorTile;
@@ -21,10 +22,14 @@ import hud.DebugOverlay;
 import level.utils.ITickable;
 import puzzles.PuzzleController;
 import systems.TickableSystem;
+import utils.CollectionUtils;
 import utils.Constants;
+import utils.GameState;
 import utils.ICommand;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -36,8 +41,15 @@ public class SimpleLeverPuzzle extends PuzzleController implements ITickable {
   private final List<Entity> hints = new ArrayList<>();
   private DoorTile door;
 
+  private final Array<Boolean> resources;
+
   public SimpleLeverPuzzle(Point p) {
     super(p);
+    Array<Boolean> defaultResources = new Array<>();
+    for(int i = 0; i < 5; i++){
+      defaultResources.add(false);
+    }
+    resources = GameState.getResourceObject(this.getClass(), defaultResources);
   }
 
   @Override
@@ -71,6 +83,7 @@ public class SimpleLeverPuzzle extends PuzzleController implements ITickable {
       Game.add(lever);
     }
 
+
     Point doorPos = this.position.add(0, 4);
     Tile doorTile = LevelSystem.level().tileAt(doorPos);
     if (doorTile == null) {
@@ -88,6 +101,17 @@ public class SimpleLeverPuzzle extends PuzzleController implements ITickable {
     hints.add(DrawTextFactory.createTextEntity("4 - Eine Variable, die mit 'volatile' markiert ist, kann von\nmehreren Threads sicher gelesen und geschrieben werden", hintsBase.add(-1, -2), 0.3f, Color.WHITE, 10, 0.7f));
     hints.add(DrawTextFactory.createTextEntity("5 - Das Keyword 'super' wird verwendet, um auf Methoden und\nKonstruktoren der Elternklasse zuzugreifen", hintsBase.add(-3, -5), 0.3f, Color.WHITE, 9, 0.7f));
     hints.forEach(Game::add);
+
+    //Apply saved game state
+    for(int i = 0; i < levers.size(); i++){
+      Entity lever = levers.get(i);
+      if(resources.get(i)){
+        LeverComponent lc = lever.fetchOrThrow(LeverComponent.class);
+        lc.setOn(true);
+        lever.fetchOrThrow(DrawComponent.class).currentAnimation(lc.isOn() ? "on" : "off");
+      }
+    }
+    checkLeverState();
   }
 
   @Override
@@ -108,8 +132,8 @@ public class SimpleLeverPuzzle extends PuzzleController implements ITickable {
     boolean allCorrect = true;
     for(int i = 0; i < levers.size(); i++){
       LeverComponent lc = levers.get(i).fetchOrThrow(LeverComponent.class);
-      DrawTextComponent dtc = hints.get(i).fetchOrThrow(DrawTextComponent.class);
       allCorrect &= states[i] == lc.isOn();
+      resources.set(i, lc.isOn());
     }
 
     if(door != null){

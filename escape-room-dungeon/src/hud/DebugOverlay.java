@@ -19,6 +19,7 @@ import core.utils.components.path.IPath;
 import core.utils.components.path.SimpleIPath;
 import level.utils.ITickable;
 import utils.Constants;
+import utils.GameState;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -198,15 +199,16 @@ public class DebugOverlay implements ITickable {
     if(Gdx.input.isKeyJustPressed(Input.Keys.O)){
       SHOW_BOXES = !SHOW_BOXES;
     }
-    if(Gdx.input.isKeyJustPressed(Input.Keys.P)){
-      Game.hero().orElseThrow().fetchOrThrow(PositionComponent.class).position(new Point(15.462f, 12.279f));
+    if(Gdx.input.isKeyJustPressed(Input.Keys.L)){
+      GameState.INSTANCE.lastHeroPos = Game.hero().orElseThrow().fetchOrThrow(PositionComponent.class).position();
+      GameState.saveState();
     }
 
     Point heroPos = Game.hero().orElseThrow().fetchOrThrow(PositionComponent.class).position();
     Point mosPos = SkillTools.cursorPositionAsPoint();
     mosPos = new Point(mosPos.x, mosPos.y);
 
-    drawText("Hero position: "+heroPos+"\nMouse position: "+mosPos);
+    drawText("Hero position: "+heroPos+"\nMouse position: "+mosPos+"\nGameState Test: "+GameState.INSTANCE.testNumber);
 
     drawTexts();
   }

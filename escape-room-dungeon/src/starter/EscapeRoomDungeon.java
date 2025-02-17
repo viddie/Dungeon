@@ -20,6 +20,7 @@ import core.Game;
 import core.System;
 import core.game.GameLoop;
 import core.systems.LevelSystem;
+import core.utils.Point;
 import core.utils.components.path.SimpleIPath;
 import entities.BurningFireballSkill;
 import hud.DebugOverlay;
@@ -27,21 +28,25 @@ import item.concreteItem.ItemPotionWater;
 import item.concreteItem.ItemResourceBerry;
 import item.concreteItem.ItemResourceMushroomRed;
 
+import java.io.BufferedOutputStream;
 import java.io.IOException;
-import java.util.logging.Level;
+import java.io.OutputStreamWriter;
+import java.util.logging.*;
 
 import level.utils.DungeonLoader;
 import systems.*;
 import systems.EventScheduler;
+import utils.GameState;
 
 /**
  * Starter class for the DevDungeon game.
  */
 public class EscapeRoomDungeon {
 
+  public static final Logger LOGGER = Logger.getLogger(EscapeRoomDungeon.class.getName());
   private static final String BACKGROUND_MUSIC = "sounds/background.wav";
   private static final boolean ENABLE_CHEATS = false;
-  private static final boolean SKIP_INTRO = false;
+  private static final boolean SKIP_INTRO = true;
   private static DebugOverlay DEBUG_OVERLAY;
 
   /**
@@ -52,17 +57,41 @@ public class EscapeRoomDungeon {
    */
   public static void main(String[] args) throws IOException {
     Game.initBaseLogger(Level.WARNING);
+    setupLogger();
+
     configGame();
     onSetup();
+    GameState.initialLoadState();
 
+    Game.userOnExit(GameState.INSTANCE::onBeforeApplicationExit);
     Game.userOnLevelLoad(
       (firstTime) -> {
         EventScheduler.getInstance().clear();
-        LeverSystem leverSystem = Game.getSystem(LeverSystem.class);
-        leverSystem.clear();
       });
 
     Game.run();
+  }
+
+  private static void setupLogger(){
+    LOGGER.setLevel(Level.ALL);
+    StreamHandler handler = new StreamHandler(java.lang.System.out, new SimpleFormatter()){
+      @Override
+      public void publish(LogRecord record){
+        super.publish(record);
+        flush();
+      }
+      @Override
+      public void close(){
+        flush();
+      }
+    };
+    LOGGER.addHandler(handler);
+
+    try{
+      FileHandler fileHandler = new FileHandler("escape_room.log");
+      fileHandler.setFormatter(new SimpleFormatter());
+      LOGGER.addHandler(fileHandler);
+    }catch(IOException ignored){}
   }
 
   private static void onSetup() {
@@ -84,7 +113,8 @@ public class EscapeRoomDungeon {
         DEBUG_OVERLAY = new DebugOverlay();
         TickableSystem.register(DEBUG_OVERLAY, TickableSystem.TIMING_LAST);
 
-        DungeonLoader.loadLevel(DungeonLoader.LevelLabel.MainMenu, 0);
+        Point loadPos = GameState.INSTANCE.currentLevel == DungeonLoader.LevelLabel.MainMenu ? null : GameState.INSTANCE.lastHeroPos;
+        DungeonLoader.loadLevel(GameState.INSTANCE.currentLevel, GameState.INSTANCE.playerNumber, loadPos);
         if(!SKIP_INTRO){
           TransitionSystem.openingTransition("Escape Room Dungeon");
         }

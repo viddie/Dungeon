@@ -56,6 +56,13 @@ public class LeverComponent implements Component {
   }
 
   /**
+   * This method sets the current state of the lever, without executing the command.
+   */
+  public void setOn(boolean on) {
+    isOn = on;
+  }
+
+  /**
    * This method toggles the state of the lever. If the lever is on, it turns it off. If it's off,
    * it turns it on.
    */

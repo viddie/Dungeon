@@ -2,21 +2,18 @@ package level.utils;
 
 import core.Game;
 import core.components.PositionComponent;
-import core.level.elements.ILevel;
 import core.utils.Point;
-import core.utils.components.path.IPath;
 import core.utils.components.path.SimpleIPath;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.*;
 import java.util.*;
-import java.util.logging.Logger;
-import java.util.stream.Stream;
+
 import level.EscapeRoomLevel;
 import systems.TickableSystem;
+import utils.GameState;
 
 /**
  * The DungeonLoader class is used to load levels in the game. It is used to load levels in a
@@ -91,6 +88,8 @@ public class DungeonLoader {
 
     currentLabel = label;
     currentLevel = level;
+    GameState.INSTANCE.currentLevel = label;
+    GameState.INSTANCE.playerNumber = player;
 
     Game.currentLevel(level);
 
