@@ -28,6 +28,14 @@ public final class Point {
   }
 
   /**
+   * A new point with x = 0, y = 0
+   */
+  public Point(){
+    x = 0;
+    y = 0;
+  }
+
+  /**
    * Copies the point.
    *
    * @param p foo
