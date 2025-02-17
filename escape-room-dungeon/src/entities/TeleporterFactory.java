@@ -13,6 +13,7 @@ import core.utils.components.draw.Animation;
 import core.utils.components.path.IPath;
 import core.utils.components.path.SimpleIPath;
 import level.utils.DungeonLoader;
+import systems.TransitionSystem;
 import utils.Constants;
 
 import java.util.Map;
@@ -25,7 +26,7 @@ public class TeleporterFactory {
   private static final IPath TELEPORTER_IMG = new SimpleIPath("objects/teleporter/teleporter_0.png");
   private static final IPath ARRIVAL_IMG = new SimpleIPath("objects/teleporter/arrival_0.png");
 
-  public static Entity createTeleporter(Point pos, DungeonLoader.LevelLabel levelLabel, Point posInLevel) {
+  public static Entity createTeleporter(Point pos, DungeonLoader.LevelLabel levelLabel, Point posInLevel, String message, float animationSpeedScale) {
     Entity teleporter = new Entity("teleporter");
 
     teleporter.add(new PositionComponent(pos.add(Constants.X_OFFSET, Constants.Y_OFFSET)));
@@ -48,11 +49,19 @@ public class TeleporterFactory {
         DEFAULT_INTERACTION_RADIUS,
         true,
         (entity, who) -> {
-          DungeonLoader.loadLevel(levelLabel, 0, posInLevel);
+          TransitionSystem.transition(() -> {
+            DungeonLoader.loadLevel(levelLabel, 0, posInLevel);
+          }, message);
         }));
     return teleporter;
   }
   public static Entity createTeleporter(Point pos, DungeonLoader.LevelLabel levelLabel) {
-    return createTeleporter(pos, levelLabel, null);
+    return createTeleporter(pos, levelLabel, null, null, 1);
+  }
+  public static Entity createTeleporter(Point pos, DungeonLoader.LevelLabel levelLabel, Point posInLevel) {
+    return createTeleporter(pos, levelLabel, posInLevel, null, 1);
+  }
+  public static Entity createTeleporter(Point pos, DungeonLoader.LevelLabel levelLabel, Point posInLevel, String message) {
+    return createTeleporter(pos, levelLabel, posInLevel, message, 1);
   }
 }

@@ -41,6 +41,7 @@ public class EscapeRoomDungeon {
 
   private static final String BACKGROUND_MUSIC = "sounds/background.wav";
   private static final boolean ENABLE_CHEATS = false;
+  private static final boolean SKIP_INTRO = false;
   private static DebugOverlay DEBUG_OVERLAY;
 
   /**
@@ -54,16 +55,13 @@ public class EscapeRoomDungeon {
     configGame();
     onSetup();
 
-
     Game.userOnLevelLoad(
       (firstTime) -> {
-        EventScheduler.getInstance().clear(); // Clear all scheduled actions
-        // Reset all levers
+        EventScheduler.getInstance().clear();
         LeverSystem leverSystem = Game.getSystem(LeverSystem.class);
         leverSystem.clear();
       });
 
-    // build and start game
     Game.run();
   }
 
@@ -87,6 +85,9 @@ public class EscapeRoomDungeon {
         TickableSystem.register(DEBUG_OVERLAY, TickableSystem.TIMING_LAST);
 
         DungeonLoader.loadLevel(DungeonLoader.LevelLabel.MainMenu, 0);
+        if(!SKIP_INTRO){
+          TransitionSystem.openingTransition("Escape Room Dungeon");
+        }
       });
   }
 
@@ -123,6 +124,7 @@ public class EscapeRoomDungeon {
     Game.add(new DrawTextSystem());
     Game.add(new LevelEditorSystem());
     Game.add(new VicinitySystem());
+    Game.add(new TransitionSystem());
 
     /* Cheats */
     if (ENABLE_CHEATS) {

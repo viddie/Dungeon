@@ -64,7 +64,6 @@ public class DungeonLoader {
    * Loads a new level
    * @param label The level type or floor to load
    * @param player For which player (1 or 2) this level should load. Pass 0 if there is no difference between players
-   * @return The newly created level
    */
   public static void loadLevel(LevelLabel label, int player){
     loadLevel(label, player, null);

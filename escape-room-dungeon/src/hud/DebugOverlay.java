@@ -26,8 +26,8 @@ import java.util.List;
 public class DebugOverlay implements ITickable {
 
   private static SpriteBatch BATCH = new SpriteBatch();
-  private static final IPath FONT_FNT = new SimpleIPath("skin/myFont.fnt");
-  private static final IPath FONT_PNG = new SimpleIPath("skin/myFont.png");
+  private static final IPath FONT_FNT = new SimpleIPath("fonts/segoe_32.fnt");
+  private static final IPath FONT_PNG = new SimpleIPath("fonts/segoe_32.png");
   private static final BitmapFont bitmapFont;
   private static final float OUTLINE_WIDTH = 1;
   private static final float MARGIN = 10;
@@ -173,6 +173,7 @@ public class DebugOverlay implements ITickable {
       }
 
       bitmapFont.setColor(Color.BLACK);
+      bitmapFont.getData().setScale(0.75f);
       //Draw black outline
       for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {

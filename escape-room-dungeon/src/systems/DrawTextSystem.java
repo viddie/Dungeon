@@ -24,10 +24,10 @@ import core.utils.components.path.SimpleIPath;
 public class DrawTextSystem extends System {
 
   private static final SpriteBatch BATCH = new SpriteBatch();
-  private static final IPath FONT_FNT = new SimpleIPath("skin/myFont.fnt");
-  private static final IPath FONT_PNG = new SimpleIPath("skin/myFont.png");
+  private static final IPath FONT_FNT = new SimpleIPath("fonts/segoe_32.fnt");
+  private static final IPath FONT_PNG = new SimpleIPath("fonts/segoe_32.png");
   private static final BitmapFont bitmapFont;
-  private static final float OUTLINE_WIDTH = 1;
+  private static final float OUTLINE_WIDTH = 1f;
   private static final float SCALE_CORRECTION = 0.05f;
   private static final float X_OFFSET = 0.5f;
   private static final float Y_OFFSET = 0.25f;
@@ -92,12 +92,13 @@ public class DrawTextSystem extends System {
     BATCH.setProjectionMatrix(m);
 
     bitmapFont.setColor(outline.r, outline.g, outline.b, alpha);
+    bitmapFont.getData().setScale(0.5f);
     //Draw black outline
     for (int i = 0; i < 3; i++){
       for (int j = 0; j < 3; j++){
         if(i == 1 && j == 1) continue;
-        float drawX = xCentered - OUTLINE_WIDTH * (i - 1) * scale;
-        float drawY = yCentered - OUTLINE_WIDTH * (j - 1) * scale;
+        float drawX = xCentered - Math.max(1, OUTLINE_WIDTH * scale) * (i - 1);
+        float drawY = yCentered - Math.max(1, OUTLINE_WIDTH * scale) * (j - 1);
         if(alpha > 0) bitmapFont.draw(BATCH, text, drawX, drawY);
       }
     }
