@@ -104,6 +104,11 @@ public final class GameLoop extends ScreenAdapter {
           public void create() {
             setScreen(new GameLoop());
           }
+          @Override
+          public void dispose(){
+            PreRunConfiguration.userOnExit().execute();
+            super.dispose();
+          }
         },
         config);
   }

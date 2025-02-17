@@ -33,6 +33,7 @@ public final class PreRunConfiguration {
   private static IVoidFunction userOnFrame = () -> {};
   private static IVoidFunction userOnSetup = () -> {};
   private static Consumer<Boolean> userOnLevelLoad = (b) -> {};
+  private static IVoidFunction userOnExit = () -> {};
 
   /**
    * Gets the width of the game window.
@@ -212,6 +213,24 @@ public final class PreRunConfiguration {
    */
   public static void userOnLevelLoad(final Consumer<Boolean> userOnLevelLoad) {
     PreRunConfiguration.userOnLevelLoad = userOnLevelLoad;
+  }
+
+  /**
+   * Gets the user-defined function for exit logic.
+   *
+   * @return The user-defined function for exit logic.
+   */
+  public static IVoidFunction userOnExit() {
+    return userOnExit;
+  }
+
+  /**
+   * Sets the user-defined function for exit logic.
+   *
+   * @param userOnExit The user-defined function for exit logic.
+   */
+  public static void userOnExit(final IVoidFunction userOnExit) {
+    PreRunConfiguration.userOnExit = userOnExit;
   }
 
   /**

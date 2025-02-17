@@ -177,6 +177,16 @@ public final class Game {
   }
 
   /**
+   * Sets the user-defined function for exit in the pre-run configuration.
+   *
+   * @param userOnExit The new user-defined function for exit.
+   */
+  public static void userOnExit(final IVoidFunction userOnExit) {
+    PreRunConfiguration.userOnExit(userOnExit);
+  }
+
+
+  /**
    * Initialize the base logger.
    *
    * <p>Set a logging level, and remove the console handler, and write all log messages into the log
