@@ -13,11 +13,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import level.levels.Floor1Level;
 import level.levels.MainMenuLevel;
 import level.levels.TutorialLevel;
 import level.utils.DungeonLoader;
 import level.utils.ITickable;
 import level.utils.MissingLevelException;
+import utils.Constants;
 
 /**
  * Represents a level in the DevDungeon game. This class extends the {@link TileLevel} class and
@@ -42,8 +44,6 @@ public abstract class EscapeRoomLevel extends TileLevel implements ITickable {
   @Override
   public final void onTick(boolean isFirstTick) {
     if (isFirstTick) {
-      ((ExitTile) endTile()).close(); // close exit at start (to force defeating the boss)
-      doorTiles().forEach(DoorTile::close);
       onFirstTick();
     }
     onTick();
@@ -106,7 +106,38 @@ public abstract class EscapeRoomLevel extends TileLevel implements ITickable {
       while (!(line = readLine(reader)).isEmpty()) {
         layoutLines.add(line);
       }
-      LevelElement[][] layout = loadLevelLayoutFromString(layoutLines);
+
+      LevelElement[][] layout;
+      boolean isDefaultLayout = false;
+
+      //Special case: if theres only 1 line and it has the form of <int>x<int>, generate a new empty level
+      if(layoutLines.size() == 1){
+        isDefaultLayout = true;
+        line = layoutLines.get(0);
+        String[] split = line.split("x");
+        int width = Integer.parseInt(split[0]);
+        int height = Integer.parseInt(split[1]);
+        layout = new LevelElement[height][width];
+
+        int centerX = width / 2;
+        int centerY = height / 2;
+
+        for(int y = 0; y < height; y++){
+          for(int x = 0; x < width; x++){
+            LevelElement toFill = LevelElement.SKIP;
+            if(y == 0 || y == height - 1 || x == 0 || x == width - 1){
+              toFill = LevelElement.WALL;
+            } else if (Math.abs(x - centerX) <= 1 && Math.abs(y - centerY) <= 1){
+              toFill = LevelElement.FLOOR;
+            }
+            layout[y][x] = toFill;
+          }
+        }
+        heroPos = new Point(centerX, centerY);
+      } else {
+        layout = loadLevelLayoutFromString(layoutLines);
+      }
+
 
       EscapeRoomLevel newLevel;
       newLevel = getLevelMapping(label, layout, designLabel);
@@ -117,6 +148,13 @@ public abstract class EscapeRoomLevel extends TileLevel implements ITickable {
         throw new RuntimeException("Invalid Hero Position: " + heroPos);
       }
       newLevel.startTile(heroTile);
+
+      if(isDefaultLayout){
+        //Remove end tile
+        for(int i = newLevel.exitTiles().size()-1; i >= 0; i--){
+          newLevel.changeTileElementType(newLevel.exitTiles().get(i), LevelElement.FLOOR);
+        }
+      }
 
       return newLevel;
     } catch (IOException e) {
@@ -210,8 +248,8 @@ public abstract class EscapeRoomLevel extends TileLevel implements ITickable {
     return switch (label) {
       case MainMenu -> new MainMenuLevel(layout, designLabel);
       case Tutorial -> new TutorialLevel(layout, designLabel);
-      default ->
-          throw new IllegalArgumentException("Invalid level name for levelHandler: " + label.name());
+      case Floor1 -> new Floor1Level(layout, designLabel);
+      default -> throw new IllegalArgumentException("Invalid level name for levelHandler: " + label.name());
     };
   }
 }

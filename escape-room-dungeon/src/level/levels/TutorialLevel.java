@@ -80,7 +80,7 @@ public class TutorialLevel extends EscapeRoomLevel {
 
     Game.add(TeleporterFactory.createTeleporter(new Point(1, 4), DungeonLoader.LevelLabel.MainMenu, new Point(9.5f, 7.5f), null, 2));
 
-    SimpleLeverPuzzle puzzle = new SimpleLeverPuzzle(new Point(59, 4));
+    SimpleLeverPuzzle puzzle = new SimpleLeverPuzzle(new Point(59, 4), 0);
     puzzle.load();
   }
 

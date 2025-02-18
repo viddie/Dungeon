@@ -26,7 +26,7 @@ public class TeleporterFactory {
   private static final IPath TELEPORTER_IMG = new SimpleIPath("objects/teleporter/teleporter_0.png");
   private static final IPath ARRIVAL_IMG = new SimpleIPath("objects/teleporter/arrival_0.png");
 
-  public static Entity createTeleporter(Point pos, DungeonLoader.LevelLabel levelLabel, Point posInLevel, String message, float animationSpeedScale) {
+  public static Entity createTeleporter(Point pos, DungeonLoader.LevelLabel levelLabel, Point posInLevel, String message, float animationSpeedScale, int player) {
     Entity teleporter = new Entity("teleporter");
 
     teleporter.add(new PositionComponent(pos.add(Constants.X_OFFSET, Constants.Y_OFFSET)));
@@ -50,18 +50,21 @@ public class TeleporterFactory {
         true,
         (entity, who) -> {
           TransitionSystem.transition(() -> {
-            DungeonLoader.loadLevel(levelLabel, 0, posInLevel);
+            DungeonLoader.loadLevel(levelLabel, player, posInLevel);
           }, message);
         }));
     return teleporter;
   }
   public static Entity createTeleporter(Point pos, DungeonLoader.LevelLabel levelLabel) {
-    return createTeleporter(pos, levelLabel, null, null, 1);
+    return createTeleporter(pos, levelLabel, null, null, 1, 0);
   }
   public static Entity createTeleporter(Point pos, DungeonLoader.LevelLabel levelLabel, Point posInLevel) {
-    return createTeleporter(pos, levelLabel, posInLevel, null, 1);
+    return createTeleporter(pos, levelLabel, posInLevel, null, 1, 0);
   }
   public static Entity createTeleporter(Point pos, DungeonLoader.LevelLabel levelLabel, Point posInLevel, String message) {
-    return createTeleporter(pos, levelLabel, posInLevel, message, 1);
+    return createTeleporter(pos, levelLabel, posInLevel, message, 1, 0);
+  }
+  public static Entity createTeleporter(Point pos, DungeonLoader.LevelLabel levelLabel, Point posInLevel, String message, float animationSpeedScale) {
+    return createTeleporter(pos, levelLabel, posInLevel, message, animationSpeedScale, 0);
   }
 }

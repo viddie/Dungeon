@@ -20,6 +20,8 @@ import core.systems.CameraSystem;
 import core.utils.Point;
 import core.utils.components.path.IPath;
 import core.utils.components.path.SimpleIPath;
+import hud.DebugOverlay;
+import utils.Constants;
 
 public class DrawTextSystem extends System {
 
@@ -55,6 +57,20 @@ public class DrawTextSystem extends System {
       .forEach(this::drawText);
 
     BATCH.end();
+
+    //Draw debug shapes has to be called outside of a SpriteBatch.being() call
+    filteredEntityStream(PositionComponent.class, DrawTextComponent.class)
+      .map(this::buildDataObject)
+      .forEach(this::drawDebugShapes);
+  }
+
+  public void drawDebugShapes(DTData data){
+    Point pos = data.pc.position();
+    float x = pos.x;
+    float y = pos.y;
+    float displayRadius = data.dtc.displayRadius();
+    DebugOverlay.renderCircle(new Point(x, y), 0.1f);
+    DebugOverlay.renderCircle(new Point(x, y), displayRadius, new Color(1, 1, 1, 0.3f));
   }
 
   public void drawText(DTData data){
@@ -106,16 +122,16 @@ public class DrawTextSystem extends System {
     bitmapFont.setColor(color.r, color.g, color.b, alpha);
     if(alpha > 0) bitmapFont.draw(BATCH, text, xCentered, yCentered);
 
-    if(DEBUG_POSITION){
-      BATCH.end();
-      ShapeRenderer renderer = new ShapeRenderer();
-      renderer.setProjectionMatrix(m);
-      renderer.begin(ShapeRenderer.ShapeType.Line);
-      renderer.rect(xCentered, yCentered - glyphLayout.height, glyphLayout.width, glyphLayout.height);
-      renderer.circle(x, y, 2);
-      renderer.end();
-      BATCH.begin();
-    }
+//    if(DEBUG_POSITION){
+//      BATCH.end();
+//      ShapeRenderer renderer = new ShapeRenderer();
+//      renderer.setProjectionMatrix(m);
+//      renderer.begin(ShapeRenderer.ShapeType.Line);
+//      renderer.rect(xCentered, yCentered - glyphLayout.height, glyphLayout.width, glyphLayout.height);
+//      renderer.circle(x, y, 2);
+//      renderer.end();
+//      BATCH.begin();
+//    }
   }
 
   private DTData buildDataObject(Entity e){

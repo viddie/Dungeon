@@ -1,8 +1,9 @@
-package puzzles.simpleLevers;
+package puzzles.floor1;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Logger;
 import components.LeverComponent;
 import components.VicinityComponent;
 import core.Entity;
@@ -26,20 +27,21 @@ import utils.GameState;
 import utils.ICommand;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
-/**
- *
- */
-public class SimpleLeverPuzzle extends PuzzleController implements ITickable {
-
+public class Floor1LeversPuzzle extends PuzzleController implements ITickable {
   private final List<Entity> levers = new ArrayList<>();
   private final List<Entity> hints = new ArrayList<>();
   private DoorTile door;
 
   private Array<Boolean> resources;
 
-  public SimpleLeverPuzzle(Point p, int player) { super(p, player); }
+  private static final HashMap<Integer, List<Point>> hintPositions = new HashMap<>();
+  private static final HashMap<Integer, List<String>> hintTexts = new HashMap<>();
+
+  public Floor1LeversPuzzle(Point p, int player) { super(p, player); }
 
   @Override
   public void loadResources(int player) {
@@ -48,6 +50,25 @@ public class SimpleLeverPuzzle extends PuzzleController implements ITickable {
       defaultResources.add(false);
     }
     resources = GameState.getResourceObject(player+"_"+this.getClass().getSimpleName(), defaultResources);
+
+
+    List<Point> points = Arrays.asList(new Point(18.5f, 9.5f), new Point(25.5f, -3.0f), new Point(18.0f, -17.0f), new Point(-18.0f, -10.0f), new Point(-16.0f, 9.0f));
+    hintPositions.put(1, points);
+    hintPositions.put(2, points);
+
+    String p1Hint1 = "A: 'final' schützt eine Variable vor Änderungen";
+    String p1Hint2 = "C = 5";
+    String p1Hint3 = "E = 2";
+    String p1Hint4 = "D: Eine 'static' Methode kann direkt auf\n Instanzvariablen zugreifen";
+    String p1Hint5 = "B: Eine Klasse, die mit 'private' deklariert wurde, kann von\nanderen Klassen aus demselben Paket instanziiert werden";
+
+    String p2Hint1 = "B = 1";
+    String p2Hint2 = "C: Eine Variable, die mit 'volatile'\nmarkiert ist, kann von mehreren\nThreads sicher gelesen und\ngeschrieben werden";
+    String p2Hint3 = "E: Das Keyword 'super' wird verwendet, um auf\nMethoden und Konstruktoren der Elternklasse\nzuzugreifen";
+    String p2Hint4 = "A = 4";
+    String p2Hint5 = "D = 3";
+    hintTexts.put(1, Arrays.asList(p1Hint1, p1Hint2, p1Hint3, p1Hint4, p1Hint5));
+    hintTexts.put(2, Arrays.asList(p2Hint1, p2Hint2, p2Hint3, p2Hint4, p2Hint5));
   }
 
   @Override
@@ -61,28 +82,11 @@ public class SimpleLeverPuzzle extends PuzzleController implements ITickable {
         @Override
         public void undo() { checkLeverState(); }
       });
-      lever.add(new VicinityComponent(2, new VicinityComponent.IVicinityCommand() {
-        @Override
-        public void onEnterRange() {}
-        @Override
-        public void onLeaveRange() {}
-        @Override
-        public void onInRange(double distance) {
-          PositionComponent pc = lever.fetchOrThrow(PositionComponent.class);
-          Point p = pc.position();
-          Point heroPos = Game.hero().orElseThrow().fetchOrThrow(PositionComponent.class).position();
-          float push = -Interpolation.exp5.apply(0, 1, 1 - (2 / (float)distance));
-          Point v = Point.unitDirectionalVector(p, heroPos).mult(push * 4);
-          DebugOverlay.renderArrow(p, p.add(v.mult(15)));
-          pc.position(p.add(v));
-        }
-      }, Game.hero().orElseThrow()));
       levers.add(lever);
       Game.add(lever);
     }
 
-
-    Point doorPos = this.position.add(0, 4);
+    Point doorPos = this.position.add(0, 3);
     Tile doorTile = LevelSystem.level().tileAt(doorPos);
     if (doorTile == null) {
       return;
@@ -92,12 +96,11 @@ public class SimpleLeverPuzzle extends PuzzleController implements ITickable {
     door.close();
 
 
-    Point hintsBase = this.position.add(81 - 59, 0);
-    hints.add(DrawTextFactory.createTextEntity("1 - 'final' schützt eine Variable vor Änderungen", hintsBase.add(-3, 5), 0.3f, Color.WHITE, 9, 0.7f));
-    hints.add(DrawTextFactory.createTextEntity("2 - Eine 'static' Methode kann direkt auf\n Instanzvariablen zugreifen", hintsBase.add(-1, 3), 0.3f, Color.WHITE, 10, 0.7f));
-    hints.add(DrawTextFactory.createTextEntity("3 - Eine Klasse, die mit 'private' deklariert wurde, kann von\nanderen Klassen aus demselben Paket instanziiert werden", hintsBase.add(0, 0), 0.3f, Color.WHITE, 10, 0.7f));
-    hints.add(DrawTextFactory.createTextEntity("4 - Eine Variable, die mit 'volatile' markiert ist, kann von\nmehreren Threads sicher gelesen und geschrieben werden", hintsBase.add(-1, -2), 0.3f, Color.WHITE, 10, 0.7f));
-    hints.add(DrawTextFactory.createTextEntity("5 - Das Keyword 'super' wird verwendet, um auf Methoden und\nKonstruktoren der Elternklasse zuzugreifen", hintsBase.add(-3, -5), 0.3f, Color.WHITE, 9, 0.7f));
+    List<Point> positions = hintPositions.get(this.player);
+    List<String> texts = hintTexts.get(this.player);
+    for(int i = 0; i < positions.size(); i++){
+      hints.add(DrawTextFactory.createTextEntity(texts.get(i), positions.get(i).add(this.position), 0.7f, Color.WHITE, 7, 0.3f));
+    }
     hints.forEach(Game::add);
 
     //Apply saved game state
@@ -126,7 +129,7 @@ public class SimpleLeverPuzzle extends PuzzleController implements ITickable {
 
 
   private void checkLeverState(){
-    boolean[] states = new boolean[]{true, false, false, true, true};
+    boolean[] states = new boolean[]{false, true, false, true, true};
     boolean allCorrect = true;
     for(int i = 0; i < levers.size(); i++){
       LeverComponent lc = levers.get(i).fetchOrThrow(LeverComponent.class);
@@ -145,13 +148,6 @@ public class SimpleLeverPuzzle extends PuzzleController implements ITickable {
 
   @Override
   public void onTick(boolean isFirstTick) {
-    String leverState = "";
-    for (Entity lever : levers) {
-      LeverComponent lc = lever.fetchOrThrow(LeverComponent.class);
-      leverState += lc.isOn() + " ";
-    }
-    DebugOverlay.drawText(leverState);
-
     DebugOverlay.renderCircle(Constants.offset(this.position), 0.25f);
   }
 }

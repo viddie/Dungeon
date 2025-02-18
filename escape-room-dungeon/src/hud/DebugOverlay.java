@@ -3,6 +3,7 @@ package hud;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
@@ -18,9 +19,13 @@ import core.utils.Point;
 import core.utils.components.path.IPath;
 import core.utils.components.path.SimpleIPath;
 import level.utils.ITickable;
+import starter.EscapeRoomDungeon;
 import utils.Constants;
 import utils.GameState;
 
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,7 +55,7 @@ public class DebugOverlay implements ITickable {
   private final List<String> toDraw = new ArrayList<>();
 
   public static void renderRect(Point point, Point point2){
-    Point diff = point.sub(point2);
+    Point diff = point2.sub(point);
     renderRect(point, diff.x, diff.y, Color.WHITE);
   }
   public static void renderRect(Point point, float width, float height){
@@ -58,10 +63,10 @@ public class DebugOverlay implements ITickable {
   }
   public static void renderRect(Point point, float width, float height, Color color){
     if(!SHOW_BOXES) return;
-//    point = Constants.offset(point);
     ShapeRenderer renderer = new ShapeRenderer();
     renderer.setProjectionMatrix(CameraSystem.camera().combined);
     renderer.begin(ShapeRenderer.ShapeType.Line);
+    Gdx.gl.glEnable(GL20.GL_BLEND);
     renderer.setColor(color);
     renderer.rect(point.x, point.y, width, height);
     renderer.end();
@@ -76,6 +81,7 @@ public class DebugOverlay implements ITickable {
     ShapeRenderer renderer = new ShapeRenderer();
     renderer.setProjectionMatrix(CameraSystem.camera().combined);
     renderer.begin(ShapeRenderer.ShapeType.Line);
+    Gdx.gl.glEnable(GL20.GL_BLEND);
     renderer.setColor(color);
     renderer.circle(point.x, point.y, radius, 30);
     renderer.end();
@@ -91,6 +97,7 @@ public class DebugOverlay implements ITickable {
     ShapeRenderer renderer = new ShapeRenderer();
     renderer.setProjectionMatrix(CameraSystem.camera().combined);
     renderer.begin(ShapeRenderer.ShapeType.Line);
+    Gdx.gl.glEnable(GL20.GL_BLEND);
     renderer.setColor(color);
     renderer.line(point.x, point.y, other.x, other.y);
     renderer.end();
@@ -102,6 +109,7 @@ public class DebugOverlay implements ITickable {
   public static void renderArrow(Point point, Point other, Color color){
     if(!SHOW_BOXES) return;
 
+    //Arrow base
     renderCircle(point, 0.1f, color);
 
     //Arrow body
@@ -124,6 +132,7 @@ public class DebugOverlay implements ITickable {
     ShapeRenderer renderer = new ShapeRenderer();
     renderer.setProjectionMatrix(CameraSystem.camera().combined);
     renderer.begin(ShapeRenderer.ShapeType.Filled);
+    Gdx.gl.glEnable(GL20.GL_BLEND);
     renderer.setColor(color);
     renderer.triangle(other.x, other.y, left.x, left.y, right.x, right.y);
     renderer.end();
@@ -198,17 +207,25 @@ public class DebugOverlay implements ITickable {
   public void onTick(boolean isFirstTick) {
     if(Gdx.input.isKeyJustPressed(Input.Keys.O)){
       SHOW_BOXES = !SHOW_BOXES;
-    }
-    if(Gdx.input.isKeyJustPressed(Input.Keys.L)){
-      GameState.INSTANCE.lastHeroPos = Game.hero().orElseThrow().fetchOrThrow(PositionComponent.class).position();
-      GameState.saveState();
+      EscapeRoomDungeon.LOGGER.info("Showing debug shapes: "+SHOW_BOXES);
     }
 
     Point heroPos = Game.hero().orElseThrow().fetchOrThrow(PositionComponent.class).position();
     Point mosPos = SkillTools.cursorPositionAsPoint();
     mosPos = new Point(mosPos.x, mosPos.y);
 
-    drawText("Hero position: "+heroPos+"\nMouse position: "+mosPos+"\nGameState Test: "+GameState.INSTANCE.testNumber);
+    if(Gdx.input.isKeyJustPressed(Input.Keys.P)){
+      int mouseXInt = (int)mosPos.x;
+      int mouseYInt = (int)mosPos.y;
+      String s = "new Point("+mouseXInt+", "+mouseYInt+")";
+      StringSelection stringSel = new StringSelection(s);
+      Toolkit.getDefaultToolkit().getSystemClipboard().setContents(stringSel,stringSel);
+      EscapeRoomDungeon.LOGGER.info("Selected Point: "+s);
+    }
+
+    if(SHOW_BOXES){
+      drawText("Hero position: "+heroPos+"\nMouse position: "+mosPos);
+    }
 
     drawTexts();
   }

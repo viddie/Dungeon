@@ -3,8 +3,10 @@ package puzzles;
 import core.Game;
 import core.System;
 import core.utils.Point;
+import starter.EscapeRoomDungeon;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * The PuzzleController is the central component of all puzzles that exist in the Escape Room.
@@ -13,33 +15,37 @@ import java.util.List;
  */
 public abstract class PuzzleController {
 
-  protected Point position;
+  protected static final Logger LOGGER = EscapeRoomDungeon.LOGGER;
 
-  public PuzzleController(float x, float y){
-    position = new Point(x, y);
-  }
-  public PuzzleController(Point p){
-    position = p;
+  protected Point position;
+  protected int player;
+
+  public PuzzleController(Point position, int player){
+    this.position = position;
+    this.player = player;
   }
 
   public void load(){
+    loadResources(player);
     loadSystems();
-    loadEntities();
+    loadEntities(player);
   }
   public void unload(){
-    unloadEntities();
+    unloadEntities(player);
     unloadSystems();
   }
 
-  public abstract void loadEntities();
-  public abstract void unloadEntities();
-  public abstract List<System> createSystems();
+  public abstract void loadResources(int player);
+  public abstract void loadEntities(int player);
+  public abstract void unloadEntities(int player);
+  public abstract List<System> createSystems(int player);
+
 
   /**
-   * Loads all non-general systems that this Puzzle needs to exist.
+   * Loads all systems that only this Puzzle needs.
    */
   public void loadSystems(){
-    List<System> systems = createSystems();
+    List<System> systems = createSystems(player);
     if(systems == null) return;
 
     systems.forEach(s -> {
@@ -51,7 +57,7 @@ public abstract class PuzzleController {
   }
 
   public void unloadSystems(){
-    List<System> systems = createSystems();
+    List<System> systems = createSystems(player);
     if(systems == null) return;
 
     systems.forEach(s -> {

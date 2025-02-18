@@ -30,10 +30,10 @@ public class MainMenuLevel extends EscapeRoomLevel {
 
     Point base = new Point(15, 10);
     Game.add(DrawTextFactory.createTextEntity("Spieler 1", base.add(0.5f, 2), 1, Color.WHITE, 0, 1));
-    Game.add(TeleporterFactory.createTeleporter(base, DungeonLoader.LevelLabel.Tutorial, null, "~~~ Tutorial ~~~"));
+    Game.add(TeleporterFactory.createTeleporter(base, DungeonLoader.LevelLabel.Floor1, null, "~~~ Floor 1 ~~~", 1, 1));
 
     Game.add(DrawTextFactory.createTextEntity("Spieler 2", base.add(0.5f, -2), 1, Color.WHITE, 0, 1));
-    Game.add(TeleporterFactory.createTeleporter(base.add(0, -4), DungeonLoader.LevelLabel.Tutorial, null, "~~~ Tutorial ~~~"));
+    Game.add(TeleporterFactory.createTeleporter(base.add(0, -4), DungeonLoader.LevelLabel.Floor1, null, "~~~ Floor 1 ~~~", 1, 2));
 
     Game.add(DrawTextFactory.createTextEntity("Einstellungen", base.add(0.5f, -6), 1, Color.WHITE, 0, 1));
     Game.add(TeleporterFactory.createTeleporter(base.add(0, -8), DungeonLoader.LevelLabel.Tutorial, null, "~~~ Tutorial ~~~"));

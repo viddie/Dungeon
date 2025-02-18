@@ -20,7 +20,6 @@ public class GameState {
   public static GameState INSTANCE;
   private static final String SAVE_PATH = "game_state.json";
 
-  public int testNumber = 5;
   public DungeonLoader.LevelLabel currentLevel = DungeonLoader.LevelLabel.MainMenu;
   public int playerNumber = 0;
   public Point lastHeroPos = null;
@@ -29,17 +28,17 @@ public class GameState {
 
   public GameState(){}
 
-  private static <T> void initResourceObject(Class<?> klass, T obj){
+  private static <T> void initResourceObject(String identifier, T obj){
     if(INSTANCE == null) throw new RuntimeException("GameState has not been initialized yet.");
     if(obj == null) throw new IllegalArgumentException("Resource object cannot be null");
-    INSTANCE.resources.put(klass.getName(), obj);
+    INSTANCE.resources.put(identifier, obj);
   }
-  public static <T> T getResourceObject(Class<?> klass, T defaultObj){
+  public static <T> T getResourceObject(String identifier, T defaultObj){
     if(INSTANCE == null) throw new RuntimeException("GameState has not been initialized yet.");
-    Object obj = INSTANCE.resources.get(klass.getName());
+    Object obj = INSTANCE.resources.get(identifier);
     if(obj == null){
-      LOGGER.warning("Didn't find resources object for class: "+klass.getName());
-      initResourceObject(klass, defaultObj);
+      LOGGER.warning("Didn't find resources object for identifier: "+identifier);
+      initResourceObject(identifier, defaultObj);
       return defaultObj;
     }
     return (T) obj;
