@@ -114,7 +114,7 @@ public final class Point {
    * @return Point where the values for x and y are subtracted
    */
   public Point sub(final Point other) {
-    return new Point(other.x - this.x, other.y - this.y);
+    return new Point(this.x - other.x, this.y - other.y);
   }
 
   /**
