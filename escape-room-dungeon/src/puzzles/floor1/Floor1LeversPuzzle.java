@@ -41,7 +41,7 @@ public class Floor1LeversPuzzle extends PuzzleController implements ITickable {
   private static final HashMap<Integer, List<Point>> hintPositions = new HashMap<>();
   private static final HashMap<Integer, List<String>> hintTexts = new HashMap<>();
 
-  public Floor1LeversPuzzle(Point p, int player) { super(p, player); }
+  public Floor1LeversPuzzle(Point p1, Point p2, int player) { super(p1, p2, player); }
 
   @Override
   public void loadResources(int player) {

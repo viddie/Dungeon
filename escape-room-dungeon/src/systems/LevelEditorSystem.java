@@ -2,19 +2,29 @@ package systems;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
+import contrib.components.CollideComponent;
 import contrib.utils.components.skill.SkillTools;
+import core.Entity;
 import core.Game;
 import core.System;
+import core.components.VelocityComponent;
 import core.level.Tile;
+import core.level.TileLevel;
+import core.level.elements.ILevel;
 import core.level.utils.Coordinate;
 import core.level.utils.LevelElement;
 import core.systems.LevelSystem;
+import core.systems.VelocitySystem;
 import core.utils.Point;
 import java.util.Queue;
+import java.util.logging.Logger;
 
 import hud.DebugOverlay;
 import level.EscapeRoomLevel;
 import level.utils.DungeonSaver;
+import starter.EscapeRoomDungeon;
+import utils.Constants;
 
 /**
  * The LevelEditorSystem is responsible for handling the level editor. It allows the user to change
@@ -23,6 +33,9 @@ import level.utils.DungeonSaver;
  * area with floor tiles and save the current dungeon.
  */
 public class LevelEditorSystem extends System {
+
+  private static final Logger LOGGER = EscapeRoomDungeon.LOGGER;
+
   private static final int SKIP_BUTTON = Input.Keys.NUM_1;
   private static final int PIT_BUTTON = Input.Keys.NUM_2;
   private static final int FLOOR_BUTTON = Input.Keys.NUM_3;
@@ -33,6 +46,13 @@ public class LevelEditorSystem extends System {
   private static final int FILL_WITH_FLOOR = Input.Keys.NUM_9;
   private static final int TOGGLE_ACTIVE = Input.Keys.NUM_0;
   private static final int SAVE_BUTTON = Input.Keys.Y;
+
+  //Complex actions
+  private static final int ADD_WIDTH_BUTTON = Input.Keys.G;
+  private static final int ADD_HEIGHT_BUTTON = Input.Keys.H;
+  private static final int SHIFT_MODIFIER = Input.Keys.CONTROL_RIGHT;
+  private static final int CROP_LEVEL = Input.Keys.J;
+
   private static final int maxFillRange = 100;
   private static boolean active = false;
 
@@ -58,6 +78,9 @@ public class LevelEditorSystem extends System {
   public void execute() {
     if (Gdx.input.isKeyJustPressed(TOGGLE_ACTIVE)) {
       active = !active;
+      Entity hero = Game.hero().orElseThrow();
+      VelocityComponent vc = hero.fetchOrThrow(VelocityComponent.class);
+      vc.hasNoClip(active);
     }
     if (!active) {
       return;
@@ -94,6 +117,26 @@ public class LevelEditorSystem extends System {
     }
     if (Gdx.input.isKeyJustPressed(FILL_WITH_FLOOR)) {
       fillWithFloor();
+    }
+
+    if(Gdx.input.isKeyPressed(SHIFT_MODIFIER)){
+      int x = 0, y = 0;
+      if(Gdx.input.isKeyJustPressed(Input.Keys.UP)){
+        y = 1;
+      } else if(Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) {
+        x = -1;
+      } else if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
+        y = -1;
+      } else if(Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
+        x = 1;
+      }
+      shiftLevel(x, y);
+    }
+    if(Gdx.input.isKeyJustPressed(ADD_WIDTH_BUTTON)){
+      addSize(1, 0);
+    }
+    if(Gdx.input.isKeyJustPressed(ADD_HEIGHT_BUTTON)){
+      addSize(0, 1);
     }
   }
 
@@ -148,5 +191,77 @@ public class LevelEditorSystem extends System {
       return;
     }
     LevelSystem.level().changeTileElementType(mouseTile, element);
+  }
+
+  private void addSize(int addX, int addY){
+    LOGGER.info("Resizing layout: x + "+addX+", y + "+addY);
+
+    TileLevel l = (TileLevel) Game.currentLevel();
+    Tile[][] layout = l.layout();
+
+    int rows = layout.length;
+    int cols = layout[0].length;
+
+    int newRows = rows + addY;
+    int newCols = cols + addX;
+
+    LevelElement[][] newLayout = new LevelElement[newRows][newCols];
+
+    for (int i = 0; i < newRows; i++) {
+      for (int j = 0; j < newCols; j++) {
+        if(i == rows || j == cols){
+          newLayout[i][j] = LevelElement.SKIP;
+        } else {
+          newLayout[i][j] = layout[i][j].levelElement();
+        }
+      }
+    }
+
+    l.setLayout(newLayout);
+  }
+
+  private void shiftLevel(int x, int y){
+    if(x == 0 && y == 0) return;
+
+    LOGGER.info("Shifting level by: x="+x+", y="+y);
+
+    ILevel l = Game.currentLevel();
+    Tile[][] layout = l.layout();
+
+    //ALGORITHM: shift all tiles in the layout by x and y, which are either 1, 0 or -1
+
+    int rows = layout.length;
+    int cols = layout[0].length;
+
+    LevelElement[][] newLayout = new LevelElement[rows][cols];
+
+    // Iterate through the current layout and shift tiles accordingly
+    for (int i = 0; i < rows; i++) {
+      for (int j = 0; j < cols; j++) {
+        int newI = i - y;
+        int newJ = j - x;
+
+        // Check if the new position is within bounds
+        if (newI >= 0 && newI < rows && newJ >= 0 && newJ < cols) {
+          newLayout[i][j] = layout[newI][newJ].levelElement();
+        } else {
+          newLayout[i][j] = LevelElement.SKIP; // Empty space for out-of-bounds tiles
+        }
+      }
+    }
+
+    // Copy the shifted layout back to the original layout
+    for (int i = 0; i < rows; i++) {
+      for (int j = 0; j < cols; j++) {
+        l.changeTileElementType(layout[i][j], newLayout[i][j]);
+      }
+    }
+
+    //Set all tiles again to fix the sprites
+    for (int i = 0; i < rows; i++) {
+      for (int j = 0; j < cols; j++) {
+        l.changeTileElementType(layout[i][j], layout[i][j].levelElement());
+      }
+    }
   }
 }

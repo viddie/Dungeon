@@ -20,13 +20,32 @@ public class GameState {
   public static GameState INSTANCE;
   private static final String SAVE_PATH = "game_state.json";
 
-  public DungeonLoader.LevelLabel currentLevel = DungeonLoader.LevelLabel.MainMenu;
-  public int playerNumber = 0;
-  public Point lastHeroPos = null;
+  private DungeonLoader.LevelLabel currentLevel = DungeonLoader.LevelLabel.MainMenu;
+  private int playerNumber = 0;
+  private Point lastHeroPos = null;
 
   private Map<String, Object> resources = new HashMap<>();
 
   public GameState(){}
+
+  public static DungeonLoader.LevelLabel currentLevel(){
+    return INSTANCE.currentLevel;
+  }
+  public static void currentLevel(DungeonLoader.LevelLabel label){
+    INSTANCE.currentLevel = label;
+  }
+  public static int playerNumber(){
+    return INSTANCE.playerNumber;
+  }
+  public static void playerNumber(int playerNumber){
+    INSTANCE.playerNumber = playerNumber;
+  }
+  public static Point lastHeroPos(){
+    return INSTANCE.lastHeroPos;
+  }
+  public static void lastHeroPos(Point lastHeroPos){
+    INSTANCE.lastHeroPos = lastHeroPos;
+  }
 
   private static <T> void initResourceObject(String identifier, T obj){
     if(INSTANCE == null) throw new RuntimeException("GameState has not been initialized yet.");

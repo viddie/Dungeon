@@ -14,7 +14,9 @@ import com.badlogic.gdx.math.Vector2;
 import contrib.utils.components.skill.SkillTools;
 import core.Game;
 import core.components.PositionComponent;
+import core.level.Tile;
 import core.systems.CameraSystem;
+import core.systems.LevelSystem;
 import core.utils.Point;
 import core.utils.components.path.IPath;
 import core.utils.components.path.SimpleIPath;
@@ -213,18 +215,29 @@ public class DebugOverlay implements ITickable {
     Point heroPos = Game.hero().orElseThrow().fetchOrThrow(PositionComponent.class).position();
     Point mosPos = SkillTools.cursorPositionAsPoint();
     mosPos = new Point(mosPos.x, mosPos.y);
+    Point mosPosOffset = Constants.ioffset(mosPos);
+    int mouseXInt = (int)mosPosOffset.x;
+    int mouseYInt = (int)mosPosOffset.y;
+    Point tilePos = new Point(mouseXInt, mouseYInt);
 
     if(Gdx.input.isKeyJustPressed(Input.Keys.P)){
-      int mouseXInt = (int)mosPos.x;
-      int mouseYInt = (int)mosPos.y;
       String s = "new Point("+mouseXInt+", "+mouseYInt+")";
       StringSelection stringSel = new StringSelection(s);
       Toolkit.getDefaultToolkit().getSystemClipboard().setContents(stringSel,stringSel);
-      EscapeRoomDungeon.LOGGER.info("Selected Point: "+s);
+      EscapeRoomDungeon.LOGGER.info("Selected Point (+offset): "+s);
     }
 
     if(SHOW_BOXES){
-      drawText("Hero position: "+heroPos+"\nMouse position: "+mosPos);
+      drawText("Hero position: "+heroPos+"\nMouse position: "+mosPos+"\nHovering tile: "+tilePos);
+      Tile[][] layout = Game.currentLevel().layout();
+      int rows = layout.length;
+      int cols = layout[0].length;
+      DebugOverlay.renderRect(Constants.offset(new Point(0, 0)), cols, rows, new Color(0, 1, 0, 0.5f));
+
+      Tile t = LevelSystem.level().tileAt(Constants.ioffset(mosPos));
+      if(t != null){
+        DebugOverlay.renderRect(Constants.offset(t.position()), 1, 1, new Color(1, 1, 1, 0.2f));
+      }
     }
 
     drawTexts();

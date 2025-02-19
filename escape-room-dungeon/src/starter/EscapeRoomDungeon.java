@@ -34,6 +34,7 @@ import java.io.OutputStreamWriter;
 import java.util.logging.*;
 
 import level.utils.DungeonLoader;
+import modules.keypad.KeypadSystem;
 import systems.*;
 import systems.EventScheduler;
 import utils.GameState;
@@ -113,8 +114,7 @@ public class EscapeRoomDungeon {
         DEBUG_OVERLAY = new DebugOverlay();
         TickableSystem.register(DEBUG_OVERLAY, TickableSystem.TIMING_LAST);
 
-        Point loadPos = GameState.INSTANCE.currentLevel == DungeonLoader.LevelLabel.MainMenu ? null : GameState.INSTANCE.lastHeroPos;
-        DungeonLoader.loadLevel(GameState.INSTANCE.currentLevel, GameState.INSTANCE.playerNumber, loadPos);
+        DungeonLoader.loadLevel(DungeonLoader.LevelLabel.MainMenu, 0);
         if(!SKIP_INTRO){
           TransitionSystem.openingTransition("Escape Room Dungeon");
         }
@@ -155,6 +155,7 @@ public class EscapeRoomDungeon {
     Game.add(new LevelEditorSystem());
     Game.add(new VicinitySystem());
     Game.add(new TransitionSystem());
+    Game.add(new KeypadSystem());
 
     /* Cheats */
     if (ENABLE_CHEATS) {

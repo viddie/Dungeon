@@ -87,10 +87,21 @@ public class DungeonLoader {
     TickableSystem.clearLevel();
     TickableSystem.registerInLevel(level);
 
+    LevelLabel oldLabel = currentLabel;
     currentLabel = label;
     currentLevel = level;
-    GameState.INSTANCE.currentLevel = label;
-    GameState.INSTANCE.playerNumber = player;
+
+    //If the player is in an actual level, save the current level to GameState
+    //TODO: this doesnt currently work since the main menu always sends you to Floor1, no matter where your last saved position actually was
+    if(label.isActualLevel){
+      GameState.currentLevel(label);
+      GameState.playerNumber(player);
+
+      //Switching from main menu to actual level. Restore saved position
+      if(!oldLabel.isActualLevel){
+        point = GameState.lastHeroPos();
+      }
+    }
 
     Game.currentLevel(level);
 
@@ -114,15 +125,17 @@ public class DungeonLoader {
    * Holds all available Levels
    */
   public enum LevelLabel {
-    MainMenu("main_menu"), //End tile: Exit game
-    Settings("settings"), //End tile: Back to main menu
-    Tutorial("tutorial"), //End tile: Back to main menu
-    Floor1("floor1"), //To next floor
+    MainMenu("main_menu", false), //End tile: Exit game
+    Settings("settings", false), //End tile: Back to main menu
+    Tutorial("tutorial", false), //End tile: Back to main menu
+    Floor1("floor1", true), //To next floor
     ;
 
     public final String fileName;
-    private LevelLabel(String fileName){
+    public final boolean isActualLevel;
+    private LevelLabel(String fileName, boolean isActualLevel){
       this.fileName = fileName;
+      this.isActualLevel = isActualLevel;
     }
 
     public LevelLabel next(){

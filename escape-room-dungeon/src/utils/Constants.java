@@ -19,6 +19,15 @@ public class Constants {
   }
 
   /**
+   * Adds 0.5 to x and 0.25 to y
+   * @param point the point to add the offset to
+   * @return a new Point with the offset applied
+   */
+  public static Point ioffset(Point point){
+    return new Point(point.x - X_OFFSET, point.y - Y_OFFSET);
+  }
+
+  /**
    * Adds 0.5 to x and 0.5 to y
    * @param point the point to add the tile offset to
    * @return a new Point with the tile offset applied
