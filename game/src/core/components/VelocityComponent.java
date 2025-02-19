@@ -40,6 +40,7 @@ public final class VelocityComponent implements Component {
   private float previousYVelocity;
   private Consumer<Entity> onWallHit;
   private boolean canEnterOpenPits;
+  private boolean hasNoClip = false;
 
   /**
    * Create a new VelocityComponent with the given configuration.
@@ -254,5 +255,23 @@ public final class VelocityComponent implements Component {
    */
   public boolean canEnterOpenPits() {
     return this.canEnterOpenPits;
+  }
+
+  /**
+   * Set whether the entity has noclip enabled.
+   *
+   * @param hasNoClip Whether the entity has noclip enabled.
+   */
+  public void hasNoClip(boolean hasNoClip) {
+    this.hasNoClip = hasNoClip;
+  }
+
+  /**
+   * Get whether the entity has noclip enabled.
+   *
+   * @return Whether the entity has noclip enabled.
+   */
+  public boolean hasNoClip() {
+    return this.hasNoClip;
   }
 }

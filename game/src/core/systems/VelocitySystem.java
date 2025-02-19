@@ -74,7 +74,7 @@ public final class VelocitySystem extends System {
     boolean canEnterOpenPits =
         vsd.e.fetch(VelocityComponent.class).map(VelocityComponent::canEnterOpenPits).orElse(false);
     try {
-      if (this.isAccessible(Game.tileAT(new Point(newX, newY)), canEnterOpenPits)) {
+      if (this.isAccessible(Game.tileAT(new Point(newX, newY)), canEnterOpenPits) || vsd.vc.hasNoClip()) {
         // no change in direction
         vsd.pc.position(new Point(newX, newY));
         this.movementAnimation(vsd);

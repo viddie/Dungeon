@@ -74,7 +74,7 @@ public class TileLevel implements ILevel {
    * @param designLabel The selected Design for the Tiles
    * @return The converted Tile[][]
    */
-  private static Tile[][] convertLevelElementToTile(
+  public static Tile[][] convertLevelElementToTile(
       LevelElement[][] layout, DesignLabel designLabel) {
     Tile[][] tileLayout = new Tile[layout.length][layout[0].length];
     for (int y = 0; y < layout.length; y++) {
@@ -287,6 +287,17 @@ public class TileLevel implements ILevel {
   @Override
   public Tile[][] layout() {
     return layout;
+  }
+  public void setLayout(LevelElement[][] layout) {
+    this.layout = convertLevelElementToTile(layout, startTile.designLabel);
+    floorTiles.clear();
+    wallTiles.clear();
+    holeTiles.clear();
+    doorTiles.clear();
+    exitTiles.clear();
+    skipTiles.clear();
+    pitTiles.clear();
+    putTilesInLists();
   }
 
   @Override
