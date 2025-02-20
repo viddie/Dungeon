@@ -140,6 +140,17 @@ public class DebugOverlay implements ITickable {
     renderer.end();
   }
 
+  public static void renderText(Point pos, String text, Color color, float scale){
+    if(!SHOW_BOXES) return;
+    BATCH.begin();
+    BATCH.setProjectionMatrix(CameraSystem.camera().combined);
+    bitmapFont.setColor(color);
+    bitmapFont.getData().setScale(scale / 20f);
+    pos = Constants.toffset(pos);
+    bitmapFont.draw(BATCH, text, pos.x, pos.y);
+    BATCH.end();
+  }
+
 
   public static void drawText(String text){
     INSTANCE.addText(text);

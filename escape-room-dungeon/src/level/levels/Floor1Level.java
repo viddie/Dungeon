@@ -2,8 +2,11 @@ package level.levels;
 
 import core.Entity;
 import core.Game;
+import core.level.Tile;
+import core.level.elements.tile.DoorTile;
 import core.level.utils.DesignLabel;
 import core.level.utils.LevelElement;
+import core.systems.LevelSystem;
 import core.utils.Point;
 import level.EscapeRoomLevel;
 import modules.keypad.KeypadFactory;
@@ -32,8 +35,15 @@ public class Floor1Level extends EscapeRoomLevel {
     Floor1LeversPuzzle puzzle = new Floor1LeversPuzzle(posP1, posP2, GameState.playerNumber());
     puzzle.load();
 
+    Point keypadPos = new Point(17, 12);
+    Point doorPos = keypadPos.add(-2, 2);
+    Tile t = LevelSystem.level().tileAt(doorPos);
+    LevelSystem.level().changeTileElementType(t, LevelElement.DOOR);
+    DoorTile door = (DoorTile)LevelSystem.level().tileAt(doorPos);
+    door.close();
+
     List<Integer> correctDigits = Arrays.asList(2, 3, 4);
-    Entity keypad = KeypadFactory.createKeypad(new Point(17, 12), correctDigits, () -> {}, true);
+    Entity keypad = KeypadFactory.createKeypad(keypadPos, correctDigits, door::open, false);
     Game.add(keypad);
   }
 

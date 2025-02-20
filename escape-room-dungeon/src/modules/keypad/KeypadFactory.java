@@ -10,6 +10,7 @@ import core.utils.Point;
 import core.utils.components.draw.Animation;
 import core.utils.components.path.IPath;
 import core.utils.components.path.SimpleIPath;
+import starter.EscapeRoomDungeon;
 import utils.Constants;
 
 import java.util.List;
@@ -17,7 +18,7 @@ import java.util.Map;
 
 public class KeypadFactory {
 
-  private static final float DEFAULT_INTERACTION_RADIUS = 2f;
+  private static final float DEFAULT_INTERACTION_RADIUS = 1.5f;
   private static final IPath TEXTURE_ON = new SimpleIPath("objects/keypad/on.png");
   private static final IPath TEXTURE_OFF = new SimpleIPath("objects/keypad/off.png");
 
@@ -47,7 +48,8 @@ public class KeypadFactory {
         (e, who) -> {
           KeypadComponent kc = entity.fetchOrThrow(KeypadComponent.class);
           kc.isUIOpen = true;
-          entity.fetchOrThrow(DrawComponent.class).currentAnimation(kc.isUIOpen ? "on" : "off");
+          EscapeRoomDungeon.LOGGER.info("Interacted with keypad sprite");
+//          entity.fetchOrThrow(DrawComponent.class).currentAnimation(kc.isUnlocked ? "on" : "off");
         }));
     return entity;
   }

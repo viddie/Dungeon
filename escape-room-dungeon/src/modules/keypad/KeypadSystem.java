@@ -1,5 +1,6 @@
 package modules.keypad;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import contrib.components.UIComponent;
@@ -9,18 +10,21 @@ import core.Entity;
 import core.Game;
 import core.System;
 import core.components.DrawComponent;
+import core.components.PositionComponent;
+import hud.DebugOverlay;
+import utils.SkinUtils;
 
 import java.util.Optional;
 
 public class KeypadSystem extends System {
 
   public KeypadSystem(){
-    super(KeypadComponent.class, DrawComponent.class);
+    super(KeypadComponent.class, DrawComponent.class, PositionComponent.class);
   }
 
   @Override
   public void execute() {
-    filteredEntityStream(KeypadComponent.class, DrawComponent.class)
+    filteredEntityStream(KeypadComponent.class, DrawComponent.class, PositionComponent.class)
       .map(this::buildDataObject)
       .forEach(this::execute);
   }
@@ -28,29 +32,17 @@ public class KeypadSystem extends System {
   public void execute(Data d){
     Entity overlay = d.kc.overlay;
 
+    DebugOverlay.renderCircle(d.pc.position(), 2, new Color(1, 1, 1, 0.3f));
+//    DebugOverlay.renderText(d.pc.position().add(0, 1), d.kc.correctString()+"\n"+d.kc.enteredString(), new Color(1, 1, 1, 0.3f), 1f);
+
     if(overlay == null && d.kc.isUIOpen){
       //Dialog is closed but should be open
-      Group g = new Group();
-      Table t = new Table();
-      g.addActor(t);
-      t.setPosition(Game.windowWidth() / 2, Game.windowHeight() / 2);
-//      t.add(new Label("Test string", UIUtils.defaultSkin())).pad(5);
-//      t.add(new Label("Test string", UIUtils.defaultSkin())).pad(5);
-//      t.add(new Label("Test string", UIUtils.defaultSkin())).pad(5).row();
-//      t.add(new Label("Test string", UIUtils.defaultSkin())).pad(5);
-//      t.add(new Label("Test string", UIUtils.defaultSkin())).pad(5).row();
-//      t.setFillParent(true);
-//      t.add(new Button()).expand().center().left().width(300).height(100).pad(2);
-//      t.add(new Label("Test", UIUtils.defaultSkin())).expand().left().width(300).height(100).pad(2);
-      t.add(new TextButton("Test1", UIUtils.defaultSkin())).width(300).height(100).pad(2);
-      t.add(new TextButton("Test2", UIUtils.defaultSkin())).width(300).height(100).pad(2).row();
-      t.add(new TextButton("Test3", UIUtils.defaultSkin())).width(300).height(100).pad(2);
-      t.add(new TextButton("Test4", UIUtils.defaultSkin())).width(300).height(100).pad(2).row();
-      t.add(new TextButton("Test5", UIUtils.defaultSkin())).width(300).height(100).pad(2);
-      t.add(new TextButton("Test6", UIUtils.defaultSkin())).width(300).height(100).pad(2).row();
-
       Entity newOverlay = new Entity("keypad-overlay");
-      newOverlay.add(new UIComponent(g, true, true));
+      UIComponent uic = new UIComponent(new KeypadUI(d.e, newOverlay), true, true);
+      uic.onClose(() -> {
+        d.kc.isUIOpen = false;
+      });
+      newOverlay.add(uic);
       d.kc.overlay = newOverlay;
       Game.add(newOverlay);
 
@@ -65,8 +57,9 @@ public class KeypadSystem extends System {
     return new Data(
       e,
       e.fetchOrThrow(KeypadComponent.class),
-      e.fetchOrThrow(DrawComponent.class)
+      e.fetchOrThrow(DrawComponent.class),
+      e.fetchOrThrow(PositionComponent.class)
     );
   }
-  private record Data(Entity e, KeypadComponent kc, DrawComponent dc) {}
+  private record Data(Entity e, KeypadComponent kc, DrawComponent dc, PositionComponent pc) {}
 }
