@@ -49,6 +49,7 @@ public class KeypadUI extends Group {
 //    background.setDebug(true);
     background.setOrigin(Align.center);
     background.setScale(1.5f);
+    background.setPosition(getX(Align.center), getY(Align.center), Align.center);
     this.addActor(background);
 
     parentTable = new Table();
@@ -98,19 +99,9 @@ public class KeypadUI extends Group {
 
     background.setPosition(getX(Align.center), getY(Align.center), Align.center);
     background.setDrawable(SkinUtils.customSkin(), kc.isUnlocked ? "keypad-ui-on" : "keypad-ui-off");
-
-//    for (Cell<TextButton> c : buttonCells) {
-//      c.width(66 * BACKGROUND_SCALE).height(66 * BACKGROUND_SCALE);
-//    }
-
     numberLabel.setText(kc.enteredString());
 
     super.draw(batch, parentAlpha);
-
-//    BitmapFont font = SkinUtils.getFontLarge();
-//    GlyphLayout layout = new GlyphLayout(font, "");
-//    font.setColor(new Color(1, 1, 1, parentAlpha));
-//    font.draw(batch, "Test", 200, 200);
   }
 
   private void onButtonPress(String action){

@@ -4,23 +4,30 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Music;
 import contrib.components.InventoryComponent;
+import contrib.components.UIComponent;
+import contrib.configuration.KeyboardConfig;
 import contrib.crafting.Crafting;
 import contrib.entities.HeroFactory;
 import contrib.entities.MiscFactory;
 import contrib.entities.MonsterFactory;
 import contrib.hud.DialogUtils;
+import contrib.hud.elements.GUICombination;
+import contrib.hud.inventory.InventoryGUI;
 import contrib.item.HealthPotionType;
 import contrib.item.concreteItem.ItemPotionHealth;
 import contrib.systems.*;
 import contrib.utils.components.Debugger;
+import contrib.utils.components.interaction.InteractionTool;
 import contrib.utils.components.item.ItemGenerator;
 import contrib.utils.components.skill.SkillTools;
 import core.Entity;
 import core.Game;
 import core.System;
+import core.components.PlayerComponent;
 import core.game.GameLoop;
 import core.systems.LevelSystem;
 import core.utils.Point;
+import core.utils.Tuple;
 import core.utils.components.path.SimpleIPath;
 import entities.BurningFireballSkill;
 import hud.DebugOverlay;
@@ -31,6 +38,7 @@ import item.concreteItem.ItemResourceMushroomRed;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.Comparator;
 import java.util.logging.*;
 
 import level.utils.DungeonLoader;
@@ -123,6 +131,10 @@ public class EscapeRoomDungeon {
 
   private static void createHero() throws IOException {
     Entity hero = HeroFactory.newHero();
+    PlayerComponent pc = hero.fetchOrThrow(PlayerComponent.class);
+    //Overwrite close UI and interact binds
+    pc.registerCallback(KeyboardConfig.CLOSE_UI.value(), EscapeRoomDungeon::onPressedCloseUI, false, true);
+    pc.registerCallback(KeyboardConfig.INTERACT_WORLD.value(), EscapeRoomDungeon::onPressedInteract, false, true);
     Game.add(hero);
   }
 
@@ -156,11 +168,6 @@ public class EscapeRoomDungeon {
     Game.add(new VicinitySystem());
     Game.add(new TransitionSystem());
     Game.add(new KeypadSystem());
-
-    /* Cheats */
-    if (ENABLE_CHEATS) {
-      enableCheats();
-    }
   }
 
   private static void enableCheats() {
@@ -193,5 +200,59 @@ public class EscapeRoomDungeon {
           }
         }
       });
+  }
+
+  /**
+   * Extracted from HeroFactory
+   * @param hero the hero
+   */
+  private static void onPressedCloseUI(Entity hero){
+    LOGGER.info("Pressed close UI");
+    var firstUI = findTopmostUI();
+    if (firstUI != null) {
+      InventoryGUI.inHeroInventory = false;
+      closeUIOnEntity(firstUI);
+    }
+  }
+  private static Tuple<Entity, UIComponent> findTopmostUI(){
+    return Game.entityStream() // would be nice to directly access HudSystems
+      // stream (no access to the System object)
+      .filter(x -> x.isPresent(UIComponent.class))
+      // find all Entities which have a UIComponent
+      .map(x -> new Tuple<>(x, x.fetchOrThrow(UIComponent.class)))
+      // create a tuple to still have access to the UI Entity
+      .filter(x -> x.b().closeOnUICloseKey())
+      .max(Comparator.comparingInt(x -> x.b().dialog().getZIndex()))
+      // find dialog with highest z-Index
+      .orElse(null);
+  }
+  private static void closeUIOnEntity(Tuple<Entity, UIComponent> firstUI){
+    if(firstUI == null) return;
+    firstUI.a().remove(UIComponent.class);
+    if (firstUI.a().componentStream().findAny().isEmpty()) {
+      Game.remove(firstUI.a()); // delete unused Entity
+    }
+  }
+
+  /**
+   * Extracted from HeroFactory
+   * @param hero the hero
+   */
+  private static void onPressedInteract(Entity hero){
+    LOGGER.info("Pressed interact button");
+    UIComponent uiComponent = hero.fetch(UIComponent.class).orElse(null);
+    if (uiComponent != null && uiComponent.dialog() instanceof GUICombination && !InventoryGUI.inHeroInventory) {
+      // if chest or cauldron
+      hero.remove(UIComponent.class);
+    } else {
+      var firstUI = findTopmostUI();
+      if(firstUI == null){
+        //No UI open, interact with world as normal
+        InteractionTool.interactWithClosestInteractable(hero);
+      } else {
+        //Already has UI open, close it instead.
+        closeUIOnEntity(firstUI);
+      }
+    }
   }
 }
