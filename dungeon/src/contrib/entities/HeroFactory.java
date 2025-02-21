@@ -114,23 +114,15 @@ public final class HeroFactory {
               DialogUtils.showTextPopup("You died!", "Game Over", Game::exit);
             });
     hero.add(hc);
-    hero.add(
-        new CollideComponent(
-            (you, other, direction) ->
-                other
-                    .fetch(SpikyComponent.class)
-                    .ifPresent(
-                        spikyComponent -> {
-                          if (spikyComponent.isActive()) {
-                            hc.receiveHit(
-                                new Damage(
-                                    spikyComponent.damageAmount(),
-                                    spikyComponent.damageType(),
-                                    other));
-                            spikyComponent.activateCoolDown();
-                          }
-                        }),
-            (you, other, direction) -> {}));
+    hero.add(new CollideComponent(
+      (you, other, direction) -> other.fetch(SpikyComponent.class).ifPresent(
+        spikyComponent -> {
+          if (spikyComponent.isActive()) {
+            hc.receiveHit(new Damage(spikyComponent.damageAmount(), spikyComponent.damageType(), other));
+            spikyComponent.activateCoolDown();
+          }
+        }),
+      (you, other, direction) -> {}));
 
     PlayerComponent pc = new PlayerComponent();
     hero.add(pc);
@@ -218,24 +210,13 @@ public final class HeroFactory {
           var firstUI =
               Game.entityStream() // would be nice to directly access HudSystems
                   // stream (no access to the System object)
-                  .filter(x -> x.isPresent(UIComponent.class)) // find all Entities
-                  // which have a
-                  // UIComponent
-                  .map(
-                      x ->
-                          new Tuple<>(
-                              x,
-                              x.fetch(UIComponent.class)
-                                  .orElseThrow(
-                                      () ->
-                                          MissingComponentException.build(
-                                              x, UIComponent.class)))) // create a tuple to
-                  // still have access to
-                  // the UI Entity
+                  .filter(x -> x.isPresent(UIComponent.class))
+                  // find all Entities which have a UIComponent
+                  .map(x -> new Tuple<>(x, x.fetchOrThrow(UIComponent.class)))
+                  // create a tuple to still have access to the UI Entity
                   .filter(x -> x.b().closeOnUICloseKey())
-                  .max(Comparator.comparingInt(x -> x.b().dialog().getZIndex())) // find dialog
-                  // with highest
-                  // z-Index
+                  .max(Comparator.comparingInt(x -> x.b().dialog().getZIndex()))
+                  // find dialog with highest z-Index
                   .orElse(null);
           if (firstUI != null) {
             InventoryGUI.inHeroInventory = false;
@@ -274,11 +255,7 @@ public final class HeroFactory {
     pc.registerCallback(
         key,
         entity -> {
-          VelocityComponent vc =
-              entity
-                  .fetch(VelocityComponent.class)
-                  .orElseThrow(
-                      () -> MissingComponentException.build(entity, VelocityComponent.class));
+          VelocityComponent vc = entity.fetchOrThrow(VelocityComponent.class);
           if (direction.x != 0) {
             vc.currentXVelocity(direction.x * vc.xVelocity());
           }
@@ -331,19 +308,9 @@ public final class HeroFactory {
     Point mousePosition = SkillTools.cursorPositionAsPoint();
     Entity interactable = checkIfClickOnInteractable(mousePosition).orElse(null);
     if (interactable == null) return;
-    InteractionComponent ic =
-        interactable
-            .fetch(InteractionComponent.class)
-            .orElseThrow(
-                () -> MissingComponentException.build(interactable, InteractionComponent.class));
-    PositionComponent pc =
-        interactable
-            .fetch(PositionComponent.class)
-            .orElseThrow(
-                () -> MissingComponentException.build(interactable, PositionComponent.class));
-    PositionComponent heroPC =
-        hero.fetch(PositionComponent.class)
-            .orElseThrow(() -> MissingComponentException.build(hero, PositionComponent.class));
+    InteractionComponent ic = interactable.fetchOrThrow(InteractionComponent.class);
+    PositionComponent pc = interactable.fetchOrThrow(PositionComponent.class);
+    PositionComponent heroPC = hero.fetchOrThrow(PositionComponent.class);
     if (Point.calculateDistance(pc.position(), heroPC.position()) < ic.radius())
       ic.triggerInteraction(interactable, hero);
   }
