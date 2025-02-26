@@ -10,6 +10,8 @@ import core.systems.LevelSystem;
 import core.utils.Point;
 import level.EscapeRoomLevel;
 import modules.keypad.KeypadFactory;
+import modules.showimage.ShowImageComponent;
+import modules.showimage.ShowImageFactory;
 import puzzles.floor1.Floor1LeversPuzzle;
 import utils.GameState;
 
@@ -35,6 +37,9 @@ public class Floor1Level extends EscapeRoomLevel {
     Floor1LeversPuzzle puzzle = new Floor1LeversPuzzle(posP1, posP2, GameState.playerNumber());
     puzzle.load();
 
+    Entity showImage = ShowImageFactory.createShowImage(new Point(18, 9), "objects/lever/on/lever_0.png", "items/potion/attack_speed_potion.png", null);
+    Game.add(showImage);
+
     Point keypadPos = new Point(17, 12);
     Point doorPos = keypadPos.add(-2, 2);
     Tile t = LevelSystem.level().tileAt(doorPos);
@@ -43,7 +48,10 @@ public class Floor1Level extends EscapeRoomLevel {
     door.close();
 
     List<Integer> correctDigits = Arrays.asList(2, 3, 4);
-    Entity keypad = KeypadFactory.createKeypad(keypadPos, correctDigits, door::open, false);
+    Entity keypad = KeypadFactory.createKeypad(keypadPos, correctDigits, () -> {
+      door.open();
+      showImage.fetchOrThrow(ShowImageComponent.class).imagePath = "skin/custom_skin.png";
+    }, false);
     Game.add(keypad);
   }
 

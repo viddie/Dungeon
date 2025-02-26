@@ -43,6 +43,7 @@ import java.util.logging.*;
 
 import level.utils.DungeonLoader;
 import modules.keypad.KeypadSystem;
+import modules.showimage.ShowImageSystem;
 import systems.*;
 import systems.EventScheduler;
 import utils.GameState;
@@ -168,6 +169,7 @@ public class EscapeRoomDungeon {
     Game.add(new VicinitySystem());
     Game.add(new TransitionSystem());
     Game.add(new KeypadSystem());
+    Game.add(new ShowImageSystem());
   }
 
   private static void enableCheats() {

@@ -50,7 +50,6 @@ public class LeverFactory {
     lever.add(dc);
     lever.add(new LeverComponent(false, onInteract));
     lever.add(new VicinityComponent(DEFAULT_INTERACTION_RADIUS, new TintEntityCommand(lever), Game.hero().orElseThrow()));
-//    lever.add(new VicinityComponent(DEFAULT_INTERACTION_RADIUS, new TintEntityCommand(lever, new Color(0.7f, 0.7f, 1, 1)), Game.hero().orElseThrow()));
     lever.add(
         new InteractionComponent(
             DEFAULT_INTERACTION_RADIUS,

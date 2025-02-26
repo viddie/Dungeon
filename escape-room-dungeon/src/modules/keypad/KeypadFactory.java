@@ -54,7 +54,7 @@ public class KeypadFactory {
           KeypadComponent kc = entity.fetchOrThrow(KeypadComponent.class);
           kc.isUIOpen = true;
           EscapeRoomDungeon.LOGGER.info("Interacted with keypad sprite");
-//          entity.fetchOrThrow(DrawComponent.class).currentAnimation(kc.isUnlocked ? "on" : "off");
+//          entity.fetchOrThrow(DrawComponent.class).currentAnimation(sic.isUnlocked ? "on" : "off");
         }));
     return entity;
   }
