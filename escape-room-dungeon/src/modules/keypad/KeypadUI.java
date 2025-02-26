@@ -15,6 +15,8 @@ import core.components.DrawComponent;
 import org.lwjgl.openal.AL;
 import starter.EscapeRoomDungeon;
 import utils.SkinUtils;
+import utils.SoundManager;
+import utils.Sounds;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -117,6 +119,10 @@ public class KeypadUI extends Group {
         case "Submit" -> onSubmit();
       }
     }
+
+    if(!action.equals("Submit")){
+      SoundManager.playSound(Sounds.KeypadButtonClicked, 1f, 1.5f);
+    }
   }
 
   private void onSubmit(){
@@ -124,5 +130,10 @@ public class KeypadUI extends Group {
     if(kc.isUnlocked) return;
     kc.checkUnlock();
     keypad.fetchOrThrow(DrawComponent.class).currentAnimation(kc.isUnlocked ? "on" : "off");
+    if(kc.isUnlocked){
+      SoundManager.playSound(Sounds.KeypadUnlocked);
+    } else {
+      SoundManager.playSound(Sounds.KeypadWrong);
+    }
   }
 }

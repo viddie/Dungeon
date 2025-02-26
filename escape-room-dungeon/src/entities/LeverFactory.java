@@ -1,8 +1,12 @@
 package entities;
 
+import com.badlogic.gdx.graphics.Color;
 import components.LeverComponent;
+import components.VicinityComponent;
+import components.commands.TintEntityCommand;
 import contrib.components.InteractionComponent;
 import core.Entity;
+import core.Game;
 import core.components.DrawComponent;
 import core.components.PositionComponent;
 import core.utils.Point;
@@ -14,11 +18,13 @@ import java.util.Map;
 
 import utils.Constants;
 import utils.ICommand;
+import utils.SoundManager;
+import utils.Sounds;
 
 /** The LeverFactory class is responsible for creating lever entities. */
 public class LeverFactory {
 
-  private static final float DEFAULT_INTERACTION_RADIUS = 2.5f;
+  private static final float DEFAULT_INTERACTION_RADIUS = 1.5f;
   private static final IPath LEVER_TEXTURE_ON = new SimpleIPath("objects/lever/on/lever_0.png");
   private static final IPath LEVER_TEXTURE_OFF = new SimpleIPath("objects/lever/off/lever_0.png");
 
@@ -43,6 +49,8 @@ public class LeverFactory {
     dc.currentAnimation("off");
     lever.add(dc);
     lever.add(new LeverComponent(false, onInteract));
+    lever.add(new VicinityComponent(DEFAULT_INTERACTION_RADIUS, new TintEntityCommand(lever), Game.hero().orElseThrow()));
+//    lever.add(new VicinityComponent(DEFAULT_INTERACTION_RADIUS, new TintEntityCommand(lever, new Color(0.7f, 0.7f, 1, 1)), Game.hero().orElseThrow()));
     lever.add(
         new InteractionComponent(
             DEFAULT_INTERACTION_RADIUS,
@@ -51,6 +59,7 @@ public class LeverFactory {
               LeverComponent lc = entity.fetchOrThrow(LeverComponent.class);
               lc.toggle();
               entity.fetchOrThrow(DrawComponent.class).currentAnimation(lc.isOn() ? "on" : "off");
+              SoundManager.playSound(Sounds.LeverFlipped);
             }));
     return lever;
   }

@@ -1,8 +1,12 @@
 package modules.keypad;
 
+import com.badlogic.gdx.graphics.Color;
+import components.VicinityComponent;
+import components.commands.TintEntityCommand;
 import contrib.components.InteractionComponent;
 import contrib.components.UIComponent;
 import core.Entity;
+import core.Game;
 import core.components.DrawComponent;
 import core.components.PositionComponent;
 import core.utils.IVoidFunction;
@@ -41,6 +45,7 @@ public class KeypadFactory {
     dc.currentAnimation("off");
     entity.add(dc);
     entity.add(new KeypadComponent(correctDigits, action, showDigitCount));
+    entity.add(new VicinityComponent(DEFAULT_INTERACTION_RADIUS, new TintEntityCommand(entity), Game.hero().orElseThrow()));
     entity.add(
       new InteractionComponent(
         DEFAULT_INTERACTION_RADIUS,

@@ -1,7 +1,9 @@
 package components;
 
+import com.badlogic.gdx.graphics.Color;
 import core.Component;
 import core.Entity;
+import core.components.DrawComponent;
 
 /**
  * This component is used to control bevhavior for two entities getting close to each other.

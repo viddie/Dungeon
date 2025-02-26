@@ -22,9 +22,7 @@ import hud.DebugOverlay;
 import level.utils.ITickable;
 import puzzles.PuzzleController;
 import systems.TickableSystem;
-import utils.Constants;
-import utils.GameState;
-import utils.ICommand;
+import utils.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -139,6 +137,9 @@ public class Floor1LeversPuzzle extends PuzzleController implements ITickable {
 
     if(door != null){
       if(allCorrect){
+        if(!door.isOpen()){
+          SoundManager.playSound(Sounds.DoorOpened);
+        }
         door.open();
       } else {
         door.close();

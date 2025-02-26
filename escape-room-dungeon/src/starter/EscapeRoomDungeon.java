@@ -142,7 +142,7 @@ public class EscapeRoomDungeon {
     Music backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal(BACKGROUND_MUSIC));
     backgroundMusic.setLooping(true);
     backgroundMusic.play();
-    backgroundMusic.setVolume(.05f);
+    backgroundMusic.setVolume(.02f);
   }
 
   private static void configGame() throws IOException {
@@ -151,7 +151,7 @@ public class EscapeRoomDungeon {
       contrib.configuration.KeyboardConfig.class,
       core.configuration.KeyboardConfig.class);
     Game.frameRate(60);
-    Game.disableAudio(true);
+    Game.disableAudio(false);
     Game.windowTitle("Escape Room");
   }
 

@@ -32,9 +32,6 @@ public class KeypadSystem extends System {
   public void execute(Data d){
     Entity overlay = d.kc.overlay;
 
-    DebugOverlay.renderCircle(d.pc.position(), 2, new Color(1, 1, 1, 0.3f));
-//    DebugOverlay.renderText(d.pc.position().add(0, 1), d.kc.correctString()+"\n"+d.kc.enteredString(), new Color(1, 1, 1, 0.3f), 1f);
-
     if(overlay == null && d.kc.isUIOpen){
       //Dialog is closed but should be open
       Entity newOverlay = new Entity("keypad-overlay");
