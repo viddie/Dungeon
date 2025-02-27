@@ -26,7 +26,6 @@ import java.util.List;
 public class ShowImageUI extends Group {
 
   private static final float SCALE = 1f;
-  private static final float MAX_SCREEN_COVERAGE = 0.85f;
   private static final int ANIMATION_OFFSET_X = -5;
   private static final int ANIMATION_OFFSET_Y = -50;
   private static final float SHOW_TRANSITION_PROGRESS = 1f / 60;
@@ -71,8 +70,8 @@ public class ShowImageUI extends Group {
     }
     float imageWidth = background.getImageWidth();
     float imageHeight = background.getImageHeight();
-    float maxWidth = Game.windowWidth() * MAX_SCREEN_COVERAGE;
-    float maxHeight = Game.windowHeight() * MAX_SCREEN_COVERAGE;
+    float maxWidth = Game.windowWidth() * sic.maxSize;
+    float maxHeight = Game.windowHeight() * sic.maxSize;
 
     float scaleX = maxWidth / imageWidth;
     float scaleY = maxHeight / imageHeight;

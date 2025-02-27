@@ -13,6 +13,7 @@ import core.utils.components.draw.Animation;
 import core.utils.components.path.IPath;
 import core.utils.components.path.SimpleIPath;
 import level.utils.DungeonLoader;
+import level.utils.LevelLabel;
 import systems.TransitionSystem;
 import utils.Constants;
 
@@ -26,7 +27,7 @@ public class TeleporterFactory {
   private static final IPath TELEPORTER_IMG = new SimpleIPath("objects/teleporter/teleporter_0.png");
   private static final IPath ARRIVAL_IMG = new SimpleIPath("objects/teleporter/arrival_0.png");
 
-  public static Entity createTeleporter(Point pos, DungeonLoader.LevelLabel levelLabel, Point posInLevel, String message, float animationSpeedScale, int player) {
+  public static Entity createTeleporter(Point pos, LevelLabel levelLabel, Point posInLevel, String message, float animationSpeedScale, int player) {
     Entity teleporter = new Entity("teleporter");
 
     teleporter.add(new PositionComponent(pos.add(Constants.X_OFFSET, Constants.Y_OFFSET)));
@@ -55,16 +56,16 @@ public class TeleporterFactory {
         }));
     return teleporter;
   }
-  public static Entity createTeleporter(Point pos, DungeonLoader.LevelLabel levelLabel) {
+  public static Entity createTeleporter(Point pos, LevelLabel levelLabel) {
     return createTeleporter(pos, levelLabel, null, null, 1, 0);
   }
-  public static Entity createTeleporter(Point pos, DungeonLoader.LevelLabel levelLabel, Point posInLevel) {
+  public static Entity createTeleporter(Point pos, LevelLabel levelLabel, Point posInLevel) {
     return createTeleporter(pos, levelLabel, posInLevel, null, 1, 0);
   }
-  public static Entity createTeleporter(Point pos, DungeonLoader.LevelLabel levelLabel, Point posInLevel, String message) {
+  public static Entity createTeleporter(Point pos, LevelLabel levelLabel, Point posInLevel, String message) {
     return createTeleporter(pos, levelLabel, posInLevel, message, 1, 0);
   }
-  public static Entity createTeleporter(Point pos, DungeonLoader.LevelLabel levelLabel, Point posInLevel, String message, float animationSpeedScale) {
+  public static Entity createTeleporter(Point pos, LevelLabel levelLabel, Point posInLevel, String message, float animationSpeedScale) {
     return createTeleporter(pos, levelLabel, posInLevel, message, animationSpeedScale, 0);
   }
 }

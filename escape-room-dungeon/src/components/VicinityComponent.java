@@ -3,6 +3,7 @@ package components;
 import com.badlogic.gdx.graphics.Color;
 import core.Component;
 import core.Entity;
+import core.Game;
 import core.components.DrawComponent;
 
 /**
@@ -20,6 +21,9 @@ public class VicinityComponent implements Component {
     this.radius = radius;
     this.command = command;
     this.watchEntity = watchEntity;
+  }
+  public VicinityComponent(float radius, IVicinityCommand command){
+    this(radius, command, Game.hero().orElseThrow());
   }
 
   public Entity watchEntity() {

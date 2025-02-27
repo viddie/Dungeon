@@ -110,6 +110,10 @@ public class DungeonLoader {
     }
   }
 
+  public static LevelLabel getCurrentLabel(){
+    return currentLabel;
+  }
+
   public static void loadNextLevel(){
     //Player stepped on an end tile in any level
     try {
@@ -118,31 +122,6 @@ public class DungeonLoader {
     } catch (MissingLevelException e){
       System.out.println("No next level found, exiting game...");
       Game.exit();
-    }
-  }
-
-  /**
-   * Holds all available Levels
-   */
-  public enum LevelLabel {
-    MainMenu("main_menu", false), //End tile: Exit game
-    Settings("settings", false), //End tile: Back to main menu
-    Tutorial("tutorial", false), //End tile: Back to main menu
-    Floor1("floor1", true), //To next floor
-    ;
-
-    public final String fileName;
-    public final boolean isActualLevel;
-    private LevelLabel(String fileName, boolean isActualLevel){
-      this.fileName = fileName;
-      this.isActualLevel = isActualLevel;
-    }
-
-    public LevelLabel next(){
-      return switch (this){
-        case Settings, Tutorial -> MainMenu;
-        default -> throw new MissingLevelException("");
-      };
     }
   }
 }

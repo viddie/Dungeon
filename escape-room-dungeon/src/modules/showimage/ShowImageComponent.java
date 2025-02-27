@@ -16,6 +16,10 @@ public class ShowImageComponent implements Component {
   public BiConsumer<Entity, Entity> onOpenAction;
   public BiConsumer<Entity, Entity> onCloseAction;
   public Entity overlay;
+  /**
+   * Defines the maximum size the image should occupy on the screen, in its biggest axis.
+   */
+  public float maxSize = 0.85f;
 
   public ShowImageComponent(String imagePath){
     this.imagePath = imagePath;

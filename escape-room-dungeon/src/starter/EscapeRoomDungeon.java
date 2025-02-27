@@ -42,6 +42,7 @@ import java.util.Comparator;
 import java.util.logging.*;
 
 import level.utils.DungeonLoader;
+import level.utils.LevelLabel;
 import modules.keypad.KeypadSystem;
 import modules.showimage.ShowImageSystem;
 import systems.*;
@@ -58,6 +59,7 @@ public class EscapeRoomDungeon {
   private static final boolean ENABLE_CHEATS = false;
   private static final boolean SKIP_INTRO = true;
   private static DebugOverlay DEBUG_OVERLAY;
+  private static Music backgroundMusic;
 
   /**
    * Main method to start the game.
@@ -123,7 +125,7 @@ public class EscapeRoomDungeon {
         DEBUG_OVERLAY = new DebugOverlay();
         TickableSystem.register(DEBUG_OVERLAY, TickableSystem.TIMING_LAST);
 
-        DungeonLoader.loadLevel(DungeonLoader.LevelLabel.MainMenu, 0);
+        DungeonLoader.loadLevel(LevelLabel.MainMenu, 0);
         if(!SKIP_INTRO){
           TransitionSystem.openingTransition("Escape Room Dungeon");
         }
@@ -140,10 +142,13 @@ public class EscapeRoomDungeon {
   }
 
   private static void setupMusic() {
-    Music backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal(BACKGROUND_MUSIC));
+    backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal(BACKGROUND_MUSIC));
     backgroundMusic.setLooping(true);
     backgroundMusic.play();
-    backgroundMusic.setVolume(.02f);
+    updateBgmVolume();
+  }
+  public static void updateBgmVolume(){
+    backgroundMusic.setVolume((GameState.volumeBgm() / 100f) * (GameState.volumeMaster() / 100f));
   }
 
   private static void configGame() throws IOException {

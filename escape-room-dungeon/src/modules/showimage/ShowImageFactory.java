@@ -24,7 +24,7 @@ public class ShowImageFactory {
    * @param pos The position where the lever will be created.
    * @return The created keypad entity.
    */
-  public static Entity createShowImage(Point pos, String spriteImage, String imagePath, BiConsumer<Entity, Entity> onClose) {
+  public static Entity createShowImage(Point pos, String spriteImage, String imagePath, BiConsumer<Entity, Entity> onClose, float maxSize) {
     Entity entity = new Entity("show-image");
     entity.add(new PositionComponent(pos.add(Constants.X_OFFSET, Constants.Y_OFFSET)));
 
@@ -33,10 +33,17 @@ public class ShowImageFactory {
 
     ShowImageComponent sic = new ShowImageComponent(imagePath);
     sic.onCloseAction = onClose;
+    sic.maxSize = maxSize;
     entity.add(sic);
 
     entity.add(new VicinityComponent(INTERACTION_RADIUS, new TintEntityCommand(entity), Game.hero().orElseThrow()));
     entity.add(new InteractionComponent(INTERACTION_RADIUS, true, (e, who) -> sic.isUIOpen = true));
     return entity;
+  }
+  public static Entity createShowImage(Point pos, String spriteImage, String imagePath, float maxSize) {
+    return createShowImage(pos, spriteImage, imagePath, null, maxSize);
+  }
+  public static Entity createShowImage(Point pos, String spriteImage, String imagePath) {
+    return createShowImage(pos, spriteImage, imagePath, null, 0.85f);
   }
 }

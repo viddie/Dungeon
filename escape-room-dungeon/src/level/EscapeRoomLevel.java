@@ -15,9 +15,11 @@ import java.util.Objects;
 
 import level.levels.Floor1Level;
 import level.levels.MainMenuLevel;
+import level.levels.SettingsLevel;
 import level.levels.TutorialLevel;
 import level.utils.DungeonLoader;
 import level.utils.ITickable;
+import level.utils.LevelLabel;
 import level.utils.MissingLevelException;
 import utils.Constants;
 
@@ -78,7 +80,7 @@ public abstract class EscapeRoomLevel extends TileLevel implements ITickable {
    * @param path The path of the level to load
    * @return
    */
-  public static EscapeRoomLevel loadFromPath(DungeonLoader.LevelLabel label, IPath path) {
+  public static EscapeRoomLevel loadFromPath(LevelLabel label, IPath path) {
     try {
       BufferedReader reader;
       if (isRunningFromJar()) {
@@ -242,11 +244,12 @@ public abstract class EscapeRoomLevel extends TileLevel implements ITickable {
   }
 
   private static EscapeRoomLevel getLevelMapping(
-      DungeonLoader.LevelLabel label,
+      LevelLabel label,
       LevelElement[][] layout,
       DesignLabel designLabel) {
     return switch (label) {
       case MainMenu -> new MainMenuLevel(layout, designLabel);
+      case Settings -> new SettingsLevel(layout, designLabel);
       case Tutorial -> new TutorialLevel(layout, designLabel);
       case Floor1 -> new Floor1Level(layout, designLabel);
       default -> throw new IllegalArgumentException("Invalid level name for levelHandler: " + label.name());

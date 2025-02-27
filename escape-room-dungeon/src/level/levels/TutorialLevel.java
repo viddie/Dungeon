@@ -44,6 +44,7 @@ import java.io.IOException;
 import java.util.List;
 import level.EscapeRoomLevel;
 import level.utils.DungeonLoader;
+import level.utils.LevelLabel;
 import puzzles.simpleLevers.SimpleLeverPuzzle;
 import systems.TickableSystem;
 import utils.EntityUtils;
@@ -78,7 +79,7 @@ public class TutorialLevel extends EscapeRoomLevel {
     Game.add(DrawTextFactory.createTextEntity("Manche Sachen kannst du\nmit LMB anklicken", new Point(20, 6), 0.7f));
     Game.add(DrawTextFactory.createTextEntity("Lange Nachricht die etwas\nversteckter im Level ist", new Point(30, 9), 0.5f, Color.RED, 7, 0.2f));
 
-    Game.add(TeleporterFactory.createTeleporter(new Point(1, 4), DungeonLoader.LevelLabel.MainMenu, new Point(9.5f, 7.5f), null, 2));
+    Game.add(TeleporterFactory.createTeleporter(new Point(1, 4), LevelLabel.MainMenu, new Point(9.5f, 7.5f), null, 2));
 
     SimpleLeverPuzzle puzzle = new SimpleLeverPuzzle(new Point(59, 4), new Point(0, 0), 0);
     puzzle.load();

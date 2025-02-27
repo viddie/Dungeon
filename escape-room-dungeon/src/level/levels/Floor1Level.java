@@ -37,7 +37,7 @@ public class Floor1Level extends EscapeRoomLevel {
     Floor1LeversPuzzle puzzle = new Floor1LeversPuzzle(posP1, posP2, GameState.playerNumber());
     puzzle.load();
 
-    Entity showImage = ShowImageFactory.createShowImage(new Point(18, 9), "objects/lever/on/lever_0.png", "items/potion/attack_speed_potion.png", null);
+    Entity showImage = ShowImageFactory.createShowImage(new Point(18, 9), "objects/note/note-sprite.png", "images/note-tutorial.png", 1f);
     Game.add(showImage);
 
     Point keypadPos = new Point(17, 12);
@@ -50,7 +50,6 @@ public class Floor1Level extends EscapeRoomLevel {
     List<Integer> correctDigits = Arrays.asList(2, 3, 4);
     Entity keypad = KeypadFactory.createKeypad(keypadPos, correctDigits, () -> {
       door.open();
-      showImage.fetchOrThrow(ShowImageComponent.class).imagePath = "skin/custom_skin.png";
     }, false);
     Game.add(keypad);
   }
