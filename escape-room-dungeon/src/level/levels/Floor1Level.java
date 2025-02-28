@@ -17,6 +17,7 @@ import utils.GameState;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class Floor1Level extends EscapeRoomLevel {
 
@@ -26,32 +27,36 @@ public class Floor1Level extends EscapeRoomLevel {
    * @param layout      The layout of the level, represented as a 2D array of LevelElements.
    * @param designLabel The design label of the level.
    */
-  public Floor1Level(LevelElement[][] layout, DesignLabel designLabel) {
-    super(layout, designLabel);
+  public Floor1Level(LevelElement[][] layout, DesignLabel designLabel, Map<String, Point> namedPoints) {
+    super(layout, designLabel, namedPoints);
   }
 
   @Override
   protected void onFirstTick() {
-    Point posP1 = new Point(52, 28);
-    Point posP2 = new Point(15, 28);
-    Floor1LeversPuzzle puzzle = new Floor1LeversPuzzle(posP1, posP2, GameState.playerNumber());
+    Point pos = getPoint("levers");
+    Floor1LeversPuzzle puzzle = new Floor1LeversPuzzle(pos, GameState.playerNumber());
     puzzle.load();
 
-    Entity showImage = ShowImageFactory.createShowImage(new Point(18, 9), "objects/note/note-sprite.png", "images/note-tutorial.png", 1f);
-    Game.add(showImage);
+    Point notePos = getPoint("note");
+    if(notePos != null){
+      Entity showImage = ShowImageFactory.createShowImage(getPoint("note"), "objects/note/note-sprite.png", "images/note-tutorial.png", 1f);
+      Game.add(showImage);
+    }
 
-    Point keypadPos = new Point(17, 12);
-    Point doorPos = keypadPos.add(-2, 2);
-    Tile t = LevelSystem.level().tileAt(doorPos);
-    LevelSystem.level().changeTileElementType(t, LevelElement.DOOR);
-    DoorTile door = (DoorTile)LevelSystem.level().tileAt(doorPos);
-    door.close();
+    Point keypadPos = getPoint("keypad");
+    Point doorPos = getPoint("keypad-door");
+    if(keypadPos != null && doorPos != null){
+      Tile t = LevelSystem.level().tileAt(doorPos);
+      LevelSystem.level().changeTileElementType(t, LevelElement.DOOR);
+      DoorTile door = (DoorTile)LevelSystem.level().tileAt(doorPos);
+      door.close();
 
-    List<Integer> correctDigits = Arrays.asList(2, 3, 4);
-    Entity keypad = KeypadFactory.createKeypad(keypadPos, correctDigits, () -> {
-      door.open();
-    }, false);
-    Game.add(keypad);
+      List<Integer> correctDigits = Arrays.asList(2, 3, 4);
+      Entity keypad = KeypadFactory.createKeypad(keypadPos, correctDigits, () -> {
+        door.open();
+      }, false);
+      Game.add(keypad);
+    }
   }
 
   @Override

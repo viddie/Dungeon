@@ -13,6 +13,7 @@ import java.util.*;
 
 import level.EscapeRoomLevel;
 import systems.TickableSystem;
+import systems.TransitionSystem;
 import utils.Constants;
 import utils.GameState;
 
@@ -115,10 +116,10 @@ public class DungeonLoader {
   }
 
   public static void loadNextLevel(){
-    //Player stepped on an end tile in any level
     try {
       LevelLabel next = currentLabel.next();
-      loadLevel(next, 0); //TODO: Load current player state via static GameState
+      int player = next.isActualLevel ? GameState.playerNumber() : 0;
+      TransitionSystem.transition(() -> loadLevel(next, player));
     } catch (MissingLevelException e){
       System.out.println("No next level found, exiting game...");
       Game.exit();

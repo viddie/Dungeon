@@ -13,6 +13,8 @@ import level.utils.DungeonLoader;
 import level.utils.LevelLabel;
 import systems.TransitionSystem;
 
+import java.util.Map;
+
 public class MainMenuLevel extends EscapeRoomLevel {
 
   /**
@@ -21,28 +23,31 @@ public class MainMenuLevel extends EscapeRoomLevel {
    * @param layout      The layout of the level, represented as a 2D array of LevelElements.
    * @param designLabel The design label of the level.
    */
-  public MainMenuLevel(LevelElement[][] layout, DesignLabel designLabel) {
-    super(layout, designLabel);
+  public MainMenuLevel(LevelElement[][] layout, DesignLabel designLabel, Map<String, Point> namedPoints) {
+    super(layout, designLabel, namedPoints);
   }
 
   @Override
   protected void onFirstTick() {
     ((ExitTile) endTile()).open();
 
-    Point base = new Point(15, 10);
-    Game.add(DrawTextFactory.createTextEntity("Spieler 1", base.add(0.5f, 2), 1, Color.WHITE, 0, 1));
-    Game.add(TeleporterFactory.createTeleporter(base, LevelLabel.Floor1, null, "~~~ Floor 1 ~~~", 1, 1));
+    Point p = getPoint("player1");
+    Game.add(DrawTextFactory.createTextEntity("Spieler 1", p.add(0.5f, 2), 1, Color.WHITE, 0, 1));
+    Game.add(TeleporterFactory.createTeleporter(p, LevelLabel.Floor1, null, "~~~ Floor 1 ~~~", 1, 1));
 
-    Game.add(DrawTextFactory.createTextEntity("Spieler 2", base.add(0.5f, -2), 1, Color.WHITE, 0, 1));
-    Game.add(TeleporterFactory.createTeleporter(base.add(0, -4), LevelLabel.Floor1, null, "~~~ Floor 1 ~~~", 1, 2));
+    p = getPoint("player2");
+    Game.add(DrawTextFactory.createTextEntity("Spieler 2", p.add(0.5f, 2), 1, Color.WHITE, 0, 1));
+    Game.add(TeleporterFactory.createTeleporter(p, LevelLabel.Floor1, null, "~~~ Floor 1 ~~~", 1, 2));
 
-    Game.add(DrawTextFactory.createTextEntity("Einstellungen", base.add(0.5f, -6), 1, Color.WHITE, 0, 1));
-    Game.add(TeleporterFactory.createTeleporter(base.add(0, -8), LevelLabel.Settings, null, "Settings", 5));
+    p = getPoint("settings");
+    Game.add(DrawTextFactory.createTextEntity("Einstellungen", p.add(0.5f, 2), 1, Color.WHITE, 0, 1));
+    Game.add(TeleporterFactory.createTeleporter(p, LevelLabel.Settings, null, "Settings", 5));
 
     Game.add(DrawTextFactory.createTextEntity("Spiel Verlassen?", new Point(27, 8.5f), 0.7f, Color.WHITE, 6, 1));
 
-    Game.add(DrawTextFactory.createTextEntity("Tutorial", new Point(4.5f, 4), 1, Color.WHITE, 0, 1));
-    Game.add(TeleporterFactory.createTeleporter(new Point(4, 2), LevelLabel.Tutorial, null, "-- Tutorial --"));
+    p = getPoint("tutorial");
+    Game.add(DrawTextFactory.createTextEntity("Tutorial", p.add(0.5f, 2), 1, Color.WHITE, 0, 1));
+    Game.add(TeleporterFactory.createTeleporter(p, LevelLabel.Tutorial, null, "-- Tutorial --"));
   }
 
   @Override

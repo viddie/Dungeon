@@ -1,5 +1,6 @@
 package level;
 
+import com.badlogic.gdx.graphics.Color;
 import core.level.Tile;
 import core.level.TileLevel;
 import core.level.elements.tile.DoorTile;
@@ -9,10 +10,10 @@ import core.level.utils.LevelElement;
 import core.utils.Point;
 import core.utils.components.path.IPath;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
+import hud.DebugOverlay;
 import level.levels.Floor1Level;
 import level.levels.MainMenuLevel;
 import level.levels.SettingsLevel;
@@ -30,6 +31,7 @@ import utils.Constants;
  */
 public abstract class EscapeRoomLevel extends TileLevel implements ITickable {
 
+  protected final Map<String, Point> namedPoints;
 
   /**
    * Constructs a new DevDungeonLevel with the given layout, design label, and custom points.
@@ -39,8 +41,10 @@ public abstract class EscapeRoomLevel extends TileLevel implements ITickable {
    */
   public EscapeRoomLevel(
       LevelElement[][] layout,
-      DesignLabel designLabel) {
+      DesignLabel designLabel,
+      Map<String, Point> namedPoints) {
     super(layout, designLabel);
+    this.namedPoints = namedPoints;
   }
 
   @Override
@@ -48,7 +52,17 @@ public abstract class EscapeRoomLevel extends TileLevel implements ITickable {
     if (isFirstTick) {
       onFirstTick();
     }
+    drawDebug();
     onTick();
+  }
+
+  private void drawDebug(){
+    Color color = new Color(0, 1, 0, 0.8f);
+    //Draw named points on debug screen
+    namedPoints.forEach((s, p) -> {
+      DebugOverlay.renderCircle(Constants.offset(p), 0.1f, color);
+      DebugOverlay.renderText(Constants.offset(p).add(0, 0.5f), s, color, 1);
+    });
   }
 
   /**
@@ -66,6 +80,17 @@ public abstract class EscapeRoomLevel extends TileLevel implements ITickable {
    * @see ITickable
    */
   protected abstract void onTick();
+
+  public Point getPoint(String name){
+    return namedPoints.get(name);
+  }
+  public Point getPointOrDefault(String name){
+    Point p = namedPoints.get(name);
+    return p == null ? new Point(0, 0) : p;
+  }
+  public Map<String, Point> getNamedPoints(){
+    return namedPoints;
+  }
 
   private static boolean isRunningFromJar() {
     return Objects.requireNonNull(
@@ -95,12 +120,13 @@ public abstract class EscapeRoomLevel extends TileLevel implements ITickable {
       }
 
       // Parse DesignLabel
-      String designLabelLine = readLine(reader);
-      DesignLabel designLabel = parseDesignLabel(designLabelLine);
+      DesignLabel designLabel = parseDesignLabel(readLine(reader));
 
       // Parse Hero Position
-      String heroPosLine = readLine(reader);
-      Point heroPos = parseHeroPosition(heroPosLine);
+      Point heroPos = parseHeroPosition(readLine(reader));
+
+      // Parse Named Points
+      Map<String, Point> namedPoints = parseNamedPoints(readLine(reader));
 
       // Parse LAYOUT
       List<String> layoutLines = new ArrayList<>();
@@ -142,7 +168,7 @@ public abstract class EscapeRoomLevel extends TileLevel implements ITickable {
 
 
       EscapeRoomLevel newLevel;
-      newLevel = getLevelMapping(label, layout, designLabel);
+      newLevel = getLevelMapping(label, layout, designLabel, namedPoints);
 
       // Set Hero Position
       Tile heroTile = newLevel.tileAt(heroPos);
@@ -183,6 +209,15 @@ public abstract class EscapeRoomLevel extends TileLevel implements ITickable {
     return line;
   }
 
+  private static DesignLabel parseDesignLabel(String line) {
+    if (line.isEmpty()) return DesignLabel.randomDesign();
+    try {
+      return DesignLabel.valueOf(line);
+    } catch (IllegalArgumentException e) {
+      throw new RuntimeException("Invalid DesignLabel: " + line);
+    }
+  }
+
   private static Point parseHeroPosition(String heroPositionLine) {
     if (heroPositionLine.isEmpty()) throw new RuntimeException("Missing Hero Position");
     String[] parts = heroPositionLine.split(",");
@@ -196,13 +231,34 @@ public abstract class EscapeRoomLevel extends TileLevel implements ITickable {
     }
   }
 
-  private static DesignLabel parseDesignLabel(String line) {
-    if (line.isEmpty()) return DesignLabel.randomDesign();
-    try {
-      return DesignLabel.valueOf(line);
-    } catch (IllegalArgumentException e) {
-      throw new RuntimeException("Invalid DesignLabel: " + line);
+  public static Map<String, Point> parseNamedPoints(String input) {
+    Map<String, Point> pointsMap = new HashMap<>();
+
+    String[] entries = input.split(";"); // Split by semicolon
+    for (String entry : entries) {
+      String[] parts = entry.split(":"); // Split by colon
+      if (parts.length == 2) {
+        String name = parts[0].trim();
+        String[] coordinates = parts[1].split(","); // Split coordinates
+
+        if (coordinates.length == 2) {
+          try {
+            float x = Float.parseFloat(coordinates[0].trim());
+            float y = Float.parseFloat(coordinates[1].trim());
+            pointsMap.put(name, new Point(x, y));
+          } catch (NumberFormatException e) {
+            System.err.println("Invalid number format in entry: " + entry);
+          }
+        }
+      }
     }
+    return pointsMap;
+  }
+
+  public String serializeNamedPoints() {
+    return namedPoints.entrySet().stream()
+      .map(entry -> entry.getKey() + ":" + entry.getValue().x + "," + entry.getValue().y)
+      .collect(Collectors.joining(";"));
   }
 
   private static LevelElement[][] loadLevelLayoutFromString(List<String> lines) {
@@ -246,12 +302,13 @@ public abstract class EscapeRoomLevel extends TileLevel implements ITickable {
   private static EscapeRoomLevel getLevelMapping(
       LevelLabel label,
       LevelElement[][] layout,
-      DesignLabel designLabel) {
+      DesignLabel designLabel,
+      Map<String, Point> namedPoints) {
     return switch (label) {
-      case MainMenu -> new MainMenuLevel(layout, designLabel);
-      case Settings -> new SettingsLevel(layout, designLabel);
-      case Tutorial -> new TutorialLevel(layout, designLabel);
-      case Floor1 -> new Floor1Level(layout, designLabel);
+      case MainMenu -> new MainMenuLevel(layout, designLabel, namedPoints);
+      case Settings -> new SettingsLevel(layout, designLabel, namedPoints);
+      case Tutorial -> new TutorialLevel(layout, designLabel, namedPoints);
+      case Floor1 -> new Floor1Level(layout, designLabel, namedPoints);
       default -> throw new IllegalArgumentException("Invalid level name for levelHandler: " + label.name());
     };
   }

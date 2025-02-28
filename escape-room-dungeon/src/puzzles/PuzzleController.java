@@ -20,8 +20,8 @@ public abstract class PuzzleController {
   protected Point position;
   protected int player;
 
-  public PuzzleController(Point p1, Point p2, int player){
-    this.position = player == 2 ? p2 : p1;
+  public PuzzleController(Point p, int player){
+    this.position = p;
     this.player = player;
   }
 

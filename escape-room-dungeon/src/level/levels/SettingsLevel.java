@@ -22,6 +22,7 @@ import utils.GameState;
 import utils.SoundManager;
 import utils.Sounds;
 
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
@@ -34,13 +35,13 @@ public class SettingsLevel extends EscapeRoomLevel {
    * @param layout      The layout of the level, represented as a 2D array of LevelElements.
    * @param designLabel The design label of the level.
    */
-  public SettingsLevel(LevelElement[][] layout, DesignLabel designLabel) { super(layout, designLabel); }
+  public SettingsLevel(LevelElement[][] layout, DesignLabel designLabel, Map<String, Point> namedPoints) { super(layout, designLabel, namedPoints); }
 
   @Override
   protected void onFirstTick() {
-    new SettingsSlider("Master\nVolume", new Point(9, 9), GameState.volumeMaster(), 5, GameState::volumeMaster).setBounds(0, 100).addToGame();
-    new SettingsSlider("Music", new Point(9, 7), GameState.volumeBgm(), 5, GameState::volumeBgm).setBounds(0, 100).addToGame();
-    new SettingsSlider("SFX", new Point(9, 5), GameState.volumeSfx(), 5, GameState::volumeSfx).setBounds(0, 100).addToGame();
+    new SettingsSlider("Master\nVolume", getPoint("volume-master"), GameState.volumeMaster(), 5, GameState::volumeMaster).setBounds(0, 100).addToGame();
+    new SettingsSlider("Music", getPoint("volume-bgm"), GameState.volumeBgm(), 5, GameState::volumeBgm).setBounds(0, 100).addToGame();
+    new SettingsSlider("SFX", getPoint("volume-sfx"), GameState.volumeSfx(), 5, GameState::volumeSfx).setBounds(0, 100).addToGame();
   }
 
   @Override

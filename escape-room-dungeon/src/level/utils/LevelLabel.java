@@ -20,7 +20,7 @@ public enum LevelLabel {
   public LevelLabel next(){
     return switch (this){
       case Settings, Tutorial -> MainMenu;
-      default -> throw new MissingLevelException("");
+      default -> throw new MissingLevelException("No next level");
     };
   }
 }

@@ -30,19 +30,12 @@ public class DungeonSaver {
    * single string and prints it.
    */
   public static void saveCurrentDungeon() {
+    EscapeRoomLevel level = (EscapeRoomLevel)Game.currentLevel();
     String designLabel;
-    if (Game.currentLevel().endTile() == null) {
-      designLabel =
-          Game.currentLevel()
-              .randomTile(LevelElement.FLOOR)
-              .orElseThrow(
-                  () ->
-                      new NoSuchElementException(
-                          "There is no floor tile in the level; cannot place the missing exit and cannot save the dungeon"))
-              .designLabel()
-              .name();
+    if (level.endTile() == null) {
+      designLabel = level.randomTile(LevelElement.FLOOR).orElseThrow().designLabel().name();
     } else {
-      designLabel = Game.currentLevel().endTile().designLabel().name();
+      designLabel = level.endTile().designLabel().name();
     }
 
     Entity hero = Game.hero().orElse(null);
@@ -53,11 +46,16 @@ public class DungeonSaver {
       heroPos = new Point(0, 0);
     }
 
+    // Serialize named points
+    String namedPoints = level.serializeNamedPoints();
+
     // Compress the layout of the current level by removing all lines that only contain 'S'
-    String dunLayout = reverseLineOrder(compressDungeonLayout(Game.currentLevel().printLevel()));
+//    String dunLayout = reverseLineOrder(compressDungeonLayout(level.printLevel()));
+    String dunLayout = reverseLineOrder(level.printLevel());
 
     String result = designLabel + "\n"
             + heroPos.x + "," + heroPos.y + "\n"
+            + namedPoints + "\n"
             + dunLayout;
 
     System.out.println(result);

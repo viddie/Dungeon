@@ -34,6 +34,7 @@ import java.util.List;
 public class DebugOverlay implements ITickable {
 
   private static SpriteBatch BATCH = new SpriteBatch();
+  private static ShapeRenderer renderer = new ShapeRenderer();
   private static final IPath FONT_FNT = new SimpleIPath("fonts/segoe_32.fnt");
   private static final IPath FONT_PNG = new SimpleIPath("fonts/segoe_32.png");
   private static final BitmapFont bitmapFont;
@@ -65,7 +66,6 @@ public class DebugOverlay implements ITickable {
   }
   public static void renderRect(Point point, float width, float height, Color color){
     if(!SHOW_BOXES) return;
-    ShapeRenderer renderer = new ShapeRenderer();
     renderer.setProjectionMatrix(CameraSystem.camera().combined);
     renderer.begin(ShapeRenderer.ShapeType.Line);
     Gdx.gl.glEnable(GL20.GL_BLEND);
@@ -80,7 +80,6 @@ public class DebugOverlay implements ITickable {
   public static void renderCircle(Point point, float radius, Color color){
     if(!SHOW_BOXES) return;
     point = Constants.toffset(point);
-    ShapeRenderer renderer = new ShapeRenderer();
     renderer.setProjectionMatrix(CameraSystem.camera().combined);
     renderer.begin(ShapeRenderer.ShapeType.Line);
     Gdx.gl.glEnable(GL20.GL_BLEND);
@@ -96,7 +95,6 @@ public class DebugOverlay implements ITickable {
     if(!SHOW_BOXES) return;
     point = Constants.toffset(point);
     other = Constants.toffset(other);
-    ShapeRenderer renderer = new ShapeRenderer();
     renderer.setProjectionMatrix(CameraSystem.camera().combined);
     renderer.begin(ShapeRenderer.ShapeType.Line);
     Gdx.gl.glEnable(GL20.GL_BLEND);
@@ -131,7 +129,6 @@ public class DebugOverlay implements ITickable {
     left = Constants.toffset(left);
     right = Constants.toffset(right);
 
-    ShapeRenderer renderer = new ShapeRenderer();
     renderer.setProjectionMatrix(CameraSystem.camera().combined);
     renderer.begin(ShapeRenderer.ShapeType.Filled);
     Gdx.gl.glEnable(GL20.GL_BLEND);
@@ -143,10 +140,15 @@ public class DebugOverlay implements ITickable {
   public static void renderText(Point pos, String text, Color color, float scale){
     if(!SHOW_BOXES) return;
     BATCH.begin();
-    BATCH.setProjectionMatrix(CameraSystem.camera().combined);
+    Matrix4 comb = CameraSystem.camera().combined.cpy();
+    scale = scale * 0.02f;
+    comb.scale(scale, scale, scale);
+    BATCH.setProjectionMatrix(comb);
     bitmapFont.setColor(color);
-    bitmapFont.getData().setScale(scale / 20f);
     pos = Constants.toffset(pos);
+    pos = pos.mult(1 / scale);
+    GlyphLayout layout = new GlyphLayout(bitmapFont, text);
+    pos = pos.add(-layout.width / 2, layout.height / 2);
     bitmapFont.draw(BATCH, text, pos.x, pos.y);
     BATCH.end();
   }
@@ -159,9 +161,8 @@ public class DebugOverlay implements ITickable {
     toDraw.add(text);
   }
 
+  private static final HUDText.Anchor[] anchors = new HUDText.Anchor[] {HUDText.Anchor.TopLeft, HUDText.Anchor.BottomLeft, HUDText.Anchor.BottomRight, HUDText.Anchor.TopRight};
   private void drawTexts(){
-    HUDText.Anchor[] anchors = new HUDText.Anchor[] {HUDText.Anchor.TopLeft, HUDText.Anchor.BottomLeft, HUDText.Anchor.BottomRight, HUDText.Anchor.TopRight};
-
     BATCH.begin();
 
     Matrix4 matrix = new Matrix4();

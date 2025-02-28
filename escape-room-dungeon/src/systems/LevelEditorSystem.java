@@ -17,6 +17,8 @@ import core.level.utils.LevelElement;
 import core.systems.LevelSystem;
 import core.systems.VelocitySystem;
 import core.utils.Point;
+
+import java.util.Map;
 import java.util.Queue;
 import java.util.logging.Logger;
 
@@ -51,7 +53,7 @@ public class LevelEditorSystem extends System {
   private static final int ADD_WIDTH_BUTTON = Input.Keys.G;
   private static final int ADD_HEIGHT_BUTTON = Input.Keys.H;
   private static final int SHIFT_MODIFIER = Input.Keys.CONTROL_RIGHT;
-  private static final int CROP_LEVEL = Input.Keys.J;
+  private static final int TOGGLE_CUSTOM_POINT = Input.Keys.J;
 
   private static final int maxFillRange = 100;
   private static boolean active = false;
@@ -137,6 +139,9 @@ public class LevelEditorSystem extends System {
     }
     if(Gdx.input.isKeyJustPressed(ADD_HEIGHT_BUTTON)){
       addSize(0, 1);
+    }
+    if(Gdx.input.isKeyJustPressed(TOGGLE_CUSTOM_POINT)){
+      toggleCustomPoint();
     }
   }
 
@@ -262,6 +267,44 @@ public class LevelEditorSystem extends System {
       for (int j = 0; j < cols; j++) {
         l.changeTileElementType(layout[i][j], layout[i][j].levelElement());
       }
+    }
+
+    //Shift all named points
+    Map<String, Point> namedPoints = ((EscapeRoomLevel)Game.currentLevel()).getNamedPoints();
+    namedPoints.forEach((s, p) -> {
+      p.x = p.x + x;
+      p.y = p.y + y;
+    });
+  }
+
+  private void toggleCustomPoint(){
+    Point mosPos = SkillTools.cursorPositionAsPoint();
+    mosPos = new Point(mosPos.x, mosPos.y);
+    Point mosPosOffset = Constants.ioffset(mosPos);
+    int mouseXInt = (int)mosPosOffset.x;
+    int mouseYInt = (int)mosPosOffset.y;
+    Point tilePos = new Point(mouseXInt, mouseYInt);
+
+    Map<String, Point> namedPoints = ((EscapeRoomLevel)Game.currentLevel()).getNamedPoints();
+    String key = namedPoints.entrySet().stream()
+      .filter(entry -> entry.getValue().equals(tilePos))
+      .map(Map.Entry::getKey)
+      .findFirst()
+      .orElse(null);
+
+    if(key == null){
+      //Didnt exist yet
+      int i = 0;
+      String newKey = "Point"+i;
+      while(namedPoints.get(newKey) != null){
+        i++;
+        newKey = "Point"+i;
+      }
+      namedPoints.put(newKey, tilePos);
+
+    } else {
+      //Did exist
+      namedPoints.remove(key);
     }
   }
 }

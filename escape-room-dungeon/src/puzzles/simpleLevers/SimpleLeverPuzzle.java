@@ -39,7 +39,7 @@ public class SimpleLeverPuzzle extends PuzzleController implements ITickable {
 
   private Array<Boolean> resources;
 
-  public SimpleLeverPuzzle(Point p1, Point p2, int player) { super(p1, p2, player); }
+  public SimpleLeverPuzzle(Point p, int player) { super(p, player); }
 
   @Override
   public void loadResources(int player) {

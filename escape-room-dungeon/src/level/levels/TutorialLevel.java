@@ -42,6 +42,8 @@ import item.concreteItem.ItemPotionWater;
 import item.concreteItem.ItemResourceMushroomRed;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+
 import level.EscapeRoomLevel;
 import level.utils.DungeonLoader;
 import level.utils.LevelLabel;
@@ -58,8 +60,8 @@ public class TutorialLevel extends EscapeRoomLevel {
    * @param layout The layout of the level.
    * @param designLabel The design label of the level.
    */
-  public TutorialLevel(LevelElement[][] layout, DesignLabel designLabel) {
-    super(layout, designLabel);
+  public TutorialLevel(LevelElement[][] layout, DesignLabel designLabel, Map<String, Point> namedPoints) {
+    super(layout, designLabel, namedPoints);
   }
 
   @Override
@@ -81,7 +83,7 @@ public class TutorialLevel extends EscapeRoomLevel {
 
     Game.add(TeleporterFactory.createTeleporter(new Point(1, 4), LevelLabel.MainMenu, new Point(9.5f, 7.5f), null, 2));
 
-    SimpleLeverPuzzle puzzle = new SimpleLeverPuzzle(new Point(59, 4), new Point(0, 0), 0);
+    SimpleLeverPuzzle puzzle = new SimpleLeverPuzzle(new Point(59, 4), 0);
     puzzle.load();
   }
 
