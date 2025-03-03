@@ -17,17 +17,19 @@ import core.utils.components.draw.Animation;
 import core.utils.components.path.SimpleIPath;
 import entities.DrawTextFactory;
 import level.EscapeRoomLevel;
-import utils.Constants;
-import utils.GameState;
-import utils.SoundManager;
-import utils.Sounds;
+import level.utils.ITickable;
+import utils.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
 public class SettingsLevel extends EscapeRoomLevel {
+
+  private final List<SettingsSlider> sliders = new ArrayList<>();
 
   /**
    * Constructs a new DevDungeonLevel with the given layout, design label, and custom points.
@@ -39,19 +41,22 @@ public class SettingsLevel extends EscapeRoomLevel {
 
   @Override
   protected void onFirstTick() {
-    new SettingsSlider("Master\nVolume", getPoint("volume-master"), GameState.volumeMaster(), 5, GameState::volumeMaster).setBounds(0, 100).addToGame();
-    new SettingsSlider("Music", getPoint("volume-bgm"), GameState.volumeBgm(), 5, GameState::volumeBgm).setBounds(0, 100).addToGame();
-    new SettingsSlider("SFX", getPoint("volume-sfx"), GameState.volumeSfx(), 5, GameState::volumeSfx).setBounds(0, 100).addToGame();
+    sliders.add(new SettingsSlider("Master\nVolume", getPoint("volume-master"), GameState.volumeMaster(), 5, GameState::volumeMaster).setBounds(0, 100));
+    sliders.add(new SettingsSlider("Music", getPoint("volume-bgm"), GameState.volumeBgm(), 5, GameState::volumeBgm).setBounds(0, 100));
+    sliders.add(new SettingsSlider("SFX", getPoint("volume-sfx"), GameState.volumeSfx(), 5, GameState::volumeSfx).setBounds(0, 100));
+    sliders.forEach(SettingsSlider::addToGame);
   }
 
   @Override
   protected void onTick() {
-
+    sliders.forEach(SettingsSlider::update);
   }
 
   private class SettingsSlider {
 
     private static final float RADIUS = 1f;
+
+    private final Wiggler wiggler = new Wiggler();
 
     private Entity valueEntity;
     private Entity leftButton;
@@ -88,7 +93,7 @@ public class SettingsLevel extends EscapeRoomLevel {
       Game.add(valueEntity);
 
       //1 label entity (x-3)
-      labelEntity = DrawTextFactory.createTextEntity(label, Constants.toffset(this.position.add(-3, 0)), 1f, Color.WHITE, 0, 1);
+      labelEntity = DrawTextFactory.createTextEntity(label, Constants.toffset(this.position.add(-3, 0)), 0.7f, Color.WHITE, 0, 1);
       Game.add(labelEntity);
 
       //2 button entities (left x-1, right x+1)
@@ -122,5 +127,17 @@ public class SettingsLevel extends EscapeRoomLevel {
       return ""+value;
     }
 
+    public void update() {
+      PositionComponent leftPc = leftButton.fetchOrThrow(PositionComponent.class);
+      PositionComponent rightPc = rightButton.fetchOrThrow(PositionComponent.class);
+
+      Point leftBase = Constants.offset(this.position.add(-1, 0));
+      Point rightBase = Constants.offset(this.position.add(1, 0));
+
+      float offset = wiggler.calculate() * 0.02f;
+
+      leftPc.position(leftBase.add(0, offset));
+      rightPc.position(rightBase.add(0, offset));
+    }
   }
 }

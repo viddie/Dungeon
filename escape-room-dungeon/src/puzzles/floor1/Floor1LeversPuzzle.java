@@ -47,7 +47,7 @@ public class Floor1LeversPuzzle extends PuzzleController implements ITickable {
     for(int i = 0; i < 5; i++){
       defaultResources.add(false);
     }
-    resources = GameState.getResourceObject(player+"_"+this.getClass().getSimpleName(), defaultResources);
+    resources = GameState.getResourceObject(this.getClass().getSimpleName(), player, defaultResources);
 
 
     List<Point> points = Arrays.asList(new Point(18.5f, 9.5f), new Point(25.5f, -3.0f), new Point(18.0f, -17.0f), new Point(-18.0f, -10.0f), new Point(-16.0f, 9.0f));

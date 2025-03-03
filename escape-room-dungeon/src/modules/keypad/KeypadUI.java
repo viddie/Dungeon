@@ -129,7 +129,6 @@ public class KeypadUI extends Group {
     KeypadComponent kc = keypad.fetchOrThrow(KeypadComponent.class);
     if(kc.isUnlocked) return;
     kc.checkUnlock();
-    keypad.fetchOrThrow(DrawComponent.class).currentAnimation(kc.isUnlocked ? "on" : "off");
     if(kc.isUnlocked){
       SoundManager.playSound(Sounds.KeypadUnlocked);
     } else {

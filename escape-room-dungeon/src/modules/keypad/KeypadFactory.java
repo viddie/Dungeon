@@ -19,6 +19,7 @@ import utils.Constants;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class KeypadFactory {
 
@@ -34,7 +35,7 @@ public class KeypadFactory {
    * @param action The action to execute when the correct digits are entered
    * @return The created keypad entity.
    */
-  public static Entity createKeypad(Point pos, List<Integer> correctDigits, IVoidFunction action, boolean showDigitCount) {
+  public static Entity createKeypad(Point pos, List<Integer> correctDigits, Consumer<Boolean> action, boolean showDigitCount) {
     Entity entity = new Entity("keypad");
 
     entity.add(new PositionComponent(pos.add(Constants.X_OFFSET, Constants.Y_OFFSET)));

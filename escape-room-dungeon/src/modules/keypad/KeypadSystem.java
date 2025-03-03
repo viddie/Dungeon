@@ -48,6 +48,8 @@ public class KeypadSystem extends System {
       Game.remove(overlay);
       d.kc.overlay = null;
     }
+
+    d.dc.currentAnimation(d.kc.isUnlocked ? "on" : "off");
   }
 
   private Data buildDataObject(Entity e){

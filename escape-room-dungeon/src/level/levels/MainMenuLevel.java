@@ -41,7 +41,7 @@ public class MainMenuLevel extends EscapeRoomLevel {
 
     p = getPoint("settings");
     Game.add(DrawTextFactory.createTextEntity("Einstellungen", p.add(0.5f, 2), 1, Color.WHITE, 0, 1));
-    Game.add(TeleporterFactory.createTeleporter(p, LevelLabel.Settings, null, "Settings", 5));
+    Game.add(TeleporterFactory.createTeleporter(p, LevelLabel.Settings, null, null, 5));
 
     Game.add(DrawTextFactory.createTextEntity("Spiel Verlassen?", new Point(27, 8.5f), 0.7f, Color.WHITE, 6, 1));
 

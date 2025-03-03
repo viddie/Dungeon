@@ -1,5 +1,6 @@
 package level.levels;
 
+import com.badlogic.gdx.utils.Array;
 import core.Entity;
 import core.Game;
 import core.level.Tile;
@@ -9,11 +10,14 @@ import core.level.utils.LevelElement;
 import core.systems.LevelSystem;
 import core.utils.Point;
 import level.EscapeRoomLevel;
+import modules.keypad.KeypadComponent;
 import modules.keypad.KeypadFactory;
 import modules.showimage.ShowImageComponent;
 import modules.showimage.ShowImageFactory;
 import puzzles.floor1.Floor1LeversPuzzle;
 import utils.GameState;
+import utils.SoundManager;
+import utils.Sounds;
 
 import java.util.Arrays;
 import java.util.List;
@@ -45,18 +49,21 @@ public class Floor1Level extends EscapeRoomLevel {
 
     Point keypadPos = getPoint("keypad");
     Point doorPos = getPoint("keypad-door");
-    if(keypadPos != null && doorPos != null){
-      Tile t = LevelSystem.level().tileAt(doorPos);
-      LevelSystem.level().changeTileElementType(t, LevelElement.DOOR);
-      DoorTile door = (DoorTile)LevelSystem.level().tileAt(doorPos);
-      door.close();
+    Tile t = LevelSystem.level().tileAt(doorPos);
+    LevelSystem.level().changeTileElementType(t, LevelElement.DOOR);
+    DoorTile door = (DoorTile)LevelSystem.level().tileAt(doorPos);
+    door.close();
 
-      List<Integer> correctDigits = Arrays.asList(2, 3, 4);
-      Entity keypad = KeypadFactory.createKeypad(keypadPos, correctDigits, () -> {
-        door.open();
-      }, false);
-      Game.add(keypad);
-    }
+    List<Integer> correctDigits = Arrays.asList(2, 3, 4);
+    Entity keypad = KeypadFactory.createKeypad(keypadPos, correctDigits, (fromLoad) -> {
+      door.open();
+      if(!fromLoad) SoundManager.playSound(Sounds.DoorOpened);
+    }, true);
+    Game.add(keypad);
+
+    KeypadComponent kc = keypad.fetchOrThrow(KeypadComponent.class);
+    kc.serializeId = "tutorial";
+    kc.load();
   }
 
   @Override

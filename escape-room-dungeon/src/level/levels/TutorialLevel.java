@@ -34,6 +34,7 @@ import core.utils.MissingHeroException;
 import core.utils.Point;
 import core.utils.components.MissingComponentException;
 import entities.DrawTextFactory;
+import entities.LeverFactory;
 import entities.MonsterType;
 import entities.TeleporterFactory;
 import hud.DebugOverlay;
@@ -50,9 +51,12 @@ import level.utils.LevelLabel;
 import puzzles.simpleLevers.SimpleLeverPuzzle;
 import systems.TickableSystem;
 import utils.EntityUtils;
+import utils.ICommand;
 
 /** The Tutorial Level. */
 public class TutorialLevel extends EscapeRoomLevel {
+
+  private DoorTile interactDoor;
 
   /**
    * Constructs the Tutorial Level.
@@ -66,25 +70,34 @@ public class TutorialLevel extends EscapeRoomLevel {
 
   @Override
   protected void onFirstTick() {
-    ((ExitTile) endTile()).open();
-    pitTiles().forEach(PitTile::open);
+//    ((ExitTile) endTile()).open();
+    Game.add(TeleporterFactory.createTeleporter(getPoint("teleporter"), LevelLabel.MainMenu, new Point(9.5f, 7.5f), null, 2));
 
     String movementKeys =
         Input.Keys.toString(core.configuration.KeyboardConfig.MOVEMENT_UP.value())
             + Input.Keys.toString(core.configuration.KeyboardConfig.MOVEMENT_LEFT.value())
             + Input.Keys.toString(core.configuration.KeyboardConfig.MOVEMENT_DOWN.value())
             + Input.Keys.toString(core.configuration.KeyboardConfig.MOVEMENT_RIGHT.value());
-    String message = "Verwende " + movementKeys + " (oder RMB),\num dich zu bewegen.";
+    String message = "Verwende " + movementKeys + ", um dich zu bewegen.";
+    Game.add(DrawTextFactory.createTextEntity(message, getPoint("move-text"), 0.7f));
 
+//    Game.add(DrawTextFactory.createTextEntity("Manche Sachen kannst du\nmit LMB anklicken", new Point(20, 6), 0.7f));
 
-    Game.add(DrawTextFactory.createTextEntity(message, new Point(5, 6), 0.7f));
-    Game.add(DrawTextFactory.createTextEntity("Manche Sachen kannst du\nmit LMB anklicken", new Point(20, 6), 0.7f));
-    Game.add(DrawTextFactory.createTextEntity("Lange Nachricht die etwas\nversteckter im Level ist", new Point(30, 9), 0.5f, Color.RED, 7, 0.2f));
+    Point leverPos = getPoint("interact-lever");
+    if(leverPos != null){
+      interactDoor = (DoorTile) Game.currentLevel().tileAt(getPoint("interact-door"));
+      interactDoor.close();
+      Entity lever = LeverFactory.createLever(leverPos, new ICommand() {
+        @Override
+        public void execute() { interactDoor.open(); }
+        @Override
+        public void undo() { interactDoor.close(); }
+      });
+      Game.add(lever);
+      Game.add(DrawTextFactory.createTextEntity("Mit E interagierst du mit\nSachen in der Umgebung", getPoint("interact-text"), 0.7f));
+    }
 
-    Game.add(TeleporterFactory.createTeleporter(new Point(1, 4), LevelLabel.MainMenu, new Point(9.5f, 7.5f), null, 2));
-
-    SimpleLeverPuzzle puzzle = new SimpleLeverPuzzle(new Point(59, 4), 0);
-    puzzle.load();
+    Game.add(DrawTextFactory.createTextEntity("Das Spiel ist in mehrere Level aufgeteilt. Das\nEnde jedes Levels ist eine Tür zum nächsten Level.", getPoint("level-text"), 0.7f));
   }
 
   @Override

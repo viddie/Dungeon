@@ -11,8 +11,7 @@ import starter.EscapeRoomDungeon;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
 
 public class GameState {
@@ -29,6 +28,7 @@ public class GameState {
   private int volumeSfx = 50;
 
   private Map<String, Object> resources = new HashMap<>();
+  private static final List<ISavable> saveCallbacks = new ArrayList<>();
 
   public GameState(){}
 
@@ -80,7 +80,33 @@ public class GameState {
     }
     return (T) obj;
   }
+  public static <T> T getResourceObject(String identifier, int player, T defaultObj){
+    return getResourceObject(player+"_"+identifier, defaultObj);
+  }
 
+  public static <T> T getResourceObject(String identifier){
+    if(INSTANCE == null) throw new RuntimeException("GameState has not been initialized yet.");
+    Object obj = INSTANCE.resources.get(identifier);
+    if(obj == null){
+      throw new NoSuchElementException("No resource object found for the identifier: "+identifier);
+    }
+    return (T) obj;
+  }
+  public static <T> T getResourceObject(String identifier, int player){
+    return getResourceObject(player+"_"+identifier);
+  }
+
+  public static <T> void setResourceObject(String identifier, T obj){
+    if(INSTANCE == null) throw new RuntimeException("GameState has not been initialized yet.");
+    INSTANCE.resources.put(identifier, obj);
+  }
+  public static <T> void setResourceObject(String identifier, int player, T obj){
+    setResourceObject(player+"_"+identifier, obj);
+  }
+
+  public static void addSaveCallback(ISavable savable){
+    saveCallbacks.add(savable);
+  }
 
   public void onBeforeApplicationExit(){
     LOGGER.info("Running onBeforeApplicationExit");
@@ -89,7 +115,8 @@ public class GameState {
       if(DungeonLoader.getCurrentLabel().isActualLevel){
         lastHeroPos = Game.hero().orElseThrow().fetchOrThrow(PositionComponent.class).position();
       }
-    }catch(Exception ignored){}
+      saveCallbacks.forEach(ISavable::save);
+    } catch(Exception ignored){}
     saveState();
   }
 
