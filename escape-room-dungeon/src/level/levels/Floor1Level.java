@@ -9,12 +9,14 @@ import core.level.utils.DesignLabel;
 import core.level.utils.LevelElement;
 import core.systems.LevelSystem;
 import core.utils.Point;
+import entities.TriggerFactory;
 import level.EscapeRoomLevel;
 import modules.keypad.KeypadComponent;
 import modules.keypad.KeypadFactory;
 import modules.showimage.ShowImageComponent;
 import modules.showimage.ShowImageFactory;
 import puzzles.floor1.Floor1LeversPuzzle;
+import starter.EscapeRoomDungeon;
 import utils.GameState;
 import utils.SoundManager;
 import utils.Sounds;
@@ -60,6 +62,14 @@ public class Floor1Level extends EscapeRoomLevel {
       if(!fromLoad) SoundManager.playSound(Sounds.DoorOpened);
     }, true);
     Game.add(keypad);
+
+    Game.add(TriggerFactory.createTrigger(getPoint("trigger-test"), 3, 1, (e, o, d) -> {
+      EscapeRoomDungeon.LOGGER.info("Entered trigger");
+      if(door.isOpen()){
+        door.close();
+        SoundManager.playSound(Sounds.DoorClosedHard);
+      }
+    }, null));
 
     KeypadComponent kc = keypad.fetchOrThrow(KeypadComponent.class);
     kc.serializeId = "tutorial";

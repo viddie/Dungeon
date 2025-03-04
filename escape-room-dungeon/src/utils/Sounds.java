@@ -7,7 +7,8 @@ public enum Sounds {
   KeypadUnlocked("retro-event-ui-01"),
   KeypadWrong("retro-event-wrong"),
   LeverFlipped("wood-block-1"),
-  DoorOpened("creaky-door-open")
+  DoorOpened("creaky-door-open"),
+  DoorClosedHard("door-hard-shut"),
   ;
 
   private String path;

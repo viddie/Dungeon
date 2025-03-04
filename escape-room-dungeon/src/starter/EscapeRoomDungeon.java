@@ -163,6 +163,7 @@ public class EscapeRoomDungeon {
 
   private static void createSystems() {
     Game.add(new ProjectileSystem());
+    Game.add(new CollisionSystem());
     Game.add(new HudSystem());
 
     Game.add(EventScheduler.getInstance());
@@ -175,6 +176,7 @@ public class EscapeRoomDungeon {
     Game.add(new TransitionSystem());
     Game.add(new KeypadSystem());
     Game.add(new ShowImageSystem());
+    Game.add(new DebugRenderSystem());
   }
 
   private static void enableCheats() {

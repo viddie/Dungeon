@@ -119,7 +119,7 @@ public class DungeonLoader {
     try {
       LevelLabel next = currentLabel.next();
       int player = next.isActualLevel ? GameState.playerNumber() : 0;
-      TransitionSystem.transition(() -> loadLevel(next, player));
+      TransitionSystem.transition(() -> loadLevel(next, player), next.isActualLevel ? next.displayName : null);
     } catch (MissingLevelException e){
       System.out.println("No next level found, exiting game...");
       Game.exit();

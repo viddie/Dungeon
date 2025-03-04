@@ -14,10 +14,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import hud.DebugOverlay;
-import level.levels.Floor1Level;
-import level.levels.MainMenuLevel;
-import level.levels.SettingsLevel;
-import level.levels.TutorialLevel;
+import level.levels.*;
 import level.utils.DungeonLoader;
 import level.utils.ITickable;
 import level.utils.LevelLabel;
@@ -38,6 +35,7 @@ public abstract class EscapeRoomLevel extends TileLevel implements ITickable {
    *
    * @param layout The layout of the level, represented as a 2D array of LevelElements.
    * @param designLabel The design label of the level.
+   * @param namedPoints A map of names to points in the level
    */
   public EscapeRoomLevel(
       LevelElement[][] layout,
@@ -309,7 +307,8 @@ public abstract class EscapeRoomLevel extends TileLevel implements ITickable {
       case Settings -> new SettingsLevel(layout, designLabel, namedPoints);
       case Tutorial -> new TutorialLevel(layout, designLabel, namedPoints);
       case Floor1 -> new Floor1Level(layout, designLabel, namedPoints);
-      default -> throw new IllegalArgumentException("Invalid level name for levelHandler: " + label.name());
+      case Floor2 -> new Floor2Level(layout, designLabel, namedPoints);
+      case GameCompleted -> new GameCompletedLevel(layout, designLabel, namedPoints);
     };
   }
 }
