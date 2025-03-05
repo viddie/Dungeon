@@ -12,6 +12,7 @@ import level.EscapeRoomLevel;
 import level.utils.DungeonLoader;
 import level.utils.LevelLabel;
 import systems.TransitionSystem;
+import utils.GameState;
 
 import java.util.Map;
 
@@ -31,13 +32,31 @@ public class MainMenuLevel extends EscapeRoomLevel {
   protected void onFirstTick() {
     ((ExitTile) endTile()).open();
 
+    LevelLabel levelContinue = GameState.currentLevel();
+    boolean disable1 = false;
+    boolean disable2 = false;
+    if(levelContinue == null){
+      levelContinue = LevelLabel.Floor1;
+    } else {
+      disable1 = GameState.playerNumber() != 1;
+      disable2 = GameState.playerNumber() != 2;
+    }
+
+    String continueText = "-> "+levelContinue.displayName;
+
     Point p = getPoint("player1");
     Game.add(DrawTextFactory.createTextEntity("Spieler 1", p.add(0.5f, 2), 1, Color.WHITE, 0, 1));
-    Game.add(TeleporterFactory.createTeleporter(p, LevelLabel.Floor1, null, "~~~ Floor 1 ~~~", 1, 1));
+    if(disable2){
+      Game.add(DrawTextFactory.createTextEntity(continueText, p.add(0.5f, 1.35f), 0.5f, Color.LIGHT_GRAY, 0, 1));
+    }
+    Game.add(TeleporterFactory.createTeleporter(p, levelContinue, null, levelContinue.displayName, 1, 1, disable1));
 
     p = getPoint("player2");
     Game.add(DrawTextFactory.createTextEntity("Spieler 2", p.add(0.5f, 2), 1, Color.WHITE, 0, 1));
-    Game.add(TeleporterFactory.createTeleporter(p, LevelLabel.Floor1, null, "~~~ Floor 1 ~~~", 1, 2));
+    if(disable1){
+      Game.add(DrawTextFactory.createTextEntity(continueText, p.add(0.5f, 1.35f), 0.5f, Color.LIGHT_GRAY, 0, 1));
+    }
+    Game.add(TeleporterFactory.createTeleporter(p, levelContinue, null, levelContinue.displayName, 1, 2, disable2));
 
     p = getPoint("settings");
     Game.add(DrawTextFactory.createTextEntity("Einstellungen", p.add(0.5f, 2), 1, Color.WHITE, 0, 1));

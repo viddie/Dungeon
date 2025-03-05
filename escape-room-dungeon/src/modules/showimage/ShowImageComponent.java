@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 public class ShowImageComponent implements Component {
 
   public String imagePath;
+  public ShowImageText textConfig;
   public boolean isUIOpen = false;
   public BiConsumer<Entity, Entity> onOpenAction;
   public BiConsumer<Entity, Entity> onCloseAction;

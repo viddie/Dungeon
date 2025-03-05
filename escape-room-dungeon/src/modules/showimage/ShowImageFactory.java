@@ -24,7 +24,7 @@ public class ShowImageFactory {
    * @param pos The position where the lever will be created.
    * @return The created keypad entity.
    */
-  public static Entity createShowImage(Point pos, String spriteImage, String imagePath, BiConsumer<Entity, Entity> onClose, float maxSize) {
+  public static Entity createShowImage(Point pos, String spriteImage, String imagePath, BiConsumer<Entity, Entity> onClose, float maxSize, float radius, ShowImageText text) {
     Entity entity = new Entity("show-image");
     entity.add(new PositionComponent(pos.add(Constants.X_OFFSET, Constants.Y_OFFSET)));
 
@@ -34,16 +34,23 @@ public class ShowImageFactory {
     ShowImageComponent sic = new ShowImageComponent(imagePath);
     sic.onCloseAction = onClose;
     sic.maxSize = maxSize;
+    sic.textConfig = text;
     entity.add(sic);
 
-    entity.add(new VicinityComponent(INTERACTION_RADIUS, new TintEntityCommand(entity), Game.hero().orElseThrow()));
-    entity.add(new InteractionComponent(INTERACTION_RADIUS, true, (e, who) -> sic.isUIOpen = true));
+    entity.add(new VicinityComponent(radius, new TintEntityCommand(entity), Game.hero().orElseThrow()));
+    entity.add(new InteractionComponent(radius, true, (e, who) -> sic.isUIOpen = true));
     return entity;
   }
+  public static Entity createShowImage(Point pos, String spriteImage, String imagePath, BiConsumer<Entity, Entity> onClose, float maxSize, float radius) {
+    return createShowImage(pos, spriteImage, imagePath, onClose, maxSize, radius, null);
+  }
+  public static Entity createShowImage(Point pos, String spriteImage, String imagePath, BiConsumer<Entity, Entity> onClose, float maxSize) {
+    return createShowImage(pos, spriteImage, imagePath, onClose, maxSize, INTERACTION_RADIUS, null);
+  }
   public static Entity createShowImage(Point pos, String spriteImage, String imagePath, float maxSize) {
-    return createShowImage(pos, spriteImage, imagePath, null, maxSize);
+    return createShowImage(pos, spriteImage, imagePath, null, maxSize, INTERACTION_RADIUS, null);
   }
   public static Entity createShowImage(Point pos, String spriteImage, String imagePath) {
-    return createShowImage(pos, spriteImage, imagePath, null, 0.85f);
+    return createShowImage(pos, spriteImage, imagePath, null, 0.85f, INTERACTION_RADIUS, null);
   }
 }

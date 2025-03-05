@@ -192,8 +192,8 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle: {
 }
 com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	default: {
-		font: myFont
-		background: white
+		font: segoe_32
+		fontColor: black
 	}
 	keypad: {
 		font: segoe_64

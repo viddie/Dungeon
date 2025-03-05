@@ -277,6 +277,7 @@ public class LevelEditorSystem extends System {
     });
   }
 
+  private String storedCustomPointName = null;
   private void toggleCustomPoint(){
     Point mosPos = SkillTools.cursorPositionAsPoint();
     mosPos = new Point(mosPos.x, mosPos.y);
@@ -300,10 +301,15 @@ public class LevelEditorSystem extends System {
         i++;
         newKey = "Point"+i;
       }
+      if(storedCustomPointName != null){
+        newKey = storedCustomPointName;
+        storedCustomPointName = null;
+      }
       namedPoints.put(newKey, tilePos);
 
     } else {
       //Did exist
+      storedCustomPointName = key;
       namedPoints.remove(key);
     }
   }

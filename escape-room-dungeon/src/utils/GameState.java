@@ -20,7 +20,7 @@ public class GameState {
   public static GameState INSTANCE;
   private static final String SAVE_PATH = "game_state.json";
 
-  private LevelLabel currentLevel = LevelLabel.MainMenu;
+  private LevelLabel currentLevel = null;
   private int playerNumber = 0;
   private Point lastHeroPos = null;
   private int volumeMaster = 50;

@@ -72,7 +72,7 @@ public class DungeonLoader {
       if(point != null) {
         Game.hero().orElseThrow().fetchOrThrow(PositionComponent.class).position(point);
       }
-      return;
+//      return;
     }
 
     String fileName = label.fileName + ".level";

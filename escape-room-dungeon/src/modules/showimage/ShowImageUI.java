@@ -55,6 +55,16 @@ public class ShowImageUI extends Group {
     background = new Image(new Texture(Gdx.files.internal(currentImagePath)));
     background.setOrigin(Align.center);
     this.addActor(background);
+
+    if(sic.textConfig != null){
+      Table table = new Table();
+      table.setFillParent(true);
+      Label label = new Label(sic.textConfig.text, SkinUtils.customSkin());
+      label.setFontScale(sic.textConfig.scale);
+      label.setColor(sic.textConfig.color);
+      table.add(label);
+      this.addActor(table);
+    }
   }
 
   @Override
@@ -78,9 +88,12 @@ public class ShowImageUI extends Group {
 
     float minScale = Math.min(scaleX, scaleY);
     background.setScale(minScale);
-    background.setPosition(getX(Align.center) + animationOffsetX(), getY(Align.center) + animationOffsetY(), Align.center);
-    background.setColor(1, 1, 1, animation);
+    background.setPosition(getX(Align.center), getY(Align.center), Align.center);
 
+
+
+    this.setPosition(animationOffsetX(), animationOffsetY());
+    this.setColor(1, 1, 1, animation);
     animation = Math.min(1, animation + SHOW_TRANSITION_PROGRESS);
 
     super.draw(batch, parentAlpha);

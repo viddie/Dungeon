@@ -20,7 +20,9 @@ import core.systems.LevelSystem;
 import core.utils.Point;
 import core.utils.components.path.IPath;
 import core.utils.components.path.SimpleIPath;
+import level.utils.DungeonLoader;
 import level.utils.ITickable;
+import level.utils.LevelLabel;
 import starter.EscapeRoomDungeon;
 import utils.Constants;
 import utils.GameState;
@@ -232,12 +234,7 @@ public class DebugOverlay implements ITickable {
     int mouseYInt = (int)mosPosOffset.y;
     Point tilePos = new Point(mouseXInt, mouseYInt);
 
-    if(Gdx.input.isKeyJustPressed(Input.Keys.P)){
-      String s = "new Point("+mouseXInt+", "+mouseYInt+")";
-      StringSelection stringSel = new StringSelection(s);
-      Toolkit.getDefaultToolkit().getSystemClipboard().setContents(stringSel,stringSel);
-      EscapeRoomDungeon.LOGGER.info("Selected Point (+offset): "+s);
-    }
+    checkSwapMap();
 
     if(SHOW_BOXES){
       drawText("Hero position: "+heroPos+"\nMouse position: "+mosPos+"\nHovering tile: "+tilePos);
@@ -253,5 +250,20 @@ public class DebugOverlay implements ITickable {
     }
 
     drawTexts();
+  }
+
+  private Point[] points = new Point[]{null, null};
+  public void checkSwapMap(){
+    if(Gdx.input.isKeyJustPressed(Input.Keys.P)){
+      int currentPlayer = GameState.playerNumber();
+      int switchToPlayer = currentPlayer == 0 ? 0 : 1 + (currentPlayer % 2);
+      LevelLabel label = DungeonLoader.getCurrentLabel();
+      if(label.isActualLevel){
+        Point switchTo = points[switchToPlayer-1];
+        Point store = Game.hero().orElseThrow().fetchOrThrow(PositionComponent.class).position();
+        points[currentPlayer-1] = store;
+        DungeonLoader.loadLevel(label, switchToPlayer, switchTo);
+      }
+    }
   }
 }
