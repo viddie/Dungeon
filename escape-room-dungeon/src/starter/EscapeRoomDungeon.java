@@ -24,7 +24,11 @@ import core.Entity;
 import core.Game;
 import core.System;
 import core.components.PlayerComponent;
+import core.game.ECSManagment;
 import core.game.GameLoop;
+import core.level.generator.postGeneration.WallGenerator;
+import core.level.generator.randomwalk.RandomWalkGenerator;
+import core.systems.DrawSystem;
 import core.systems.LevelSystem;
 import core.utils.Point;
 import core.utils.Tuple;
@@ -138,6 +142,8 @@ public class EscapeRoomDungeon {
     //Overwrite close UI and interact binds
     pc.registerCallback(KeyboardConfig.CLOSE_UI.value(), EscapeRoomDungeon::onPressedCloseUI, false, true);
     pc.registerCallback(KeyboardConfig.INTERACT_WORLD.value(), EscapeRoomDungeon::onPressedInteract, false, true);
+    pc.registerCallback(KeyboardConfig.ACCEPT_INPUT.value(), EscapeRoomDungeon::onPressedEnter, false, true);
+    pc.registerCallback(KeyboardConfig.INVENTORY_OPEN.value(), EscapeRoomDungeon::onPressedInventory, false, false);
     Game.add(hero);
   }
 
@@ -167,6 +173,11 @@ public class EscapeRoomDungeon {
     Game.add(new HudSystem());
 
     Game.add(EventScheduler.getInstance());
+
+    //Replace with my own DrawSystem
+    Game.remove(DrawSystem.class);
+    Game.add(new DrawSystem2());
+    Game.getSystem(LevelSystem.class).painter(DrawSystem2.painter());
 
     Game.add(new TickableSystem());
     Game.add(new LeverSystem());
@@ -217,20 +228,27 @@ public class EscapeRoomDungeon {
    */
   private static void onPressedCloseUI(Entity hero){
     LOGGER.info("Pressed close UI");
-    var firstUI = findTopmostUI();
+    var firstUI = findTopmostUI(false);
     if (firstUI != null) {
       InventoryGUI.inHeroInventory = false;
       closeUIOnEntity(firstUI);
     }
   }
-  private static Tuple<Entity, UIComponent> findTopmostUI(){
+
+  /**
+   * Finds the topmost UIComponent being displayed
+   * @param onlyPausing Only filter for UIComponents that are pausing the game
+   * @return A tuple of the found entity and the UIComponent, or null
+   */
+  public static Tuple<Entity, UIComponent> findTopmostUI(boolean onlyPausing){
     return Game.entityStream() // would be nice to directly access HudSystems
       // stream (no access to the System object)
-      .filter(x -> x.isPresent(UIComponent.class))
       // find all Entities which have a UIComponent
-      .map(x -> new Tuple<>(x, x.fetchOrThrow(UIComponent.class)))
+      .filter(x -> x.isPresent(UIComponent.class))
       // create a tuple to still have access to the UI Entity
-      .filter(x -> x.b().closeOnUICloseKey())
+      .map(x -> new Tuple<>(x, x.fetchOrThrow(UIComponent.class)))
+      // filter only for closable UI + check for pausing UI
+      .filter(x -> x.b().closeOnUICloseKey() && (!onlyPausing || x.b().willPauseGame()))
       .max(Comparator.comparingInt(x -> x.b().dialog().getZIndex()))
       // find dialog with highest z-Index
       .orElse(null);
@@ -254,14 +272,49 @@ public class EscapeRoomDungeon {
       // if chest or cauldron
       hero.remove(UIComponent.class);
     } else {
-      var firstUI = findTopmostUI();
+      var firstUI = findTopmostUI(false);
       if(firstUI == null){
         //No UI open, interact with world as normal
         InteractionTool.interactWithClosestInteractable(hero);
       } else {
-        //Already has UI open, close it instead.
-        closeUIOnEntity(firstUI);
+        //Already has UI open, close it instead. (Except if capturing keyboard content)
+        if(!firstUI.b().isCapturingKeyboard()){
+          closeUIOnEntity(firstUI);
+        }
       }
     }
+  }
+
+  private static void onPressedInventory(Entity hero){
+    PlayerComponent pc = hero.fetchOrThrow(PlayerComponent.class);
+    InventoryComponent ic = hero.fetchOrThrow(InventoryComponent.class);
+    if (pc.openDialogs() || findTopmostUI(false) != null) {
+      return; // do not open inventory if dialogs are open
+    }
+
+    UIComponent uiComponent = hero.fetch(UIComponent.class).orElse(null);
+    if (uiComponent != null) {
+      if (uiComponent.dialog() instanceof GUICombination) {
+        InventoryGUI.inHeroInventory = false;
+        hero.remove(UIComponent.class);
+      }
+    } else {
+      InventoryGUI.inHeroInventory = true;
+      hero.add(new UIComponent(new GUICombination(new InventoryGUI(ic)), true));
+    }
+  }
+
+
+  public static boolean isDialogCapturingKeyboard(){
+    var firstUI = findTopmostUI(true);
+    if(firstUI == null) return false;
+    return firstUI.b().isCapturingKeyboard();
+  }
+
+  private static void onPressedEnter(Entity hero){
+    var firstUI = findTopmostUI(true);
+    if(firstUI == null) return;
+    if(!firstUI.b().isCapturingKeyboard()) return;
+    firstUI.a().remove(UIComponent.class);
   }
 }

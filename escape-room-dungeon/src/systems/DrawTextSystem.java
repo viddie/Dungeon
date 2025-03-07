@@ -121,18 +121,11 @@ public class DrawTextSystem extends System {
 
     bitmapFont.setColor(color.r, color.g, color.b, alpha);
     if(alpha > 0) bitmapFont.draw(BATCH, text, xCentered, yCentered);
-
-//    if(DEBUG_POSITION){
-//      BATCH.end();
-//      ShapeRenderer renderer = new ShapeRenderer();
-//      renderer.setProjectionMatrix(m);
-//      renderer.begin(ShapeRenderer.ShapeType.Line);
-//      renderer.rect(xCentered, yCentered - glyphLayout.height, glyphLayout.width, glyphLayout.height);
-//      renderer.circle(x, y, 2);
-//      renderer.end();
-//      BATCH.begin();
-//    }
   }
+
+  /** Run while paused */
+  @Override
+  public void stop() {}
 
   private DTData buildDataObject(Entity e){
     return new DTData(

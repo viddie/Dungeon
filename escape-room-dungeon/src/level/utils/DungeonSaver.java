@@ -8,7 +8,11 @@ import core.level.utils.LevelElement;
 import core.utils.Point;
 import core.utils.components.MissingComponentException;
 
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.util.*;
+import java.util.List;
 
 import level.EscapeRoomLevel;
 
@@ -31,20 +35,6 @@ public class DungeonSaver {
    */
   public static void saveCurrentDungeon() {
     EscapeRoomLevel level = (EscapeRoomLevel)Game.currentLevel();
-    String designLabel;
-    if (level.endTile() == null) {
-      designLabel = level.randomTile(LevelElement.FLOOR).orElseThrow().designLabel().name();
-    } else {
-      designLabel = level.endTile().designLabel().name();
-    }
-
-    Entity hero = Game.hero().orElse(null);
-    Point heroPos;
-    if (hero != null) {
-      heroPos = hero.fetchOrThrow(PositionComponent.class).position();
-    } else {
-      heroPos = new Point(0, 0);
-    }
 
     // Serialize named points
     String namedPoints = level.serializeNamedPoints();
@@ -53,12 +43,14 @@ public class DungeonSaver {
 //    String dunLayout = reverseLineOrder(compressDungeonLayout(level.printLevel()));
     String dunLayout = reverseLineOrder(level.printLevel());
 
-    String result = designLabel + "\n"
-            + heroPos.x + "," + heroPos.y + "\n"
-            + namedPoints + "\n"
-            + dunLayout;
+    String result = namedPoints + "\n"
+      + dunLayout;
 
     System.out.println(result);
+
+    StringSelection selection = new StringSelection(result);
+    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+    clipboard.setContents(selection, selection);
   }
 
   /**

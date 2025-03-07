@@ -1,10 +1,16 @@
 package level.levels;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import core.Game;
 import core.level.elements.tile.ExitTile;
 import core.level.utils.DesignLabel;
 import core.level.utils.LevelElement;
+import core.systems.CameraSystem;
 import core.utils.Point;
 import entities.DrawTextFactory;
 import entities.TeleporterFactory;
@@ -62,7 +68,7 @@ public class MainMenuLevel extends EscapeRoomLevel {
     Game.add(DrawTextFactory.createTextEntity("Einstellungen", p.add(0.5f, 2), 1, Color.WHITE, 0, 1));
     Game.add(TeleporterFactory.createTeleporter(p, LevelLabel.Settings, null, null, 5));
 
-    Game.add(DrawTextFactory.createTextEntity("Spiel Verlassen?", new Point(27, 8.5f), 0.7f, Color.WHITE, 6, 1));
+    Game.add(DrawTextFactory.createTextEntity("Spiel Verlassen?", getPoint("exit-text").add(0.5f, 0.5f), 0.7f, Color.WHITE, 6, 1));
 
     p = getPoint("tutorial");
     Game.add(DrawTextFactory.createTextEntity("Tutorial", p.add(0.5f, 2), 1, Color.WHITE, 0, 1));
@@ -71,7 +77,22 @@ public class MainMenuLevel extends EscapeRoomLevel {
 
   @Override
   protected void onTick() {
+    SpriteBatch batch = new SpriteBatch();
 
+    Texture texture = new Texture(Gdx.files.internal("spritesheets/TilesetProps.png"));
+    int x = 5;
+    int y = 12;
+    int width = 2;
+    int height = 1;
+    TextureRegion region = new TextureRegion(texture, x * 16, y * 16, width * 16, height * 16);
+    Sprite s = new Sprite(region);
+    s.setSize(width, height);
+    s.setPosition(2.5f, 1.25f);
+
+    batch.begin();
+    batch.setProjectionMatrix(CameraSystem.camera().combined);
+    s.draw(batch);
+    batch.end();
   }
 
 }

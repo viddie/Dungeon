@@ -26,10 +26,10 @@ public class TickableSystem extends System {
   public static final int TIMING_LATE = 1000;
   public static final int TIMING_LAST = Integer.MAX_VALUE;
 
-  private static final Map<ITickable, Integer> tickables = new HashMap();
-  private static final Map<ITickable, Integer> levelTickables = new HashMap();
-  private static final Map<ITickable, Integer> addTickables = new HashMap();
-  private static final Map<ITickable, Integer> addLevelTickables = new HashMap();
+  private static final Map<ITickable, Integer> tickables = new HashMap<>();
+  private static final Map<ITickable, Integer> levelTickables = new HashMap<>();
+  private static final Map<ITickable, Integer> addTickables = new HashMap<>();
+  private static final Map<ITickable, Integer> addLevelTickables = new HashMap<>();
   private static final Map<ITickable, Boolean> hasTicked = new HashMap<>();
 
   /**
@@ -112,4 +112,8 @@ public class TickableSystem extends System {
     levelTickables.putAll(addLevelTickables);
     addLevelTickables.clear();
   }
+
+  /** Run while paused */
+  @Override
+  public void stop() {}
 }

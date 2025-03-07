@@ -22,11 +22,13 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.logging.Logger;
 
+import dialogs.Dialogs;
 import hud.DebugOverlay;
 import level.EscapeRoomLevel;
 import level.utils.DungeonSaver;
 import starter.EscapeRoomDungeon;
 import utils.Constants;
+import utils.InputHandler;
 
 /**
  * The LevelEditorSystem is responsible for handling the level editor. It allows the user to change
@@ -78,7 +80,7 @@ public class LevelEditorSystem extends System {
 
   @Override
   public void execute() {
-    if (Gdx.input.isKeyJustPressed(TOGGLE_ACTIVE)) {
+    if (InputHandler.isKeyJustPressed(TOGGLE_ACTIVE)) {
       active = !active;
       Entity hero = Game.hero().orElseThrow();
       VelocityComponent vc = hero.fetchOrThrow(VelocityComponent.class);
@@ -89,58 +91,58 @@ public class LevelEditorSystem extends System {
     } else {
       DebugOverlay.drawText("~ EDIT MODE ~");
     }
-    if (Gdx.input.isKeyPressed(SKIP_BUTTON)) {
+    if (InputHandler.isKeyPressed(SKIP_BUTTON)) {
       setTile(LevelElement.SKIP);
     }
-    if (Gdx.input.isKeyPressed(PIT_BUTTON)) {
+    if (InputHandler.isKeyPressed(PIT_BUTTON)) {
       setTile(LevelElement.PIT);
     }
-    if (Gdx.input.isKeyPressed(FLOOR_BUTTON)) {
+    if (InputHandler.isKeyPressed(FLOOR_BUTTON)) {
       setTile(LevelElement.FLOOR);
     }
-    if (Gdx.input.isKeyPressed(WALL_BUTTON)) {
+    if (InputHandler.isKeyPressed(WALL_BUTTON)) {
       setTile(LevelElement.WALL);
     }
-    if (Gdx.input.isKeyPressed(HOLE_BUTTON)) {
+    if (InputHandler.isKeyPressed(HOLE_BUTTON)) {
       setTile(LevelElement.HOLE);
     }
-    if (Gdx.input.isKeyJustPressed(EXIT_BUTTON)) {
+    if (InputHandler.isKeyJustPressed(EXIT_BUTTON)) {
       setTile(LevelElement.EXIT);
     }
-    if (Gdx.input.isKeyJustPressed(DOOR_BUTTON)) {
+    if (InputHandler.isKeyJustPressed(DOOR_BUTTON)) {
       setTile(LevelElement.DOOR);
     }
-    if (Gdx.input.isKeyJustPressed(SAVE_BUTTON)) {
+    if (InputHandler.isKeyJustPressed(SAVE_BUTTON)) {
       if (Game.currentLevel() instanceof EscapeRoomLevel) {
         DungeonSaver.saveCurrentDungeon();
       } else {
         java.lang.System.out.println(Game.currentLevel().printLevel());
       }
     }
-    if (Gdx.input.isKeyJustPressed(FILL_WITH_FLOOR)) {
+    if (InputHandler.isKeyJustPressed(FILL_WITH_FLOOR)) {
       fillWithFloor();
     }
 
-    if(Gdx.input.isKeyPressed(SHIFT_MODIFIER)){
+    if(InputHandler.isKeyPressed(SHIFT_MODIFIER)){
       int x = 0, y = 0;
-      if(Gdx.input.isKeyJustPressed(Input.Keys.UP)){
+      if(InputHandler.isKeyJustPressed(Input.Keys.UP)){
         y = 1;
-      } else if(Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) {
+      } else if(InputHandler.isKeyJustPressed(Input.Keys.LEFT)) {
         x = -1;
-      } else if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
+      } else if(InputHandler.isKeyJustPressed(Input.Keys.DOWN)) {
         y = -1;
-      } else if(Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
+      } else if(InputHandler.isKeyJustPressed(Input.Keys.RIGHT)) {
         x = 1;
       }
       shiftLevel(x, y);
     }
-    if(Gdx.input.isKeyJustPressed(ADD_WIDTH_BUTTON)){
+    if(InputHandler.isKeyJustPressed(ADD_WIDTH_BUTTON)){
       addSize(1, 0);
     }
-    if(Gdx.input.isKeyJustPressed(ADD_HEIGHT_BUTTON)){
+    if(InputHandler.isKeyJustPressed(ADD_HEIGHT_BUTTON)){
       addSize(0, 1);
     }
-    if(Gdx.input.isKeyJustPressed(TOGGLE_CUSTOM_POINT)){
+    if(InputHandler.isKeyJustPressed(TOGGLE_CUSTOM_POINT)){
       toggleCustomPoint();
     }
   }
@@ -295,17 +297,14 @@ public class LevelEditorSystem extends System {
 
     if(key == null){
       //Didnt exist yet
-      int i = 0;
-      String newKey = "Point"+i;
-      while(namedPoints.get(newKey) != null){
-        i++;
-        newKey = "Point"+i;
-      }
+      String newKey = "";
       if(storedCustomPointName != null){
         newKey = storedCustomPointName;
         storedCustomPointName = null;
+        namedPoints.put(newKey, tilePos);
+      } else {
+        Dialogs.openInputDialog("Named Point", "Name for this point", (s) -> namedPoints.put(s, tilePos));
       }
-      namedPoints.put(newKey, tilePos);
 
     } else {
       //Did exist
@@ -313,4 +312,8 @@ public class LevelEditorSystem extends System {
       namedPoints.remove(key);
     }
   }
+
+  /** Run while paused */
+  @Override
+  public void stop() {}
 }

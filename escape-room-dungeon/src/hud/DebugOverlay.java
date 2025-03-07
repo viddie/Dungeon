@@ -26,6 +26,7 @@ import level.utils.LevelLabel;
 import starter.EscapeRoomDungeon;
 import utils.Constants;
 import utils.GameState;
+import utils.InputHandler;
 
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -221,7 +222,7 @@ public class DebugOverlay implements ITickable {
 
   @Override
   public void onTick(boolean isFirstTick) {
-    if(Gdx.input.isKeyJustPressed(Input.Keys.O)){
+    if(InputHandler.isKeyJustPressed(Input.Keys.O)){
       SHOW_BOXES = !SHOW_BOXES;
       EscapeRoomDungeon.LOGGER.info("Showing debug shapes: "+SHOW_BOXES);
     }
@@ -254,7 +255,7 @@ public class DebugOverlay implements ITickable {
 
   private Point[] points = new Point[]{null, null};
   public void checkSwapMap(){
-    if(Gdx.input.isKeyJustPressed(Input.Keys.P)){
+    if(InputHandler.isKeyJustPressed(Input.Keys.P)){
       int currentPlayer = GameState.playerNumber();
       int switchToPlayer = currentPlayer == 0 ? 0 : 1 + (currentPlayer % 2);
       LevelLabel label = DungeonLoader.getCurrentLabel();
