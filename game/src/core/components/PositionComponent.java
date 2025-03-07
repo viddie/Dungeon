@@ -86,12 +86,12 @@ public final class PositionComponent implements Component {
   }
 
   /**
-   * Set the position.
+   * Set the position to the center of the tile (added offset of x+0.5, y+0.25)
    *
    * @param tile The tile where the new position is located.
    * @see Tile
    */
   public void position(final Tile tile) {
-    position(tile.position());
+    position(tile.position().add(0.5f, 0.25f));
   }
 }
