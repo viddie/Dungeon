@@ -153,7 +153,6 @@ public final class GameLoop extends ScreenAdapter {
   @Override
   public void render(float delta) {
     if (doSetup) setup();
-    DrawSystem.batch().setProjectionMatrix(CameraSystem.camera().combined);
     frame();
     clearScreen();
 
@@ -220,10 +219,7 @@ public final class GameLoop extends ScreenAdapter {
    */
   private void placeOnLevelStart(final Entity entity) {
     ECSManagment.add(entity);
-    PositionComponent pc =
-        entity
-            .fetch(PositionComponent.class)
-            .orElseThrow(() -> MissingComponentException.build(entity, PositionComponent.class));
+    PositionComponent pc = entity.fetchOrThrow(PositionComponent.class);
     pc.position(Game.startTile());
   }
 

@@ -63,7 +63,7 @@ public final class LevelSystem extends System {
 
   private static ILevel currentLevel;
   private final IVoidFunction onLevelLoad;
-  private final Painter painter;
+  private Painter painter;
   private final Logger levelAPI_logger = Logger.getLogger(this.getClass().getSimpleName());
   private IVoidFunction onEndTile;
   private IGenerator generator;
@@ -314,6 +314,13 @@ public final class LevelSystem extends System {
    */
   public IVoidFunction onEndTile() {
     return onEndTile;
+  }
+
+  public Painter painter() {
+    return painter;
+  }
+  public void painter(Painter painter) {
+    this.painter = painter;
   }
 
   /** LevelSystem can't be paused. If it is paused, the level will not be shown anymore. */

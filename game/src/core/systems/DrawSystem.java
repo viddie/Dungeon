@@ -82,6 +82,8 @@ public final class DrawSystem extends System {
    */
   @Override
   public void execute() {
+    BATCH.setProjectionMatrix(CameraSystem.camera().combined);
+
     Map<Boolean, List<Entity>> partitionedEntities =
         filteredEntityStream(DrawComponent.class, PositionComponent.class)
             .collect(Collectors.partitioningBy(entity -> entity.isPresent(PlayerComponent.class)));
@@ -105,19 +107,12 @@ public final class DrawSystem extends System {
    * @see DrawComponent#isVisible()
    */
   private boolean shouldDraw(Entity entity) {
-    PositionComponent pc =
-        entity
-            .fetch(PositionComponent.class)
-            .orElseThrow(() -> MissingComponentException.build(entity, PositionComponent.class));
-
+    PositionComponent pc = entity.fetchOrThrow(PositionComponent.class);
     if (Game.currentLevel().tileAt(pc.position()) == null) {
       return false;
     }
 
-    DrawComponent dc =
-        entity
-            .fetch(DrawComponent.class)
-            .orElseThrow(() -> MissingComponentException.build(entity, DrawComponent.class));
+    DrawComponent dc = entity.fetchOrThrow(DrawComponent.class);
     if (!dc.isVisible()) return false;
 
     Tile tile = Game.currentLevel().tileAt(pc.position());
@@ -186,16 +181,7 @@ public final class DrawSystem extends System {
   }
 
   private DSData buildDataObject(final Entity entity) {
-    DrawComponent dc =
-        entity
-            .fetch(DrawComponent.class)
-            .orElseThrow(() -> MissingComponentException.build(entity, DrawComponent.class));
-    PositionComponent pc =
-        entity
-            .fetch(PositionComponent.class)
-            .orElseThrow(() -> MissingComponentException.build(entity, PositionComponent.class));
-    return new DSData(entity, dc, pc);
+    return new DSData(entity, entity.fetchOrThrow(DrawComponent.class), entity.fetchOrThrow(PositionComponent.class));
   }
-
   private record DSData(Entity e, DrawComponent dc, PositionComponent pc) {}
 }
