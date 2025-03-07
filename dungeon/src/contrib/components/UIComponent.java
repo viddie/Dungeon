@@ -4,6 +4,9 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import core.Component;
 import core.utils.IVoidFunction;
 
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+
 /**
  * A simple implementation for a UI Component which allows to define a Group of {@link
  * com.badlogic.gdx.scenes.scene2d.ui Elements}
@@ -15,6 +18,7 @@ public final class UIComponent implements Component {
   private final boolean willPauseGame;
   private final boolean closeOnUICloseKey;
   private IVoidFunction onClose = () -> {};
+  private Supplier<Boolean> isCapturingKeyboard = () -> false;
 
   /**
    * Create a new UIComponent.
@@ -23,10 +27,17 @@ public final class UIComponent implements Component {
    * @param willPauseGame if the UI should pause the Game or not
    * @param closeOnUICloseKey if the UI should close when the UI Close Key was pressed
    */
-  public UIComponent(final Group dialog, boolean willPauseGame, boolean closeOnUICloseKey) {
+  public UIComponent(final Group dialog, boolean willPauseGame, boolean closeOnUICloseKey, Supplier<Boolean> isCapturingKeyboard) {
     this.dialog = dialog;
     this.willPauseGame = willPauseGame;
     this.closeOnUICloseKey = closeOnUICloseKey;
+    if(isCapturingKeyboard != null){
+      this.isCapturingKeyboard = isCapturingKeyboard;
+    }
+  }
+
+  public UIComponent(final Group dialog, boolean willPauseGame, boolean closeOnUICloseKey) {
+    this(dialog, willPauseGame, closeOnUICloseKey, null);
   }
 
   /**
@@ -101,5 +112,12 @@ public final class UIComponent implements Component {
    */
   public void onClose(IVoidFunction onClose) {
     this.onClose = onClose;
+  }
+
+  public void setIsCapturingKeyboard(Supplier<Boolean> supplier){
+    isCapturingKeyboard = supplier == null ? () -> false : supplier;
+  }
+  public boolean isCapturingKeyboard(){
+    return isCapturingKeyboard.get();
   }
 }

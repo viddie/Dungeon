@@ -22,6 +22,9 @@ public class KeyboardConfig {
   public static final ConfigKey<Integer> INTERACT_WORLD =
       new ConfigKey<>(new String[] {"interact", "world"}, new ConfigIntValue(Input.Keys.E));
 
+  public static final ConfigKey<Integer> ACCEPT_INPUT =
+    new ConfigKey<>(new String[] {"interact", "dialog", "accept"}, new ConfigIntValue(Input.Keys.ENTER));
+
   /**
    * If Mouse Movement is enabled. This key is used to interact with the world.
    *
