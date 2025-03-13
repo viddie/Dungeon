@@ -39,6 +39,14 @@ public class Painter {
   }
 
   /**
+   * Gets the SpriteBatch for this Painter
+   * @return The SpriteBatch used by this Painter
+   */
+  public SpriteBatch batch() {
+    return batch;
+  }
+
+  /**
    * Draw the given texture on the given point with the given configuration.
    *
    * <p>Will only draw the texture if it's in the frustum of the camera.

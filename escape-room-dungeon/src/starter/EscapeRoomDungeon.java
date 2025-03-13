@@ -175,9 +175,9 @@ public class EscapeRoomDungeon {
     Game.add(EventScheduler.getInstance());
 
     //Replace with my own DrawSystem
-    Game.remove(DrawSystem.class);
-    Game.add(new DrawSystem2());
-    Game.getSystem(LevelSystem.class).painter(DrawSystem2.painter());
+//    Game.remove(DrawSystem.class);
+//    Game.add(new DrawSystem2());
+//    Game.getSystem(LevelSystem.class).painter(DrawSystem2.painter());
 
     Game.add(new TickableSystem());
     Game.add(new LeverSystem());

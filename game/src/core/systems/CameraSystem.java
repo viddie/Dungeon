@@ -101,10 +101,7 @@ public final class CameraSystem extends System {
   }
 
   private void focus(Entity entity) {
-    PositionComponent pc =
-        entity
-            .fetch(PositionComponent.class)
-            .orElseThrow(() -> MissingComponentException.build(entity, PositionComponent.class));
+    PositionComponent pc = entity.fetchOrThrow(PositionComponent.class);
     focus(pc.position());
   }
 
