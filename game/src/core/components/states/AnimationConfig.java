@@ -1,37 +1,72 @@
 package core.components.states;
 
-import core.utils.components.path.IPath;
-
 public class AnimationConfig {
 
-  private IPath path;
   private SpritesheetConfig config;
-  private int framesPerSprite = 5;
-  public boolean isLooping = true;
+  private int framesPerSprite = 10;
+  //Default width/height of 1 tile.
+  private float scaleX = 1;
+  private float scaleY = 0;
+  private boolean isLooping = true;
+  private boolean centered = false;
 
-  public AnimationConfig(IPath path, SpritesheetConfig config){
-    this.path = path;
+  public AnimationConfig(SpritesheetConfig config){
     this.config = config;
   }
-  public AnimationConfig(IPath path){
-    this(path, null);
+  public AnimationConfig(){
+    this(null);
   }
 
-  public static AnimationConfig[] fromPath(IPath... paths){
-    AnimationConfig[] configs = new AnimationConfig[paths.length];
-    for (int i = 0; i < paths.length; i++) {
-      configs[i] = new AnimationConfig(paths[i]);
-    }
-    return configs;
-  }
+//  public static AnimationConfig[] fromPath(IPath... paths){
+//    AnimationConfig[] configs = new AnimationConfig[paths.length];
+//    for (int i = 0; i < paths.length; i++) {
+//      configs[i] = new AnimationConfig(paths[i]);
+//    }
+//    return configs;
+//  }
 
-  public IPath path(){ return path; }
   public SpritesheetConfig config(){ return config; }
+  public AnimationConfig config(SpritesheetConfig config){
+    this.config = config;
+    return this;
+  }
 
   public int framesPerSprite(){ return framesPerSprite; }
-  public void framesPerSprite(int framesPerSprite){
+  public AnimationConfig framesPerSprite(int framesPerSprite){
     if(framesPerSprite <= 0) throw new IllegalArgumentException("framesPerSprite cannot be less than 1");
     this.framesPerSprite = framesPerSprite;
+    return this;
   }
 
+  public AnimationConfig scaleX(float scaleX) {
+    this.scaleX = scaleX;
+    return this;
+  }
+  public float scaleX() {
+    return scaleX;
+  }
+
+  public AnimationConfig scaleY(float scaleY) {
+    this.scaleY = scaleY;
+    return this;
+  }
+  public float scaleY() {
+    return scaleY;
+  }
+
+  public AnimationConfig isLooping(boolean looping) {
+    isLooping = looping;
+    return this;
+  }
+  public boolean isLooping() {
+    return isLooping;
+  }
+
+  public AnimationConfig centered(boolean centered) {
+    this.centered = centered;
+    return this;
+  }
+  public boolean centered() {
+    return centered;
+  }
 }

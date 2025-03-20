@@ -9,16 +9,16 @@ public class State {
   protected Animation animation;
   protected Object data;
 
-  public State(String name, AnimationConfig config){
+  public State(String name, IPath path, AnimationConfig config){
     if(name == null) throw new IllegalArgumentException("name can't be empty");
     this.name = name;
-    animation = new Animation(config);
+    animation = new Animation(path, config);
   }
   public State(String name, IPath path, SpritesheetConfig config){
-    this(name, new AnimationConfig(path, config));
+    this(name, path, new AnimationConfig(config));
   }
   public State(String name, IPath path){
-    this(name, path, null);
+    this(name, path, new AnimationConfig());
   }
 
   public void update(){
@@ -30,6 +30,12 @@ public class State {
 
   public Sprite getSprite(){
     return getAnimation().getSprite();
+  }
+  public float getSpriteWidth(){
+    return getAnimation().getSpriteWidth();
+  }
+  public float getSpriteHeight(){
+    return getAnimation().getSpriteHeight();
   }
 
   public boolean isAnimationFinished(){

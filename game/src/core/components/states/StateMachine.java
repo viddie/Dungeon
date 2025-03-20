@@ -24,11 +24,11 @@ public class StateMachine {
     currentState = states.get(0);
   }
   public StateMachine(IPath path){
-    this(path, null);
+    this(path, new AnimationConfig());
   }
-  public StateMachine(AnimationConfig config){
+  public StateMachine(IPath path, AnimationConfig config){
     states = new ArrayList<>();
-    states.add(new State("normal", config));
+    states.add(new State("normal", path, config));
     currentState = states.get(0);
   }
   public StateMachine(List<State> states){
@@ -136,8 +136,10 @@ public class StateMachine {
   }
   private void changeState(State newState, Object data){
     newState.setData(data);
-    newState.frameCount(0);
-    currentState = newState;
+    if(newState != currentState){
+      newState.frameCount(0);
+      currentState = newState;
+    }
   }
   public void update(){
     currentState.update();
@@ -145,12 +147,18 @@ public class StateMachine {
     for (int i = 0; i < epsilonTransitions.size(); i++) {
       EpsilonTransition transition = epsilonTransitions.get(i);
       if(transition.function().apply(currentState)){
-        changeState(transition.targetState(), transition.data());
+        changeState(transition.targetState(), transition.data().get());
       }
     }
   }
   public Sprite getSprite(){
     return currentState.getSprite();
+  }
+  public float getSpriteWidth(){
+    return currentState.getSpriteWidth();
+  }
+  public float getSpriteHeight(){
+    return currentState.getSpriteHeight();
   }
   public boolean isAnimationFinished(){
     return currentState.isAnimationFinished();

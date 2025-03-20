@@ -56,11 +56,14 @@ public final class DrawComponent implements Component {
    *     containing the animation files are stored. Example: "character/knight".
    * @see Animation
    */
+  public DrawComponent(final IPath path, AnimationConfig config) {
+    stateMachine = new StateMachine(path, config);
+  }
   public DrawComponent(final IPath path, SpritesheetConfig config) {
     stateMachine = new StateMachine(path, config);
   }
   public DrawComponent(final IPath path) {
-    this(path, null);
+    this(path, new AnimationConfig());
   }
   public DrawComponent(List<State> states) {
     stateMachine = new StateMachine(states);
@@ -81,8 +84,13 @@ public final class DrawComponent implements Component {
   }
 
   public Sprite getSprite(){
-    Sprite s = stateMachine.getSprite();
-    return s;
+    return stateMachine.getSprite();
+  }
+  public float getSpriteWidth(){
+    return stateMachine.getSpriteWidth();
+  }
+  public float getSpriteHeight(){
+    return stateMachine.getSpriteHeight();
   }
 
   public Animation currentAnimation(){

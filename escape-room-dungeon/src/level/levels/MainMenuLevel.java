@@ -6,18 +6,25 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import components.Deco;
+import components.DecoFactory;
+import core.Entity;
 import core.Game;
+import core.components.DrawComponent;
+import core.components.PositionComponent;
+import core.components.states.AnimationConfig;
 import core.level.elements.tile.ExitTile;
 import core.level.utils.DesignLabel;
 import core.level.utils.LevelElement;
 import core.systems.CameraSystem;
 import core.utils.Point;
+import core.utils.components.draw.DepthLayer;
+import core.utils.components.path.SimpleIPath;
 import entities.DrawTextFactory;
 import entities.TeleporterFactory;
 import level.EscapeRoomLevel;
-import level.utils.DungeonLoader;
 import level.utils.LevelLabel;
-import systems.TransitionSystem;
+import utils.Constants;
 import utils.GameState;
 
 import java.util.Map;
@@ -73,26 +80,14 @@ public class MainMenuLevel extends EscapeRoomLevel {
     p = getPoint("tutorial");
     Game.add(DrawTextFactory.createTextEntity("Tutorial", p.add(0.5f, 2), 1, Color.WHITE, 0, 1));
     Game.add(TeleporterFactory.createTeleporter(p, LevelLabel.Tutorial, null, "-- Tutorial --"));
+
+//    Game.add(DecoFactory.createDeco(new Point(9f, 8f), Deco.Tileset2));
+//    Game.add(DecoFactory.createDeco(new Point(1f, 1f), Deco.Tileset2));
+    Game.add(DecoFactory.createDeco(new Point(19, 9), Deco.SignBig, DepthLayer.Player.depth()));
+    Game.add(DecoFactory.createDeco(new Point(9, 9), Deco.BookshelfLarge, DepthLayer.Player.depth()));
   }
 
   @Override
-  protected void onTick() {
-    SpriteBatch batch = new SpriteBatch();
-
-    Texture texture = new Texture(Gdx.files.internal("spritesheets/TilesetProps.png"));
-    int x = 5;
-    int y = 12;
-    int width = 2;
-    int height = 1;
-    TextureRegion region = new TextureRegion(texture, x * 16, y * 16, width * 16, height * 16);
-    Sprite s = new Sprite(region);
-    s.setSize(width, height);
-    s.setPosition(2.5f, 1.25f);
-
-    batch.begin();
-    batch.setProjectionMatrix(CameraSystem.camera().combined);
-    s.draw(batch);
-    batch.end();
-  }
+  protected void onTick() {}
 
 }

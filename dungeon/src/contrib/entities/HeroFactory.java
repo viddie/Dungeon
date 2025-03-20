@@ -17,6 +17,7 @@ import contrib.utils.components.skill.SkillTools;
 import core.Entity;
 import core.Game;
 import core.components.*;
+import core.components.states.AnimationConfig;
 import core.components.states.DirectionalState;
 import core.components.states.State;
 import core.components.states.StateMachine;
@@ -25,6 +26,7 @@ import core.level.utils.LevelUtils;
 import core.utils.Point;
 import core.utils.Tuple;
 import core.utils.components.MissingComponentException;
+import core.utils.components.draw.DepthLayer;
 import core.utils.components.path.IPath;
 import core.utils.components.path.SimpleIPath;
 import java.io.IOException;
@@ -100,15 +102,24 @@ public final class HeroFactory {
     hero.add(poc);
     hero.add(new VelocityComponent(SPEED_HERO.x, SPEED_HERO.y, (e) -> {}, true));
 
-    State stIdle = new DirectionalState("idle", HERO_IDLE, HERO_MOVE_LEFT, HERO_MOVE_UP, HERO_MOVE_RIGHT);
-    State stMove = new DirectionalState("move", HERO_MOVE_DOWN, HERO_MOVE_LEFT, HERO_MOVE_UP, HERO_MOVE_RIGHT);
+
+    AnimationConfig idleMoveConfig = new AnimationConfig().framesPerSprite(30).isLooping(false);
+    AnimationConfig idleConfig = new AnimationConfig().framesPerSprite(20);
+    AnimationConfig moveConfig = new AnimationConfig().framesPerSprite(10);
+
+    State stIdle = new DirectionalState("idle", HERO_IDLE, HERO_MOVE_LEFT, HERO_MOVE_UP, HERO_MOVE_RIGHT, idleConfig, idleMoveConfig, idleMoveConfig, idleMoveConfig);
+    State stMove = new DirectionalState("move", HERO_MOVE_DOWN, HERO_MOVE_LEFT, HERO_MOVE_UP, HERO_MOVE_RIGHT, moveConfig);
     State stDead = new State("dead", HERO_IDLE);
     StateMachine sm = new StateMachine(Arrays.asList(stIdle, stMove, stDead));
     sm.addTransition(stIdle, "move", stMove);
+    sm.addTransition(stMove, "move", stMove);
     sm.addTransition(stMove, "idle", stIdle);
     sm.addTransition(stIdle, "died", stDead);
     sm.addTransition(stMove, "died", stDead);
+    //Always have the hero face South when not moving after a bit
+    sm.addEpsilonTransition(stIdle, State::isAnimationFinished, stIdle, () -> Tile.Direction.S);
     DrawComponent dc = new DrawComponent(sm);
+    dc.depth(DepthLayer.Player.depth());
     hero.add(dc);
 
     HealthComponent hc =

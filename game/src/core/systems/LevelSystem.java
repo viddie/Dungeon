@@ -177,6 +177,7 @@ public final class LevelSystem extends System {
   private void drawLevel() {
     Map<IPath, PainterConfig> mapping = new HashMap<>();
     painter.batch().setProjectionMatrix(CameraSystem.camera().combined);
+    painter.batch().begin();
 
     Tile[][] layout = currentLevel.layout();
     for (Tile[] tiles : layout) {
@@ -193,6 +194,8 @@ public final class LevelSystem extends System {
         }
       }
     }
+
+    painter.batch().end();
   }
 
   /**

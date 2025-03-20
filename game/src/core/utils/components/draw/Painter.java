@@ -62,22 +62,20 @@ public class Painter {
       // set up scaling of textures
       sprite.setSize(config.xScaling(), config.yScaling());
       // where to draw the sprite
-      sprite.setPosition(realX, realY);
 
-      // need to be called before drawing
-      batch.begin();
+      sprite.setPosition(realX, realY);
 
       // tint the sprite
       if (config.tintColor() != -1) {
         Color color = Color.CLEAR;
         Color.rgba8888ToColor(color, config.tintColor());
         sprite.setColor(color);
+      } else {
+        sprite.setColor(Color.WHITE);
       }
 
       // draw sprite
       sprite.draw(batch);
-      // need to be called after drawing
-      batch.end();
     }
   }
 }

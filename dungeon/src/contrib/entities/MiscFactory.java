@@ -224,11 +224,12 @@ public final class MiscFactory {
   private static class FillState extends State {
     private Animation empty;
 
-    private FillState(String name, AnimationConfig config) { super(name, config); }
-    private FillState(String name, IPath path, SpritesheetConfig config) { super(name, path, config); }
+    public FillState(String name, IPath pathFull, IPath pathEmpty, AnimationConfig config) {
+      super(name, pathFull, config);
+      empty = new Animation(pathEmpty, config);
+    }
     public FillState(String name, IPath pathFull, IPath pathEmpty) {
-      super(name, pathFull);
-      empty = new Animation(new AnimationConfig(pathEmpty));
+      this(name, pathFull, pathEmpty, null);
     }
 
     @Override

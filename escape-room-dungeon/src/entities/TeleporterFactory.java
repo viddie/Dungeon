@@ -10,6 +10,7 @@ import core.components.DrawComponent;
 import core.components.PositionComponent;
 import core.utils.Point;
 import core.utils.components.draw.Animation;
+import core.utils.components.draw.DepthLayer;
 import core.utils.components.path.IPath;
 import core.utils.components.path.SimpleIPath;
 import level.utils.DungeonLoader;
@@ -36,6 +37,8 @@ public class TeleporterFactory {
     if(disabled){
       dc.tintColor(Color.rgba8888(DISABLED_COLOR));
     }
+    dc.depth(DepthLayer.Normal.depth());
+    teleporter.add(dc);
     teleporter.add(new VicinityComponent(DEFAULT_INTERACTION_RADIUS, new VicinityComponent.IVicinityCommand() {
       @Override
       public void onEnterRange() {
@@ -50,7 +53,6 @@ public class TeleporterFactory {
       @Override
       public void onInRange(double distance) {}
     }, Game.hero().orElseThrow()));
-    teleporter.add(dc);
     teleporter.add(
       new InteractionComponent(
         DEFAULT_INTERACTION_RADIUS,

@@ -26,4 +26,8 @@ public class DebugRenderComponent implements Component {
     this.customRender = customRender;
   }
 
+  public DebugRenderComponent drawPosition(boolean drawPosition){
+    this.drawPosition = drawPosition;
+    return this;
+  }
 }
