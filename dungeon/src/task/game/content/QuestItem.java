@@ -3,6 +3,7 @@ package task.game.content;
 import contrib.item.Item;
 import core.Entity;
 import core.utils.components.draw.Animation;
+import core.utils.components.path.IPath;
 import task.game.components.TaskContentComponent;
 
 /**
@@ -29,8 +30,8 @@ public class QuestItem extends Item {
    *     belongs.
    */
   public QuestItem(
-      Animation inventoryAnimation,
-      Animation worldAnimation,
+      IPath inventoryAnimation,
+      IPath worldAnimation,
       TaskContentComponent taskContentComponent) {
     super(UNDEFINED_QUEST_NAME, DEFAULT_DESCRIPTION, inventoryAnimation, worldAnimation);
     this.taskContentComponent = taskContentComponent;
@@ -61,7 +62,7 @@ public class QuestItem extends Item {
    * @param taskContentComponent The TaskContentComponent that stores the Task to which this item
    *     belongs.
    */
-  public QuestItem(Animation animation, TaskContentComponent taskContentComponent) {
+  public QuestItem(IPath animation, TaskContentComponent taskContentComponent) {
     this(animation, animation, taskContentComponent);
   }
 

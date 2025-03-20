@@ -6,9 +6,8 @@ import core.utils.components.path.IPath;
 public class State {
 
   public final String name;
-  private Animation animation;
-  private int framesPerSprite = 1;
-  private Object data;
+  protected Animation animation;
+  protected Object data;
 
   public State(String name, AnimationConfig config){
     if(name == null) throw new IllegalArgumentException("name can't be empty");
@@ -22,10 +21,26 @@ public class State {
     this(name, path, null);
   }
 
-  public Sprite getSprite(int frameCount){
-    int spriteIndex = frameCount / framesPerSprite;
-    return null;
+  public void update(){
+    getAnimation().update();
   }
+  public void frameCount(int frameCount){
+    getAnimation().frameCount(frameCount);
+  }
+
+  public Sprite getSprite(){
+    return getAnimation().getSprite();
+  }
+
+  public boolean isAnimationFinished(){
+    return getAnimation().isFinished();
+  }
+
+  public Animation getAnimation(){
+    return animation;
+  }
+
+  public Object getData(){ return data; }
   public void setData(Object data){
     this.data = data;
   }

@@ -33,7 +33,7 @@ public class ItemPotionSpeed extends Item {
     super(
         "Speed Potion",
         "A potion that increases your speed",
-        Animation.fromSingleImage(DEFAULT_TEXTURE));
+        DEFAULT_TEXTURE);
     this.speedEffect = new SpeedEffect(3, 5);
     if (!testEffect()) {
       description("It looks like this potion is broken...");

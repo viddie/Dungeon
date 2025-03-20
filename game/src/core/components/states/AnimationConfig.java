@@ -6,6 +6,7 @@ public class AnimationConfig {
 
   private IPath path;
   private SpritesheetConfig config;
+  private int framesPerSprite = 5;
   public boolean isLooping = true;
 
   public AnimationConfig(IPath path, SpritesheetConfig config){
@@ -22,6 +23,15 @@ public class AnimationConfig {
       configs[i] = new AnimationConfig(paths[i]);
     }
     return configs;
+  }
+
+  public IPath path(){ return path; }
+  public SpritesheetConfig config(){ return config; }
+
+  public int framesPerSprite(){ return framesPerSprite; }
+  public void framesPerSprite(int framesPerSprite){
+    if(framesPerSprite <= 0) throw new IllegalArgumentException("framesPerSprite cannot be less than 1");
+    this.framesPerSprite = framesPerSprite;
   }
 
 }

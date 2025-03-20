@@ -45,7 +45,7 @@ public class MobSpawnerFactory {
     Entity mobSpawner = new Entity("mobSpawner");
 
     mobSpawner.add(new PositionComponent(pos.toCenteredPoint()));
-    mobSpawner.add(new DrawComponent(Animation.fromSingleImage(SPAWNER_TEXTURE)));
+    mobSpawner.add(new DrawComponent(SPAWNER_TEXTURE));
     mobSpawner.add(
         new MobSpawnerComponent(
             monsterTypes,

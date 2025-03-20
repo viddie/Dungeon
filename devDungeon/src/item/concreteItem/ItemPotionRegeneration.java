@@ -34,7 +34,7 @@ public class ItemPotionRegeneration extends Item {
     super(
         "Regeneration Potion",
         "A potion that heals you over time",
-        Animation.fromSingleImage(DEFAULT_TEXTURE));
+        DEFAULT_TEXTURE);
     this.regenerationEffect = new RegenerationEffect(HEAL_PER_SECOND, EFFECT_DURATION);
   }
 

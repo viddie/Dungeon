@@ -22,7 +22,7 @@ import java.util.function.Supplier;
 public final class FireballSkill extends DamageProjectile {
 
   private static final String SKILL_NAME = "fireball";
-  private static final IPath PROJECTILE_TEXTURES = new SimpleIPath("skills/fireball");
+  private static final IPath PROJECTILE_TEXTURES = new SimpleIPath("skills/fireball/run_down");
   private static final IPath PROJECTILE_SOUND = new SimpleIPath("sounds/fireball.wav");
   private static final float DEFAULT_PROJECTILE_SPEED = 15.0f;
   private static final int DEFAULT_DAMAGE_AMOUNT = 2;

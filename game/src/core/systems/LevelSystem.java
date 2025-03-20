@@ -2,6 +2,7 @@ package core.systems;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import core.Entity;
 import core.Game;
 import core.System;
@@ -18,6 +19,7 @@ import core.utils.IVoidFunction;
 import core.utils.components.MissingComponentException;
 import core.utils.components.draw.Painter;
 import core.utils.components.draw.PainterConfig;
+import core.utils.components.draw.TextureMap;
 import core.utils.components.path.IPath;
 import java.util.*;
 import java.util.logging.Logger;
@@ -187,7 +189,7 @@ public final class LevelSystem extends System {
             mapping.put(
                 texturePath, new PainterConfig(texturePath, X_OFFSET, Y_OFFSET, t.tintColor()));
           }
-          painter.draw(t.position(), texturePath, mapping.get(texturePath));
+          painter.draw(t.position(), new Sprite(TextureMap.instance().textureAt(texturePath)), mapping.get(texturePath));
         }
       }
     }

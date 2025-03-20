@@ -130,6 +130,7 @@ public class KeypadUI extends Group {
     if(kc.isUnlocked) return;
     kc.checkUnlock();
     if(kc.isUnlocked){
+      keypad.fetchOrThrow(DrawComponent.class).sendSignal("open");
       SoundManager.playSound(Sounds.KeypadUnlocked);
     } else {
       SoundManager.playSound(Sounds.KeypadWrong);

@@ -13,12 +13,13 @@ import contrib.utils.components.item.ItemGenerator;
 import core.Entity;
 import core.components.DrawComponent;
 import core.components.PositionComponent;
+import core.components.states.*;
 import core.utils.Point;
 import core.utils.components.draw.CoreAnimations;
+import core.utils.components.path.IPath;
 import core.utils.components.path.SimpleIPath;
 import java.io.IOException;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -133,84 +134,46 @@ public final class MiscFactory {
 
     if (position == null) chest.add(new PositionComponent());
     else chest.add(new PositionComponent(position));
+
     InventoryComponent ic = new InventoryComponent(DEFAULT_CHEST_SIZE);
     chest.add(ic);
     item.forEach(ic::add);
-    chest.add(
-        new InteractionComponent(
-            defaultInteractionRadius,
-            true,
-            (interacted, interactor) -> {
-              interactor
-                  .fetch(InventoryComponent.class)
-                  .ifPresent(
-                      whoIc -> {
-                        UIComponent uiComponent =
-                            new UIComponent(
-                                new GUICombination(
-                                    new InventoryGUI(whoIc), new InventoryGUI("Chest", ic, 6)),
-                                true);
-                        uiComponent.onClose(
-                            () ->
-                                interacted
-                                    .fetch(DrawComponent.class)
-                                    .ifPresent(
-                                        interactedDC -> {
-                                          // remove all
-                                          // prior
-                                          // opened
-                                          // animations
-                                          interactedDC.deQueueByPriority(
-                                              ChestAnimations.OPEN_FULL.priority());
-                                          if (ic.count() > 0) {
-                                            // as long
-                                            // as
-                                            // there is
-                                            // an
-                                            // item
-                                            // inside
-                                            // the chest
-                                            // show a
-                                            // full
-                                            // chest
-                                            interactedDC.queueAnimation(ChestAnimations.OPEN_FULL);
-                                          } else {
-                                            // empty
-                                            // chest
-                                            // show the
-                                            // empty
-                                            // animation
-                                            interactedDC.queueAnimation(ChestAnimations.OPEN_EMPTY);
-                                          }
-                                        }));
-                        interactor.add(uiComponent);
-                      });
-              interacted
-                  .fetch(DrawComponent.class)
-                  .ifPresent(
-                      interactedDC -> {
-                        // only add opening animation when it is not
-                        // finished
-                        if (interactedDC
-                            .animation(ChestAnimations.OPENING)
-                            .map(animation -> !animation.isFinished())
-                            .orElse(true)) {
-                          interactedDC.queueAnimation(ChestAnimations.OPENING);
-                        }
-                      });
-            }));
-    DrawComponent dc = new DrawComponent(new SimpleIPath("objects/treasurechest"));
-    var mapping = dc.animationMap();
-    // set the closed chest as default idle
-    mapping.put(CoreAnimations.IDLE.pathString(), mapping.get(ChestAnimations.CLOSED.pathString()));
-    // opening animation should not loop
-    mapping.get(ChestAnimations.OPENING.pathString()).loop(false);
-    dc.animationMap(mapping);
-    // reset Idle Animation
-    dc.deQueueByPriority(CoreAnimations.IDLE.priority());
-    dc.currentAnimation(CoreAnimations.IDLE);
+
+    State stClosed = new State("closed", new SimpleIPath("objects/treasurechest/idle_closed"));
+    State stOpening = new State("opening", new SimpleIPath("objects/treasurechest/opening"));
+    State stOpen = new FillState("open", new SimpleIPath("objects/treasurechest/open_full"), new SimpleIPath("objects/treasurechest/open_empty"));
+    StateMachine sm = new StateMachine(Arrays.asList(stClosed, stOpening, stOpen));
+    sm.addTransition(stClosed, "open", stOpening);
+    sm.addEpsilonTransition(stOpening, State::isAnimationFinished, stOpen, () -> ic.count() == 0);
+    //If we didn't have a direct way of controlling when the full/empty check should happen, an epsilon transition
+    //to itself would still work
+//    sm.addEpsilonTransition(stOpen, s -> (boolean)s.getData() != (ic.count() == 0), stOpen, () -> ic.count() == 0);
+    DrawComponent dc = new DrawComponent(sm);
     chest.add(dc);
 
+    chest.add(
+      new InteractionComponent(
+        defaultInteractionRadius,
+        true,
+        (interacted, interactor) -> {
+          interactor.fetch(InventoryComponent.class).ifPresent(
+            whoIc -> {
+              UIComponent uiComponent = new UIComponent(
+                new GUICombination(new InventoryGUI(whoIc), new InventoryGUI("Chest", ic, 6)),
+                true);
+              uiComponent.onClose(() ->
+                interacted.fetch(DrawComponent.class)
+                  .ifPresent(interactedDC -> {
+                    // only add opening animation when it is not finished. If we close the GUI before the opening
+                    // animation finishes, the epsilon transition will handle setting the data correctly
+                    if(!interactedDC.stateMachine().getCurrentState().name.equals("opening")){
+                      interactedDC.sendSignal("open", ic.count() == 0);
+                    }
+                  }));
+              interactor.add(uiComponent);
+            });
+        })
+    );
     return chest;
   }
 
@@ -256,5 +219,22 @@ public final class MiscFactory {
     RANDOM,
     /** Represents an empty chest. */
     EMPTY,
+  }
+
+  private static class FillState extends State {
+    private Animation empty;
+
+    private FillState(String name, AnimationConfig config) { super(name, config); }
+    private FillState(String name, IPath path, SpritesheetConfig config) { super(name, path, config); }
+    public FillState(String name, IPath pathFull, IPath pathEmpty) {
+      super(name, pathFull);
+      empty = new Animation(new AnimationConfig(pathEmpty));
+    }
+
+    @Override
+    public Animation getAnimation() {
+      boolean isEmpty = (boolean) data;
+      return isEmpty ? empty : super.getAnimation();
+    }
   }
 }

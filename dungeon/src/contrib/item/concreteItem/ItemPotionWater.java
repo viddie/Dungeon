@@ -25,7 +25,7 @@ public class ItemPotionWater extends Item {
         "A bottle of water. It's not very useful except for hydration. It heals you for "
             + HEAL_AMOUNT
             + " health points.",
-        Animation.fromSingleImage(new SimpleIPath("items/potion/water_bottle.png")));
+        new SimpleIPath("items/potion/water_bottle.png"));
   }
 
   @Override

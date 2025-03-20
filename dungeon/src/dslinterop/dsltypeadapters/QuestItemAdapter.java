@@ -23,8 +23,7 @@ public class QuestItemAdapter {
       @DSLTypeMember(name = "display_name") String displayName,
       @DSLTypeMember(name = "description") String description,
       @DSLTypeMember(name = "texture_path") String texturePath) {
-    Animation animation = Animation.fromSingleImage(new SimpleIPath(texturePath));
     TaskContentComponent tcc = new TaskContentComponent();
-    return new QuestItem(animation, tcc);
+    return new QuestItem(new SimpleIPath(texturePath), tcc);
   }
 }

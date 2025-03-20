@@ -17,6 +17,9 @@ import contrib.utils.components.skill.SkillTools;
 import core.Entity;
 import core.Game;
 import core.components.*;
+import core.components.states.DirectionalState;
+import core.components.states.State;
+import core.components.states.StateMachine;
 import core.level.Tile;
 import core.level.utils.LevelUtils;
 import core.utils.Point;
@@ -25,6 +28,7 @@ import core.utils.components.MissingComponentException;
 import core.utils.components.path.IPath;
 import core.utils.components.path.SimpleIPath;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Objects;
 import java.util.Optional;
@@ -43,7 +47,11 @@ public final class HeroFactory {
    */
   public static final int DEFAULT_INVENTORY_SIZE = 6;
 
-  private static final IPath HERO_FILE_PATH = new SimpleIPath("character/wizard");
+  private static final IPath HERO_IDLE = new SimpleIPath("character/wizard/idle");
+  private static final IPath HERO_MOVE_UP = new SimpleIPath("character/wizard/run_up");
+  private static final IPath HERO_MOVE_LEFT = new SimpleIPath("character/wizard/run_left");
+  private static final IPath HERO_MOVE_DOWN = new SimpleIPath("character/wizard/run_down");
+  private static final IPath HERO_MOVE_RIGHT = new SimpleIPath("character/wizard/run_right");
   private static final Vector2 SPEED_HERO = new Vector2(7.5f, 7.5f);
   private static final int FIREBALL_COOL_DOWN = 500;
   private static final int HERO_HP = 25;
@@ -91,7 +99,18 @@ public final class HeroFactory {
     PositionComponent poc = new PositionComponent();
     hero.add(poc);
     hero.add(new VelocityComponent(SPEED_HERO.x, SPEED_HERO.y, (e) -> {}, true));
-    hero.add(new DrawComponent(HERO_FILE_PATH));
+
+    State stIdle = new DirectionalState("idle", HERO_IDLE, HERO_MOVE_LEFT, HERO_MOVE_UP, HERO_MOVE_RIGHT);
+    State stMove = new DirectionalState("move", HERO_MOVE_DOWN, HERO_MOVE_LEFT, HERO_MOVE_UP, HERO_MOVE_RIGHT);
+    State stDead = new State("dead", HERO_IDLE);
+    StateMachine sm = new StateMachine(Arrays.asList(stIdle, stMove, stDead));
+    sm.addTransition(stIdle, "move", stMove);
+    sm.addTransition(stMove, "idle", stIdle);
+    sm.addTransition(stIdle, "died", stDead);
+    sm.addTransition(stMove, "died", stDead);
+    DrawComponent dc = new DrawComponent(sm);
+    hero.add(dc);
+
     HealthComponent hc =
         new HealthComponent(
             HERO_HP,

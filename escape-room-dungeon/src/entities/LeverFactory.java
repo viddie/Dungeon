@@ -9,11 +9,16 @@ import core.Entity;
 import core.Game;
 import core.components.DrawComponent;
 import core.components.PositionComponent;
+import core.components.states.State;
+import core.components.states.StateMachine;
 import core.utils.Point;
 import core.utils.components.MissingComponentException;
 import core.utils.components.draw.Animation;
 import core.utils.components.path.IPath;
 import core.utils.components.path.SimpleIPath;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import utils.Constants;
@@ -42,11 +47,15 @@ public class LeverFactory {
     Entity lever = new Entity("lever");
 
     lever.add(new PositionComponent(pos.add(Constants.X_OFFSET, Constants.Y_OFFSET)));
-    DrawComponent dc = new DrawComponent(Animation.fromSingleImage(LEVER_TEXTURE_OFF));
-    Map<String, Animation> animationMap =
-        Map.of("off", dc.currentAnimation(), "on", Animation.fromSingleImage(LEVER_TEXTURE_ON));
-    dc.animationMap(animationMap);
-    dc.currentAnimation("off");
+
+    List<State> states = new ArrayList<>();
+    states.add(new State("off", LEVER_TEXTURE_OFF));
+    states.add(new State("on", LEVER_TEXTURE_ON));
+    StateMachine sm = new StateMachine(states);
+    sm.addTransition("off", "on", "on");
+    sm.addTransition("on", "off", "off");
+    DrawComponent dc = new DrawComponent(sm);
+
     lever.add(dc);
     lever.add(new LeverComponent(false, onInteract));
     lever.add(new VicinityComponent(DEFAULT_INTERACTION_RADIUS, new TintEntityCommand(lever), Game.hero().orElseThrow()));
@@ -57,7 +66,7 @@ public class LeverFactory {
             (entity, who) -> {
               LeverComponent lc = entity.fetchOrThrow(LeverComponent.class);
               lc.toggle();
-              entity.fetchOrThrow(DrawComponent.class).currentAnimation(lc.isOn() ? "on" : "off");
+              entity.fetchOrThrow(DrawComponent.class).sendSignal(lc.isOn() ? "off" : "on");
               SoundManager.playSound(Sounds.LeverFlipped);
             }));
     return lever;

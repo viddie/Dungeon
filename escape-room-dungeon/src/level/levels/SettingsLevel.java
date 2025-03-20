@@ -113,7 +113,7 @@ public class SettingsLevel extends EscapeRoomLevel {
 
     private static Entity createButton(Point position, String image, IVoidFunction onInteract){
       Entity t = new Entity("settings-button");
-      t.add(new DrawComponent(Animation.fromSingleImage(new SimpleIPath(image))));
+      t.add(new DrawComponent(new SimpleIPath(image)));
       t.add(new PositionComponent(position));
       t.add(new InteractionComponent(RADIUS, true, (e1, e2) -> {
         onInteract.execute();

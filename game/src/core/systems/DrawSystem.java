@@ -46,12 +46,9 @@ public final class DrawSystem extends System {
   /** Draws objects. */
   private static final Painter PAINTER = new Painter(BATCH);
 
-  private final Map<IPath, PainterConfig> configs;
-
   /** Create a new DrawSystem. */
   public DrawSystem() {
     super(DrawComponent.class, PositionComponent.class);
-    configs = new HashMap<>();
   }
 
   /**
@@ -84,14 +81,20 @@ public final class DrawSystem extends System {
   public void execute() {
     BATCH.setProjectionMatrix(CameraSystem.camera().combined);
 
-    Map<Boolean, List<Entity>> partitionedEntities =
-        filteredEntityStream(DrawComponent.class, PositionComponent.class)
-            .collect(Collectors.partitioningBy(entity -> entity.isPresent(PlayerComponent.class)));
-    List<Entity> players = partitionedEntities.get(true);
-    List<Entity> npcs = partitionedEntities.get(false);
+    filteredEntityStream(DrawComponent.class, PositionComponent.class)
+      .map(this::buildDataObject)
+      .filter(this::shouldDraw)
+      .sorted(Comparator.comparingInt(data -> data.dc.depth()))
+      .forEach(this::draw);
 
-    npcs.stream().filter(this::shouldDraw).forEach(entity -> draw(buildDataObject(entity)));
-    players.forEach(entity -> draw(buildDataObject(entity)));
+//    Map<Boolean, List<Entity>> partitionedEntities =
+//        filteredEntityStream(DrawComponent.class, PositionComponent.class)
+//            .collect(Collectors.partitioningBy(entity -> entity.isPresent(PlayerComponent.class)));
+//    List<Entity> players = partitionedEntities.get(true);
+//    List<Entity> npcs = partitionedEntities.get(false);
+//
+//    npcs.stream().filter(this::shouldDraw).forEach(entity -> draw(buildDataObject(entity)));
+//    players.forEach(entity -> draw(buildDataObject(entity)));
   }
 
   /**
@@ -102,76 +105,25 @@ public final class DrawSystem extends System {
    *   <li>The entity itself is visible
    * </ol>
    *
-   * @param entity the entity to check
+   * @param data the entity to check
    * @return true if the entity should be drawn, false otherwise
    * @see DrawComponent#isVisible()
    */
-  private boolean shouldDraw(Entity entity) {
-    PositionComponent pc = entity.fetchOrThrow(PositionComponent.class);
-    if (Game.currentLevel().tileAt(pc.position()) == null) {
+  private boolean shouldDraw(DSData data) {
+    if (Game.currentLevel().tileAt(data.pc.position()) == null) {
       return false;
     }
 
-    DrawComponent dc = entity.fetchOrThrow(DrawComponent.class);
-    if (!dc.isVisible()) return false;
+    if (!data.dc.isVisible()) return false;
 
-    Tile tile = Game.currentLevel().tileAt(pc.position());
+    Tile tile = Game.currentLevel().tileAt(data.pc.position());
     return tile.visible();
   }
 
   private void draw(final DSData dsd) {
-    reduceFrameTimer(dsd.dc);
-    setNextAnimation(dsd.dc);
-    final Animation animation = dsd.dc.currentAnimation();
-    IPath currentAnimationTexture = animation.nextAnimationTexturePath();
-    if (!configs.containsKey(currentAnimationTexture)) {
-      configs.put(
-          currentAnimationTexture,
-          new PainterConfig(currentAnimationTexture, 0, 0, dsd.dc.tintColor()));
-    }
-    PainterConfig conf = this.configs.get(currentAnimationTexture);
-    conf.tintColor(dsd.dc.tintColor());
-    PAINTER.draw(dsd.pc.position(), currentAnimationTexture, conf);
-  }
-
-  /**
-   * Reduce the frame timer for each animation in the queue, remove animations that have a frame
-   * time < 0.
-   *
-   * @param dc Component to iterate over
-   */
-  private void reduceFrameTimer(final DrawComponent dc) {
-    // iterate through animationQueue
-    for (Map.Entry<IPath, Integer> entry : dc.animationQueue().entrySet()) {
-      // reduce remaining frame time of animation by 1
-      entry.setValue(entry.getValue() - 1);
-    }
-    // remove animations when there is no remaining frame time
-    dc.animationQueue().entrySet().stream()
-        .filter(x -> x.getValue() < 0)
-        .forEach(x -> dc.deQueue(x.getKey()));
-  }
-
-  /**
-   * Checks the status of animations in the animationQueue and selects the next animation by
-   * priority.
-   *
-   * @param dc DrawComponent to draw
-   */
-  private void setNextAnimation(final DrawComponent dc) {
-
-    Optional<Map.Entry<IPath, Integer>> highestFind =
-        dc.animationQueue().entrySet().stream()
-            .max(Comparator.comparingInt(x -> x.getKey().priority()));
-
-    // when there is an animation load it
-    if (highestFind.isPresent()) {
-      IPath highestPrio = highestFind.get().getKey();
-      // making sure the animation exists
-      dc.animationMap().get(highestPrio.pathString());
-      // changing the Animation
-      dc.currentAnimation(highestPrio);
-    }
+    dsd.dc.update();
+    PainterConfig conf = new PainterConfig(0, 0, 1, 1, dsd.dc.tintColor());
+    PAINTER.draw(dsd.pc.position(), dsd.dc.getSprite(), conf);
   }
 
   /** DrawSystem can't be paused. */

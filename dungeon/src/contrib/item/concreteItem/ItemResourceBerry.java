@@ -23,7 +23,7 @@ public class ItemResourceBerry extends Item {
     super(
         "Berry",
         "A berry.",
-        Animation.fromSingleImage(new SimpleIPath("items/resource/berry.png")));
+        new SimpleIPath("items/resource/berry.png"));
   }
 
   @Override

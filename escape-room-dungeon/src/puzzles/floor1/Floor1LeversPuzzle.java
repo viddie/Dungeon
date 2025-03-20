@@ -106,7 +106,7 @@ public class Floor1LeversPuzzle extends PuzzleController implements ITickable {
       if(resources.get(i)){
         LeverComponent lc = lever.fetchOrThrow(LeverComponent.class);
         lc.setOn(true);
-        lever.fetchOrThrow(DrawComponent.class).currentAnimation(lc.isOn() ? "on" : "off");
+        lever.fetchOrThrow(DrawComponent.class).sendSignal("on");
       }
     }
     checkLeverState();

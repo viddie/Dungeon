@@ -40,9 +40,6 @@ import core.utils.components.draw.CoreAnimations;
  */
 public final class VelocitySystem extends System {
 
-  // default time an Animation should be enqueued
-  private static final int DEFAULT_FRAME_TIME = 1;
-
   /** Create a new VelocitySystem. */
   public VelocitySystem() {
     super(VelocityComponent.class, PositionComponent.class, DrawComponent.class);
@@ -132,68 +129,29 @@ public final class VelocitySystem extends System {
 
     // move
     if (x != 0 || y != 0) {
-      vsd.dc.deQueueByPriority(CoreAnimationPriorities.RUN.priority());
-      if (x > 0) vsd.dc.queueAnimation(CoreAnimations.RUN_RIGHT, CoreAnimations.RUN);
-      else if (x < 0) vsd.dc.queueAnimation(CoreAnimations.RUN_LEFT, CoreAnimations.RUN);
-      else if (y > 0) vsd.dc.queueAnimation(CoreAnimations.RUN_UP, CoreAnimations.RUN);
-      else if (y < 0) vsd.dc.queueAnimation(CoreAnimations.RUN_DOWN, CoreAnimations.RUN);
+      if (x > 0) vsd.dc.sendSignal("move", Tile.Direction.E);
+      else if (x < 0) vsd.dc.sendSignal("move", Tile.Direction.W);
+      else if (y > 0) vsd.dc.sendSignal("move", Tile.Direction.N);
+      else if (y < 0) vsd.dc.sendSignal("move", Tile.Direction.S);
       vsd.vc.previousXVelocity(x);
       vsd.vc.previousYVelocity(y);
-
-      vsd.dc.deQueueByPriority(CoreAnimationPriorities.IDLE.priority());
     }
     // idle
     else {
       // each drawComponent has an idle animation, so no check is needed
-      if (vsd.vc.previousXVelocity() < 0)
-        vsd.dc.queueAnimation(
-            DEFAULT_FRAME_TIME,
-            CoreAnimations.IDLE_LEFT,
-            CoreAnimations.IDLE,
-            CoreAnimations.IDLE_RIGHT,
-            CoreAnimations.IDLE_DOWN,
-            CoreAnimations.IDLE_UP);
-      else if (vsd.vc.previousXVelocity() > 0)
-        vsd.dc.queueAnimation(
-            DEFAULT_FRAME_TIME,
-            CoreAnimations.IDLE_RIGHT,
-            CoreAnimations.IDLE,
-            CoreAnimations.IDLE_LEFT,
-            CoreAnimations.IDLE_DOWN,
-            CoreAnimations.IDLE_UP);
-      else if (vsd.vc.previousYVelocity() > 0)
-        vsd.dc.queueAnimation(
-            DEFAULT_FRAME_TIME,
-            CoreAnimations.IDLE_UP,
-            CoreAnimations.IDLE,
-            CoreAnimations.IDLE_DOWN,
-            CoreAnimations.IDLE_LEFT,
-            CoreAnimations.IDLE_RIGHT);
-      else
-        vsd.dc.queueAnimation(
-            DEFAULT_FRAME_TIME,
-            CoreAnimations.IDLE_DOWN,
-            CoreAnimations.IDLE,
-            CoreAnimations.IDLE_UP,
-            CoreAnimations.IDLE_LEFT,
-            CoreAnimations.IDLE_RIGHT);
+      if (vsd.vc.previousXVelocity() > 0) vsd.dc.sendSignal("idle", Tile.Direction.E);
+      else if (vsd.vc.previousXVelocity() < 0) vsd.dc.sendSignal("idle", Tile.Direction.W);
+      else if (vsd.vc.previousYVelocity() > 0) vsd.dc.sendSignal("idle", Tile.Direction.N);
+      else if (vsd.vc.previousYVelocity() < 0) vsd.dc.sendSignal("idle", Tile.Direction.S);
     }
   }
 
   private VSData buildDataObject(Entity e) {
-    VelocityComponent vc =
-        e.fetch(VelocityComponent.class)
-            .orElseThrow(() -> MissingComponentException.build(e, VelocityComponent.class));
-
-    PositionComponent pc =
-        e.fetch(PositionComponent.class)
-            .orElseThrow(() -> MissingComponentException.build(e, PositionComponent.class));
-
-    DrawComponent dc =
-        e.fetch(DrawComponent.class)
-            .orElseThrow(() -> MissingComponentException.build(e, DrawComponent.class));
-
-    return new VSData(e, vc, pc, dc);
+    return new VSData(e,
+      e.fetchOrThrow(VelocityComponent.class),
+      e.fetchOrThrow(PositionComponent.class),
+      e.fetchOrThrow(DrawComponent.class)
+    );
   }
 
   private record VSData(Entity e, VelocityComponent vc, PositionComponent pc, DrawComponent dc) {}

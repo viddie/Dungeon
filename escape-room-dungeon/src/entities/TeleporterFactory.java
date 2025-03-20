@@ -32,7 +32,7 @@ public class TeleporterFactory {
     Entity teleporter = new Entity("teleporter");
 
     teleporter.add(new PositionComponent(pos.add(Constants.X_OFFSET, Constants.Y_OFFSET)));
-    DrawComponent dc = new DrawComponent(Animation.fromSingleImage(TELEPORTER_IMG));
+    DrawComponent dc = new DrawComponent(TELEPORTER_IMG);
     if(disabled){
       dc.tintColor(Color.rgba8888(DISABLED_COLOR));
     }

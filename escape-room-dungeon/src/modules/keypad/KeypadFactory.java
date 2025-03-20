@@ -9,6 +9,8 @@ import core.Entity;
 import core.Game;
 import core.components.DrawComponent;
 import core.components.PositionComponent;
+import core.components.states.State;
+import core.components.states.StateMachine;
 import core.utils.IVoidFunction;
 import core.utils.Point;
 import core.utils.components.draw.Animation;
@@ -17,6 +19,8 @@ import core.utils.components.path.SimpleIPath;
 import starter.EscapeRoomDungeon;
 import utils.Constants;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -39,12 +43,15 @@ public class KeypadFactory {
     Entity entity = new Entity("keypad");
 
     entity.add(new PositionComponent(pos.add(Constants.X_OFFSET, Constants.Y_OFFSET)));
-    DrawComponent dc = new DrawComponent(Animation.fromSingleImage(TEXTURE_OFF));
-    Map<String, Animation> animationMap =
-      Map.of("off", dc.currentAnimation(), "on", Animation.fromSingleImage(TEXTURE_ON));
-    dc.animationMap(animationMap);
-    dc.currentAnimation("off");
+
+    State stClosed = new State("closed", TEXTURE_OFF);
+    State stOpen = new State("open", TEXTURE_ON);
+    StateMachine sm = new StateMachine(Arrays.asList(stClosed, stOpen));
+    sm.addTransition(stClosed, "open", stOpen);
+    sm.addTransition(stOpen, "close", stClosed);
+    DrawComponent dc = new DrawComponent(sm);
     entity.add(dc);
+
     entity.add(new KeypadComponent(correctDigits, action, showDigitCount));
     entity.add(new VicinityComponent(DEFAULT_INTERACTION_RADIUS, new TintEntityCommand(entity), Game.hero().orElseThrow()));
     entity.add(

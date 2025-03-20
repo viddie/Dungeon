@@ -21,7 +21,7 @@ public class ItemReward extends Item {
     super(
         "A rock",
         "You did it! You have defeated the final boss and now you are rewarded with the ultimate reward. A boulder. Its not just a boulder it's A rock!",
-        Animation.fromSingleImage(DEFAULT_TEXTURE));
+        DEFAULT_TEXTURE);
   }
 
   @Override

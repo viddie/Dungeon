@@ -9,6 +9,7 @@ import core.components.PositionComponent;
 import core.utils.Point;
 import core.utils.components.MissingComponentException;
 import core.utils.components.draw.Animation;
+import core.utils.components.path.IPath;
 import core.utils.components.path.SimpleIPath;
 import java.util.function.BiConsumer;
 
@@ -21,8 +22,7 @@ import java.util.function.BiConsumer;
 public class SignFactory {
 
   private static final float DEFAULT_INTERACTION_RADIUS = 2.5f;
-  private static final Animation SIGN_TEXTURE =
-      Animation.fromSingleImage(new SimpleIPath("objects/mailbox/mailbox_2.png"));
+  private static final IPath SIGN_PATH = new SimpleIPath("objects/mailbox/mailbox_2.png");
 
   /**
    * Creates a sign entity with a default title at a given position.
@@ -52,18 +52,14 @@ public class SignFactory {
     Entity sign = new Entity("sign");
 
     sign.add(new PositionComponent(pos));
-    sign.add(new DrawComponent(SIGN_TEXTURE));
+    sign.add(new DrawComponent(SIGN_PATH));
     sign.add(new SignComponent(text, title));
     sign.add(
         new InteractionComponent(
             DEFAULT_INTERACTION_RADIUS,
             true,
             (entity, who) -> {
-              SignComponent sc =
-                  entity
-                      .fetch(SignComponent.class)
-                      .orElseThrow(
-                          () -> MissingComponentException.build(entity, SignComponent.class));
+              SignComponent sc = entity.fetchOrThrow(SignComponent.class);
               onInteract.accept(entity, who);
               sc.showDialog();
             }));

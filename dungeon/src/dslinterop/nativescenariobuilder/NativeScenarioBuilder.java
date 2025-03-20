@@ -42,11 +42,7 @@ public class NativeScenarioBuilder {
   public static Set<Set<Entity>> quizOnHud(Quiz quiz) {
     Entity questowner = new Entity("Questgeber");
     questowner.add(new PositionComponent());
-    try {
-      questowner.add(new DrawComponent(new SimpleIPath("character/blue_knight")));
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+    questowner.add(new DrawComponent(new SimpleIPath("character/blue_knight")));
     new TaskComponent(quiz, questowner);
 
     questowner.add(askOnInteractionQuiz(quiz));
@@ -81,11 +77,7 @@ public class NativeScenarioBuilder {
     // setup quest owner
     Entity questowner = new Entity("Questgeber");
     questowner.add(new PositionComponent());
-    try {
-      questowner.add(new DrawComponent(new SimpleIPath("character/blue_knight")));
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+    questowner.add(new DrawComponent(new SimpleIPath("character/blue_knight")));
     new TaskComponent(task, questowner);
     questowner.add(askOnInteractionYesNo(task));
     roomSet.add(questowner);
@@ -96,10 +88,8 @@ public class NativeScenarioBuilder {
       // setup quest items
       for (var element : entry.getValue()) {
         if (!element.equals(AssignTask.EMPTY_ELEMENT)) {
-          Animation animation =
-              Animation.fromSingleImage(new SimpleIPath("items/book/wisdom_scroll.png"));
           TaskContentComponent tcc = new TaskContentComponent(element);
-          QuestItem questItem = new QuestItem(animation, tcc);
+          QuestItem questItem = new QuestItem(new SimpleIPath("items/book/wisdom_scroll.png"), tcc);
           Entity worldItem = WorldItemBuilder.buildWorldItem(questItem);
           roomSet.add(worldItem);
         }
@@ -167,45 +157,16 @@ public class NativeScenarioBuilder {
 
       UIComponent uiComponent =
           new UIComponent(new GUICombination(new InventoryGUI(otherIc), inventory), true);
-      uiComponent.onClose(
-          () ->
-              chest
-                  .fetch(DrawComponent.class)
-                  .ifPresent(
-                      interactedDC -> {
-                        // remove all prior
-                        // opened animations
-                        interactedDC.deQueueByPriority(ChestAnimations.OPEN_FULL.priority());
-                        if (chestIc.count() > 0) {
-                          // aslong as
-                          // there is an
-                          // item inside
-                          // the chest
-                          // show a full
-                          // chest
-                          interactedDC.queueAnimation(ChestAnimations.OPEN_FULL);
-                        } else {
-                          // empty chest
-                          // show the
-                          // empty
-                          // animation
-                          interactedDC.queueAnimation(ChestAnimations.OPEN_EMPTY);
-                        }
-                      }));
+      uiComponent.onClose(() ->
+        chest.fetch(DrawComponent.class)
+          .ifPresent(interactedDC -> {
+            // only add opening animation when it is not finished. If we close the GUI before the opening
+            // animation finishes, the epsilon transition will handle setting the data correctly
+            if(!interactedDC.stateMachine().getCurrentState().name.equals("opening")){
+              interactedDC.sendSignal("open", chestIc.count() == 0);
+            }
+          }));
       other.add(uiComponent);
-      chest
-          .fetch(DrawComponent.class)
-          .ifPresent(
-              interactedDC -> {
-                // only add opening animation when it is not
-                // finished
-                if (interactedDC
-                    .animation(ChestAnimations.OPENING)
-                    .map(animation -> !animation.isFinished())
-                    .orElse(true)) {
-                  interactedDC.queueAnimation(ChestAnimations.OPENING);
-                }
-              });
     };
   }
 

@@ -167,7 +167,6 @@ public class InventoryGUI extends CombinableGUI {
               this.inventoryComponent
                   .items()[i]
                   .inventoryAnimation()
-                  .nextAnimationTexturePath()
                   .pathString()),
           x,
           y,
@@ -279,7 +278,7 @@ public class InventoryGUI extends CombinableGUI {
 
             Image image =
                 new Image(
-                    new Texture(item.inventoryAnimation().nextAnimationTexturePath().pathString()));
+                    new Texture(item.inventoryAnimation().pathString()));
             image.setSize(InventoryGUI.this.slotSize, InventoryGUI.this.slotSize);
             payload.setDragActor(image);
             dragAndDrop.setDragActorPosition(image.getWidth() / 2, -image.getHeight() / 2);

@@ -222,61 +222,61 @@ public class EntityExtension {
     public Void call(InventoryComponent instance, List<Object> params) {
       // interacted = chest
       // interactor = andere entity (spieler)
-      Entity chest = Game.find(instance).get();
-      Entity other = (Entity) params.get(0);
-      InventoryComponent otherIc = other.fetch(InventoryComponent.class).get();
-
-      var optionalTcc = chest.fetch(TaskContentComponent.class);
-      InventoryGUI inventory;
-      if (optionalTcc.isEmpty()) {
-        inventory = new InventoryGUI(instance);
-      } else {
-        TaskContent content = optionalTcc.get().content();
-        Task task = content.task();
-        inventory = new InventoryGUI(content + " (Quest: '" + task.taskName() + "')", instance);
-      }
-
-      UIComponent uiComponent =
-          new UIComponent(new GUICombination(new InventoryGUI(otherIc), inventory), true);
-      uiComponent.onClose(
-          () ->
-              chest
-                  .fetch(DrawComponent.class)
-                  .ifPresent(
-                      interactedDC -> {
-                        // remove all prior
-                        // opened animations
-                        interactedDC.deQueueByPriority(ChestAnimations.OPEN_FULL.priority());
-                        if (instance.count() > 0) {
-                          // aslong as
-                          // there is an
-                          // item inside
-                          // the chest
-                          // show a full
-                          // chest
-                          interactedDC.queueAnimation(ChestAnimations.OPEN_FULL);
-                        } else {
-                          // empty chest
-                          // show the
-                          // empty
-                          // animation
-                          interactedDC.queueAnimation(ChestAnimations.OPEN_EMPTY);
-                        }
-                      }));
-      other.add(uiComponent);
-      chest
-          .fetch(DrawComponent.class)
-          .ifPresent(
-              interactedDC -> {
-                // only add opening animation when it is not
-                // finished
-                if (interactedDC
-                    .animation(ChestAnimations.OPENING)
-                    .map(animation -> !animation.isFinished())
-                    .orElse(true)) {
-                  interactedDC.queueAnimation(ChestAnimations.OPENING);
-                }
-              });
+//      Entity chest = Game.find(instance).get();
+//      Entity other = (Entity) params.get(0);
+//      InventoryComponent otherIc = other.fetch(InventoryComponent.class).get();
+//
+//      var optionalTcc = chest.fetch(TaskContentComponent.class);
+//      InventoryGUI inventory;
+//      if (optionalTcc.isEmpty()) {
+//        inventory = new InventoryGUI(instance);
+//      } else {
+//        TaskContent content = optionalTcc.get().content();
+//        Task task = content.task();
+//        inventory = new InventoryGUI(content + " (Quest: '" + task.taskName() + "')", instance);
+//      }
+//
+//      UIComponent uiComponent =
+//          new UIComponent(new GUICombination(new InventoryGUI(otherIc), inventory), true);
+//      uiComponent.onClose(
+//          () ->
+//              chest
+//                  .fetch(DrawComponent.class)
+//                  .ifPresent(
+//                      interactedDC -> {
+//                        // remove all prior
+//                        // opened animations
+//                        interactedDC.deQueueByPriority(ChestAnimations.OPEN_FULL.priority());
+//                        if (instance.count() > 0) {
+//                          // aslong as
+//                          // there is an
+//                          // item inside
+//                          // the chest
+//                          // show a full
+//                          // chest
+//                          interactedDC.queueAnimation(ChestAnimations.OPEN_FULL);
+//                        } else {
+//                          // empty chest
+//                          // show the
+//                          // empty
+//                          // animation
+//                          interactedDC.queueAnimation(ChestAnimations.OPEN_EMPTY);
+//                        }
+//                      }));
+//      other.add(uiComponent);
+//      chest
+//          .fetch(DrawComponent.class)
+//          .ifPresent(
+//              interactedDC -> {
+//                // only add opening animation when it is not
+//                // finished
+//                if (interactedDC
+//                    .animation(ChestAnimations.OPENING)
+//                    .map(animation -> !animation.isFinished())
+//                    .orElse(true)) {
+//                  interactedDC.queueAnimation(ChestAnimations.OPENING);
+//                }
+//              });
 
       return null;
     }

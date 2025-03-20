@@ -22,7 +22,7 @@ public class ItemResourceEgg extends Item {
     super(
         "Egg",
         "An egg. What was there before? The chicken or the egg?",
-        Animation.fromSingleImage(new SimpleIPath("items/resource/egg.png")));
+        new SimpleIPath("items/resource/egg.png"));
   }
 
   @Override

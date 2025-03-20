@@ -7,14 +7,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class StateMachine {
 
   private State currentState;
-  private int frameCount = 0;
   private final List<State> states;
   private final Map<State, List<Transition>> transitions = new HashMap<>();
+  private final Map<State, List<EpsilonTransition>> epsilonTransitions = new HashMap<>();
 
   public StateMachine(IPath path, SpritesheetConfig config){
     states = new ArrayList<>();
@@ -75,12 +77,28 @@ public class StateMachine {
     return existing;
   }
 
+  public EpsilonTransition addEpsilonTransition(State from, Function<State, Boolean> function, State to, Supplier<Object> dataSupplier){
+    List<EpsilonTransition> fromTransitions = getEpsilonTransitionList(from);
+    EpsilonTransition existing = fromTransitions.stream().filter(t -> t.targetState() == to).findFirst().orElse(null);
+    if(existing != null) fromTransitions.remove(existing);
+    fromTransitions.add(new EpsilonTransition(function, to, dataSupplier));
+    return existing;
+  }
+  public EpsilonTransition addEpsilonTransition(State from, Function<State, Boolean> function, State to){
+    return addEpsilonTransition(from, function, to, null);
+  }
+
   private void removeAllTransitions(State state){
     //Remove the state from the transitions
     transitions.remove(state);
+    epsilonTransitions.remove(state);
     //Also remove any transition targeting the state
     transitions.values().forEach(transitionList -> {
       List<Transition> toRemove = transitionList.stream().filter(t -> t.targetState() == state).collect(Collectors.toList());
+      toRemove.forEach(transitionList::remove);
+    });
+    epsilonTransitions.values().forEach(transitionList -> {
+      List<EpsilonTransition> toRemove = transitionList.stream().filter(t -> t.targetState() == state).collect(Collectors.toList());
       toRemove.forEach(transitionList::remove);
     });
   }
@@ -95,6 +113,13 @@ public class StateMachine {
     if(transition != null) return fromTransitions.remove(transition);
     return false;
   }
+
+  private List<EpsilonTransition> getEpsilonTransitionList(State state){
+    if(!epsilonTransitions.containsKey(state)){
+      epsilonTransitions.put(state, new ArrayList<>());
+    }
+    return epsilonTransitions.get(state);
+  }
   private List<Transition> getTransitionList(State state){
     if(!transitions.containsKey(state)){
       transitions.put(state, new ArrayList<>());
@@ -107,15 +132,28 @@ public class StateMachine {
     Transition transition = getTransitionList(currentState).stream().filter(t -> t.signal().equals(signal.signal)).findFirst().orElse(null);
     if(transition == null) return;
     State newState = transition.targetState();
-    newState.setData(signal.data);
-    frameCount = 0;
+    changeState(newState, signal.data);
+  }
+  private void changeState(State newState, Object data){
+    newState.setData(data);
+    newState.frameCount(0);
     currentState = newState;
   }
   public void update(){
-    frameCount++;
+    currentState.update();
+    List<EpsilonTransition> epsilonTransitions = getEpsilonTransitionList(currentState);
+    for (int i = 0; i < epsilonTransitions.size(); i++) {
+      EpsilonTransition transition = epsilonTransitions.get(i);
+      if(transition.function().apply(currentState)){
+        changeState(transition.targetState(), transition.data());
+      }
+    }
   }
   public Sprite getSprite(){
-    return currentState.getSprite(frameCount);
+    return currentState.getSprite();
+  }
+  public boolean isAnimationFinished(){
+    return currentState.isAnimationFinished();
   }
 
 }

@@ -37,7 +37,7 @@ public class ItemPotionHealth extends Item {
     super(
         type.getName() + " Health Potion",
         "It heals you for " + type.getHealAmount() + " health points.",
-        Animation.fromSingleImage(DEFAULT_TEXTURE));
+        DEFAULT_TEXTURE);
     this.heal_amount = type.getHealAmount();
   }
 

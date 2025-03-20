@@ -57,7 +57,7 @@ public class HealthSystem extends System {
     int dmgAmount = calculateDamage(hsd);
 
     // if we have some damage, let's show a little dance
-    if (dmgAmount > 0) hsd.dc.queueAnimation(AdditionalAnimations.HIT);
+    if (dmgAmount > 0) hsd.dc.sendSignal("hit");
 
     // reset all damage objects in health component and apply damage
     hsd.hc.clearDamage();
@@ -74,7 +74,7 @@ public class HealthSystem extends System {
 
   protected HSData activateDeathAnimation(final HSData hsd) {
     // set DeathAnimation as active animation
-    hsd.dc.queueAnimation(AdditionalAnimations.DIE);
+    hsd.dc.sendSignal("died");
 
     // return data object to enable method chaining/streaming
     return hsd;
@@ -92,17 +92,7 @@ public class HealthSystem extends System {
    * @return true if Entity can be removed from the game.
    */
   protected boolean isDeathAnimationFinished(final HSData hsd) {
-    // test if hsd has a DeathAnimation
-    Predicate<DrawComponent> hasDeathAnimation =
-        (drawComponent) -> drawComponent.hasAnimation(AdditionalAnimations.DIE);
-    // test if Animation is looping
-    Predicate<DrawComponent> isAnimationLooping = DrawComponent::isCurrentAnimationLooping;
-    // test if Animation has finished playing
-    Predicate<DrawComponent> isAnimationFinished = DrawComponent::isCurrentAnimationFinished;
-
-    return !hasDeathAnimation.test(hsd.dc)
-        || isAnimationLooping.test(hsd.dc)
-        || isAnimationFinished.test(hsd.dc);
+    return hsd.dc.stateMachine().getCurrentState().name.equals("dead") && hsd.dc.isCurrentAnimationFinished();
   }
 
   /**

@@ -18,11 +18,7 @@ public class DrawComponentAdapter {
   public static DrawComponent buildDrawComponentFromPath(
       @DSLTypeMember(name = "path") String path) {
     DrawComponent comp = null;
-    try {
-      comp = new DrawComponent(new SimpleIPath(path));
-    } catch (IOException e) {
-      return null;
-    }
+    comp = new DrawComponent(new SimpleIPath(path));
     return comp;
   }
 }

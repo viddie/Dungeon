@@ -2,6 +2,7 @@ package contrib.item.concreteItem;
 
 import contrib.item.Item;
 import core.utils.components.draw.Animation;
+import core.utils.components.path.IPath;
 
 /**
  * A default implementation of {@link Item}.
@@ -21,8 +22,8 @@ public final class ItemDefault extends Item {
   public ItemDefault(
       final String displayName,
       final String description,
-      final Animation inventoryAnimation,
-      final Animation worldAnimation) {
+      final IPath inventoryAnimation,
+      final IPath worldAnimation) {
     super(displayName, description, inventoryAnimation, worldAnimation);
   }
 }

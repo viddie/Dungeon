@@ -11,6 +11,7 @@ import core.Game;
 import core.level.elements.tile.FloorTile;
 import core.utils.Point;
 import core.utils.components.draw.Animation;
+import core.utils.components.path.IPath;
 import core.utils.logging.CustomLogLevel;
 import java.util.HashMap;
 import java.util.Map;
@@ -60,8 +61,8 @@ public class Item implements CraftingIngredient, CraftingResult {
 
   private String displayName;
   private String description;
-  private Animation inventoryAnimation;
-  private Animation worldAnimation;
+  private IPath inventoryAnimation;
+  private IPath worldAnimation;
   private int stackSize;
   private int maxStackSize;
 
@@ -78,8 +79,8 @@ public class Item implements CraftingIngredient, CraftingResult {
   public Item(
       final String displayName,
       final String description,
-      final Animation inventoryAnimation,
-      final Animation worldAnimation,
+      final IPath inventoryAnimation,
+      final IPath worldAnimation,
       int stackSize,
       int maxStackSize) {
     this.displayName = displayName;
@@ -111,8 +112,8 @@ public class Item implements CraftingIngredient, CraftingResult {
   public Item(
       final String displayName,
       final String description,
-      final Animation inventoryAnimation,
-      final Animation worldAnimation) {
+      final IPath inventoryAnimation,
+      final IPath worldAnimation) {
     this(displayName, description, inventoryAnimation, worldAnimation, 1, 1);
   }
 
@@ -127,7 +128,7 @@ public class Item implements CraftingIngredient, CraftingResult {
    * @param description The description.
    * @param animation The animation.
    */
-  public Item(final String displayName, final String description, final Animation animation) {
+  public Item(final String displayName, final String description, final IPath animation) {
     this(displayName, description, animation, animation, 1, 1);
   }
 
@@ -214,7 +215,7 @@ public class Item implements CraftingIngredient, CraftingResult {
    *
    * @return The inventory animation.
    */
-  public Animation inventoryAnimation() {
+  public IPath inventoryAnimation() {
     return this.inventoryAnimation;
   }
 
@@ -223,7 +224,7 @@ public class Item implements CraftingIngredient, CraftingResult {
    *
    * @param inventoryAnimation The new inventory animation.
    */
-  public void inventoryAnimation(final Animation inventoryAnimation) {
+  public void inventoryAnimation(final IPath inventoryAnimation) {
     this.inventoryAnimation = inventoryAnimation;
   }
 
@@ -232,7 +233,7 @@ public class Item implements CraftingIngredient, CraftingResult {
    *
    * @return The world animation.
    */
-  public Animation worldAnimation() {
+  public IPath worldAnimation() {
     return this.worldAnimation;
   }
 
@@ -241,7 +242,7 @@ public class Item implements CraftingIngredient, CraftingResult {
    *
    * @param worldAnimation The new world animation.
    */
-  public void worldAnimation(final Animation worldAnimation) {
+  public void worldAnimation(final IPath worldAnimation) {
     this.worldAnimation = worldAnimation;
   }
 

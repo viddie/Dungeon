@@ -28,7 +28,7 @@ public class ShowImageFactory {
     Entity entity = new Entity("show-image");
     entity.add(new PositionComponent(pos.add(Constants.X_OFFSET, Constants.Y_OFFSET)));
 
-    DrawComponent dc = new DrawComponent(Animation.fromSingleImage(new SimpleIPath(spriteImage)));
+    DrawComponent dc = new DrawComponent(new SimpleIPath(spriteImage));
     entity.add(dc);
 
     ShowImageComponent sic = new ShowImageComponent(imagePath);

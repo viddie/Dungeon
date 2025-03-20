@@ -203,16 +203,9 @@ public abstract class DamageProjectile implements Consumer<Entity> {
             .orElseThrow(() -> MissingComponentException.build(entity, PositionComponent.class));
     projectile.add(new PositionComponent(epc.position()));
 
-    try {
-      DrawComponent dc = new DrawComponent(pathToTexturesOfProjectile);
-      dc.tintColor(tintColor());
-      projectile.add(dc);
-    } catch (IOException e) {
-      LOGGER.warning(
-          String.format("The DrawComponent for the projectile %s cant be created. ", entity)
-              + e.getMessage());
-      throw new RuntimeException();
-    }
+    DrawComponent dc = new DrawComponent(pathToTexturesOfProjectile);
+    dc.tintColor(tintColor());
+    projectile.add(dc);
 
     Point startPoint = new Point(0, 0);
     entity

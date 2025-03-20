@@ -247,7 +247,7 @@ public class CraftingGUI extends CombinableGUI {
       for (int i = 0; i < this.items.size(); i++) {
         Texture itemTexture =
             TextureMap.instance()
-                .textureAt(this.items.get(i).inventoryAnimation().nextAnimationTexturePath());
+                .textureAt(this.items.get(i).inventoryAnimation());
         int textureX = startX + ITEM_GAP * (i + 1) + size * i;
         batch.draw(itemTexture, textureX, startY, size, size);
 
@@ -302,7 +302,7 @@ public class CraftingGUI extends CombinableGUI {
           continue;
         }
         Texture itemTexture =
-            TextureMap.instance().textureAt(item.inventoryAnimation().nextAnimationTexturePath());
+            TextureMap.instance().textureAt(item.inventoryAnimation());
         batch.draw(itemTexture, x + ITEM_GAP * (i + 1) + size * i, y, size, size);
 
         GlyphLayout layout = new GlyphLayout(bitmapFont, item.displayName());

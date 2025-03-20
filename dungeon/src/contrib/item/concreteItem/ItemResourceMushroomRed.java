@@ -23,7 +23,7 @@ public class ItemResourceMushroomRed extends Item {
     super(
         "Red Mushroom",
         "A red mushroom.",
-        Animation.fromSingleImage(new SimpleIPath("items/resource/mushroom_red.png")));
+        new SimpleIPath("items/resource/mushroom_red.png"));
   }
 
   @Override

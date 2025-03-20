@@ -44,7 +44,7 @@ public final class PainterConfig {
     this(TextureMap.instance().textureAt(texturePath));
   }
 
-  private PainterConfig(
+  public PainterConfig(
       float xOffset, float yOffset, float xScaling, float yScaling, int tintColor) {
     this.xOffset = xOffset;
     this.yOffset = yOffset;

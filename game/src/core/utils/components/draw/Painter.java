@@ -55,11 +55,10 @@ public class Painter {
    * @param texturePath Path to the texture to draw.
    * @param config Painting configuration.
    */
-  public void draw(final Point position, final IPath texturePath, final PainterConfig config) {
+  public void draw(final Point position, final Sprite sprite, final PainterConfig config) {
     float realX = position.x + config.xOffset(); // including the drawOffset
     float realY = position.y + config.yOffset(); // including the drawOffset
     if (CameraSystem.isPointInFrustum(realX, realY)) {
-      Sprite sprite = new Sprite(TextureMap.instance().textureAt(texturePath));
       // set up scaling of textures
       sprite.setSize(config.xScaling(), config.yScaling());
       // where to draw the sprite
