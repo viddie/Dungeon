@@ -3,6 +3,7 @@ package systems;
 import com.badlogic.gdx.graphics.Color;
 import components.DebugRenderComponent;
 import components.VicinityComponent;
+import contrib.components.CollideComponent;
 import core.Entity;
 import core.System;
 import core.components.PositionComponent;
@@ -32,6 +33,13 @@ public class DebugRenderSystem extends System {
     }
     if(d.drc.customRender != null){
       d.drc.customRender.accept(d.pc);
+    }
+    if(d.drc.drawCollider){
+      try {
+        CollideComponent cc = d.e.fetchOrThrow(CollideComponent.class);
+        Point size = cc.size();
+        DebugOverlay.renderRect(d.pc.position().add(cc.offset()), size.x, size.y, d.drc.color);
+      } catch(MissingComponentException ignored){}
     }
   }
 

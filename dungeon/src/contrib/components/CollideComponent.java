@@ -56,6 +56,7 @@ public final class CollideComponent implements Component {
   private final Logger LOGGER = Logger.getLogger(this.getClass().getName());
   @DSLCallback private TriConsumer<Entity, Entity, Tile.Direction> collideEnter;
   private TriConsumer<Entity, Entity, Tile.Direction> collideLeave;
+  private TriConsumer<Entity, Entity, Tile.Direction> collideMove;
 
   /**
    * Create a new CollisionComponent.
@@ -135,6 +136,17 @@ public final class CollideComponent implements Component {
   }
 
   /**
+   * Function to be executed on every frame that the collision is happening
+   *
+   * @param entity associated entity of this component.
+   * @param other Component of the colliding entity
+   * @param direction Direction in which the collision happens
+   */
+  public void onMove(final Entity entity, final Entity other, final Tile.Direction direction) {
+    if (collideMove != null) collideMove.accept(entity, other, direction);
+  }
+
+  /**
    * Get the bottom-left point of the hitbox.
    *
    * @param entity associated entity of this component.
@@ -193,6 +205,24 @@ public final class CollideComponent implements Component {
    */
   public void collideLeave(TriConsumer<Entity, Entity, Tile.Direction> collideLeave) {
     this.collideLeave = collideLeave;
+  }
+
+  /**
+   * Set function to execute for every frame of the collision happening
+   *
+   * @param collideMove new collideMethod of the associated entity
+   */
+  public void collideMove(TriConsumer<Entity, Entity, Tile.Direction> collideMove) {
+    this.collideMove = collideMove;
+  }
+
+  /**
+   * Get the offset of the hitbox.
+   *
+   * @return the offset of the component
+   */
+  public Point offset() {
+    return new Point(offset);
   }
 
   /**

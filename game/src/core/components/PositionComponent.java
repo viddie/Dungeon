@@ -32,6 +32,7 @@ public final class PositionComponent implements Component {
   public static final Point ILLEGAL_POSITION = new Point(Integer.MIN_VALUE, Integer.MIN_VALUE);
 
   private Point position;
+  private float rotation;
 
   /**
    * Create a new PositionComponent with given position.
@@ -93,5 +94,20 @@ public final class PositionComponent implements Component {
    */
   public void position(final Tile tile) {
     position(tile.position().add(0.5f, 0.25f));
+  }
+
+  /**
+   * Get the rotation.
+   * @return The rotation.
+   */
+  public float rotation() {
+    return rotation;
+  }
+  /**
+   * Set the rotation.
+   * @param rotation new Rotation
+   */
+  public void rotation(final float rotation) {
+    this.rotation = rotation;
   }
 }

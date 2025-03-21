@@ -1,4 +1,4 @@
-package components;
+package entities;
 
 import core.components.states.AnimationConfig;
 import core.components.states.SpritesheetConfig;

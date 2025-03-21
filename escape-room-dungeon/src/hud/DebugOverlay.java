@@ -32,6 +32,7 @@ import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class DebugOverlay implements ITickable {
@@ -238,7 +239,8 @@ public class DebugOverlay implements ITickable {
     checkSwapMap();
 
     if(SHOW_BOXES){
-      drawText("Hero position: "+heroPos+"\nMouse position: "+mosPos+"\nHovering tile: "+tilePos);
+      long entitiesInGame = Game.entityStream(Collections.singleton(PositionComponent.class)).count();
+      drawText("Hero position: "+heroPos+"\nMouse position: "+mosPos+"\nHovering tile: "+tilePos+"\nEntities in game: "+entitiesInGame);
       Tile[][] layout = Game.currentLevel().layout();
       int rows = layout.length;
       int cols = layout[0].length;
@@ -248,6 +250,16 @@ public class DebugOverlay implements ITickable {
       if(t != null){
         DebugOverlay.renderRect(Constants.offset(t.position()), 1, 1, new Color(1, 1, 1, 0.2f));
       }
+    }
+
+    if(SHOW_BOXES){
+      Color entityPosColor = new Color(1, 0, 0, 1f);
+      Game.entityStream(Collections.singleton(PositionComponent.class)).forEach(e -> {
+        PositionComponent pc = e.fetchOrThrow(PositionComponent.class);
+        Point pos = pc.position();
+        DebugOverlay.renderCircle(Constants.itoffset(pos), 0.05f, entityPosColor);
+        DebugOverlay.renderText(Constants.itoffset(pos).add(0, -0.15f), e.name(), entityPosColor, 0.4f);
+      });
     }
 
     drawTexts();

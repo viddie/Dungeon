@@ -141,7 +141,7 @@ public final class DrawSystem extends System {
     if(dsd.dc.currentAnimation().getConfig().centered()){
       conf = new PainterConfig(-dsd.dc.getSpriteWidth() / 2, -dsd.dc.getSpriteHeight() / 2, dsd.dc.getSpriteWidth(), dsd.dc.getSpriteHeight(), dsd.dc.tintColor());
     }
-    PAINTER.draw(dsd.pc.position(), sprite, conf);
+    PAINTER.draw(dsd.pc.position(), sprite, conf, dsd.pc.rotation());
   }
 
   /** DrawSystem can't be paused. */

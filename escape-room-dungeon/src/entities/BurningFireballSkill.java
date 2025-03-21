@@ -22,7 +22,7 @@ import java.util.function.Supplier;
  * the maximum distance.
  */
 public final class BurningFireballSkill extends DamageProjectile {
-  private static final IPath PROJECTILE_TEXTURES = new SimpleIPath("skills/fireball/run_down");
+  private static final IPath PROJECTILE_TEXTURES = new SimpleIPath("skills/fireball/run_right");
   private static final IPath PROJECTILE_SOUND = new SimpleIPath("sounds/fireball.wav");
   private static final float PROJECTILE_SPEED = 15.0f;
   private static final DamageType DAMAGE_TYPE = DamageType.FIRE;

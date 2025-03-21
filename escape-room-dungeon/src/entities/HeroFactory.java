@@ -1,4 +1,4 @@
-package contrib.entities;
+package entities;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ai.pfa.GraphPath;
@@ -30,6 +30,8 @@ import core.utils.components.MissingComponentException;
 import core.utils.components.draw.DepthLayer;
 import core.utils.components.path.IPath;
 import core.utils.components.path.SimpleIPath;
+import utils.Constants;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -59,7 +61,7 @@ public final class HeroFactory {
   private static final int FIREBALL_COOL_DOWN = 500;
   private static final int HERO_HP = 25;
   private static Skill HERO_SKILL =
-      new Skill(new FireballSkill(SkillTools::cursorPositionAsPoint), FIREBALL_COOL_DOWN);
+    new Skill(new FireballSkill(SkillTools::cursorPositionAsPoint), FIREBALL_COOL_DOWN);
 
   /**
    * Gets the current skill of the hero.
@@ -123,34 +125,34 @@ public final class HeroFactory {
     hero.add(dc);
 
     HealthComponent hc =
-        new HealthComponent(
-            HERO_HP,
-            entity -> {
-              // play sound
-              Sound sound = Gdx.audio.newSound(Gdx.files.internal("sounds/death.wav"));
-              long soundId = sound.play();
-              sound.setLooping(soundId, false);
-              sound.setVolume(soundId, 0.3f);
-              sound.setLooping(soundId, false);
-              sound.play();
-              sound.setVolume(soundId, 0.9f);
+      new HealthComponent(
+        HERO_HP,
+        entity -> {
+          // play sound
+          Sound sound = Gdx.audio.newSound(Gdx.files.internal("sounds/death.wav"));
+          long soundId = sound.play();
+          sound.setLooping(soundId, false);
+          sound.setVolume(soundId, 0.3f);
+          sound.setLooping(soundId, false);
+          sound.play();
+          sound.setVolume(soundId, 0.9f);
 
-              // relink components for camera
-              Entity cameraDummy = new Entity();
-              cameraDummy.add(cc);
-              cameraDummy.add(poc);
-              Game.add(cameraDummy);
+          // relink components for camera
+          Entity cameraDummy = new Entity();
+          cameraDummy.add(cc);
+          cameraDummy.add(poc);
+          Game.add(cameraDummy);
 
-              DialogUtils.showTextPopup("You died!", "Game Over", Game::exit);
-            });
+          DialogUtils.showTextPopup("You died!", "Game Over", Game::exit);
+        });
     hero.add(hc);
 
     VelocityComponent vc = new VelocityComponent(SPEED_HERO.x, SPEED_HERO.y, (e) -> {}, true);
     vc.colliderCorners(p -> Arrays.asList(
-      p.copy().add(-0.25f, 0),
-      p.copy().add(-0.25f + 0.5f, 0),
-      p.copy().add(-0.25f, 0 + 0.5f),
-      p.copy().add(-0.25f + 0.5f, 0 + 0.5f)
+      Constants.ioffset(p).add(0.25f, 0.25f),
+      Constants.ioffset(p).add(0.25f + 0.5f, 0.25f),
+      Constants.ioffset(p).add(0.25f, 0.25f + 0.5f),
+      Constants.ioffset(p).add(0.25f + 0.5f, 0.25f + 0.5f)
     ));
     hero.add(vc);
     hero.add(new CollideComponent(
@@ -171,11 +173,11 @@ public final class HeroFactory {
     // hero movement
     registerMovement(pc, core.configuration.KeyboardConfig.MOVEMENT_UP.value(), new Vector2(0, 1));
     registerMovement(
-        pc, core.configuration.KeyboardConfig.MOVEMENT_DOWN.value(), new Vector2(0, -1));
+      pc, core.configuration.KeyboardConfig.MOVEMENT_DOWN.value(), new Vector2(0, -1));
     registerMovement(
-        pc, core.configuration.KeyboardConfig.MOVEMENT_RIGHT.value(), new Vector2(1, 0));
+      pc, core.configuration.KeyboardConfig.MOVEMENT_RIGHT.value(), new Vector2(1, 0));
     registerMovement(
-        pc, core.configuration.KeyboardConfig.MOVEMENT_LEFT.value(), new Vector2(-1, 0));
+      pc, core.configuration.KeyboardConfig.MOVEMENT_LEFT.value(), new Vector2(-1, 0));
 
     if (ENABLE_MOUSE_MOVEMENT) {
       // Mouse Left Click
@@ -183,157 +185,157 @@ public final class HeroFactory {
 
       // Mouse Movement (Right Click)
       pc.registerCallback(
-          KeyboardConfig.MOUSE_MOVE.value(),
-          innerHero -> {
-            // Small adjustment to get the correct tile
-            Point mousePos = SkillTools.cursorPositionAsPoint();
-            mousePos.x = mousePos.x - 0.5f;
-            mousePos.y = mousePos.y - 0.25f;
+        KeyboardConfig.MOUSE_MOVE.value(),
+        innerHero -> {
+          // Small adjustment to get the correct tile
+          Point mousePos = SkillTools.cursorPositionAsPoint();
+          mousePos.x = mousePos.x - 0.5f;
+          mousePos.y = mousePos.y - 0.25f;
 
-            Point heroPos =
-                innerHero
-                    .fetch(PositionComponent.class)
-                    .map(PositionComponent::position)
-                    .orElse(null);
-            if (heroPos == null) return;
-
-            GraphPath<Tile> path = LevelUtils.calculatePath(heroPos, mousePos);
-            // If the path is null or empty, try to find a nearby tile that is accessible and
-            // calculate a path to it
-            if (path == null || path.getCount() == 0) {
-              Tile nearTile =
-                  LevelUtils.tilesInRange(mousePos, 1f).stream()
-                      .filter(tile -> LevelUtils.calculatePath(heroPos, tile.position()) != null)
-                      .findFirst()
-                      .orElse(null);
-              // If no accessible tile is found, abort
-              if (nearTile == null) return;
-              path = LevelUtils.calculatePath(heroPos, nearTile.position());
-            }
-
-            // Stores the path in Hero's PathComponent
-            GraphPath<Tile> finalPath = path;
+          Point heroPos =
             innerHero
-                .fetch(PathComponent.class)
-                .ifPresentOrElse(
-                    pathComponent -> pathComponent.path(finalPath),
-                    () -> innerHero.add(new PathComponent(finalPath)));
-          },
-          false);
+              .fetch(PositionComponent.class)
+              .map(PositionComponent::position)
+              .orElse(null);
+          if (heroPos == null) return;
+
+          GraphPath<Tile> path = LevelUtils.calculatePath(heroPos, mousePos);
+          // If the path is null or empty, try to find a nearby tile that is accessible and
+          // calculate a path to it
+          if (path == null || path.getCount() == 0) {
+            Tile nearTile =
+              LevelUtils.tilesInRange(mousePos, 1f).stream()
+                .filter(tile -> LevelUtils.calculatePath(heroPos, tile.position()) != null)
+                .findFirst()
+                .orElse(null);
+            // If no accessible tile is found, abort
+            if (nearTile == null) return;
+            path = LevelUtils.calculatePath(heroPos, nearTile.position());
+          }
+
+          // Stores the path in Hero's PathComponent
+          GraphPath<Tile> finalPath = path;
+          innerHero
+            .fetch(PathComponent.class)
+            .ifPresentOrElse(
+              pathComponent -> pathComponent.path(finalPath),
+              () -> innerHero.add(new PathComponent(finalPath)));
+        },
+        false);
     }
 
     pc.registerCallback(
-        KeyboardConfig.INVENTORY_OPEN.value(),
-        (e) -> {
-          if (pc.openDialogs()) {
-            return; // do not open inventory if dialogs are open
-          }
+      KeyboardConfig.INVENTORY_OPEN.value(),
+      (e) -> {
+        if (pc.openDialogs()) {
+          return; // do not open inventory if dialogs are open
+        }
 
-          UIComponent uiComponent = e.fetch(UIComponent.class).orElse(null);
-          if (uiComponent != null) {
-            if (uiComponent.dialog() instanceof GUICombination) {
-              InventoryGUI.inHeroInventory = false;
-              e.remove(UIComponent.class);
-            }
-          } else {
-            InventoryGUI.inHeroInventory = true;
-            e.add(new UIComponent(new GUICombination(new InventoryGUI(ic)), true));
-          }
-        },
-        false,
-        true);
-
-    pc.registerCallback(
-        KeyboardConfig.CLOSE_UI.value(),
-        (e) -> {
-          var firstUI =
-              Game.entityStream() // would be nice to directly access HudSystems
-                  // stream (no access to the System object)
-                  .filter(x -> x.isPresent(UIComponent.class))
-                  // find all Entities which have a UIComponent
-                  .map(x -> new Tuple<>(x, x.fetchOrThrow(UIComponent.class)))
-                  // create a tuple to still have access to the UI Entity
-                  .filter(x -> x.b().closeOnUICloseKey())
-                  .max(Comparator.comparingInt(x -> x.b().dialog().getZIndex()))
-                  // find dialog with highest z-Index
-                  .orElse(null);
-          if (firstUI != null) {
+        UIComponent uiComponent = e.fetch(UIComponent.class).orElse(null);
+        if (uiComponent != null) {
+          if (uiComponent.dialog() instanceof GUICombination) {
             InventoryGUI.inHeroInventory = false;
-            firstUI.a().remove(UIComponent.class);
-            if (firstUI.a().componentStream().findAny().isEmpty()) {
-              Game.remove(firstUI.a()); // delete unused Entity
-            }
+            e.remove(UIComponent.class);
           }
-        },
-        false,
-        true);
+        } else {
+          InventoryGUI.inHeroInventory = true;
+          e.add(new UIComponent(new GUICombination(new InventoryGUI(ic)), true));
+        }
+      },
+      false,
+      true);
 
     pc.registerCallback(
-        KeyboardConfig.INTERACT_WORLD.value(),
-        entity -> {
-          UIComponent uiComponent = entity.fetch(UIComponent.class).orElse(null);
-          if (uiComponent != null
-              && uiComponent.dialog() instanceof GUICombination
-              && !InventoryGUI.inHeroInventory) {
-            // if chest or cauldron
-            entity.remove(UIComponent.class);
-          } else {
-            InteractionTool.interactWithClosestInteractable(entity);
+      KeyboardConfig.CLOSE_UI.value(),
+      (e) -> {
+        var firstUI =
+          Game.entityStream() // would be nice to directly access HudSystems
+            // stream (no access to the System object)
+            .filter(x -> x.isPresent(UIComponent.class))
+            // find all Entities which have a UIComponent
+            .map(x -> new Tuple<>(x, x.fetchOrThrow(UIComponent.class)))
+            // create a tuple to still have access to the UI Entity
+            .filter(x -> x.b().closeOnUICloseKey())
+            .max(Comparator.comparingInt(x -> x.b().dialog().getZIndex()))
+            // find dialog with highest z-Index
+            .orElse(null);
+        if (firstUI != null) {
+          InventoryGUI.inHeroInventory = false;
+          firstUI.a().remove(UIComponent.class);
+          if (firstUI.a().componentStream().findAny().isEmpty()) {
+            Game.remove(firstUI.a()); // delete unused Entity
           }
-        },
-        false);
+        }
+      },
+      false,
+      true);
+
+    pc.registerCallback(
+      KeyboardConfig.INTERACT_WORLD.value(),
+      entity -> {
+        UIComponent uiComponent = entity.fetch(UIComponent.class).orElse(null);
+        if (uiComponent != null
+          && uiComponent.dialog() instanceof GUICombination
+          && !InventoryGUI.inHeroInventory) {
+          // if chest or cauldron
+          entity.remove(UIComponent.class);
+        } else {
+          InteractionTool.interactWithClosestInteractable(entity);
+        }
+      },
+      false);
 
     // skills
     pc.registerCallback(
-        KeyboardConfig.FIRST_SKILL.value(), heroEntity -> HERO_SKILL.execute(heroEntity));
+      KeyboardConfig.FIRST_SKILL.value(), heroEntity -> HERO_SKILL.execute(heroEntity));
 
     return hero;
   }
 
   private static void registerMovement(PlayerComponent pc, int key, Vector2 direction) {
     pc.registerCallback(
-        key,
-        entity -> {
-          VelocityComponent vc = entity.fetchOrThrow(VelocityComponent.class);
-          if (direction.x != 0) {
-            vc.currentXVelocity(direction.x * vc.xVelocity());
-          }
-          if (direction.y != 0) {
-            vc.currentYVelocity(direction.y * vc.yVelocity());
-          }
-          // Abort any path finding on own movement
-          if (ENABLE_MOUSE_MOVEMENT) {
-            entity.fetch(PathComponent.class).ifPresent(PathComponent::clear);
-          }
-        });
+      key,
+      entity -> {
+        VelocityComponent vc = entity.fetchOrThrow(VelocityComponent.class);
+        if (direction.x != 0) {
+          vc.currentXVelocity(direction.x * vc.xVelocity());
+        }
+        if (direction.y != 0) {
+          vc.currentYVelocity(direction.y * vc.yVelocity());
+        }
+        // Abort any path finding on own movement
+        if (ENABLE_MOUSE_MOVEMENT) {
+          entity.fetch(PathComponent.class).ifPresent(PathComponent::clear);
+        }
+      });
   }
 
   private static void registerMouseLeftClick(PlayerComponent pc) {
     if (!Objects.equals(
-        KeyboardConfig.MOUSE_FIRST_SKILL.value(), KeyboardConfig.MOUSE_INTERACT_WORLD.value())) {
+      KeyboardConfig.MOUSE_FIRST_SKILL.value(), KeyboardConfig.MOUSE_INTERACT_WORLD.value())) {
       pc.registerCallback(
-          KeyboardConfig.MOUSE_FIRST_SKILL.value(), hero -> HERO_SKILL.execute(hero), true, false);
+        KeyboardConfig.MOUSE_FIRST_SKILL.value(), hero -> HERO_SKILL.execute(hero), true, false);
       pc.registerCallback(
-          KeyboardConfig.MOUSE_INTERACT_WORLD.value(),
-          HeroFactory::handleInteractWithClosestInteractable,
-          false,
-          false);
+        KeyboardConfig.MOUSE_INTERACT_WORLD.value(),
+        HeroFactory::handleInteractWithClosestInteractable,
+        false,
+        false);
     } else {
       // If interact and skill are the same, only one callback can be used, so we only interact if
       // interaction is possible
       pc.registerCallback(
-          KeyboardConfig.MOUSE_INTERACT_WORLD.value(),
-          (hero) -> {
-            Point mousePosition = SkillTools.cursorPositionAsPoint();
-            Entity interactable = checkIfClickOnInteractable(mousePosition).orElse(null);
-            if (interactable == null || !interactable.isPresent(InteractionComponent.class)) {
-              HERO_SKILL.execute(hero);
-            } else {
-              handleInteractWithClosestInteractable(hero);
-            }
-          },
-          false,
-          false);
+        KeyboardConfig.MOUSE_INTERACT_WORLD.value(),
+        (hero) -> {
+          Point mousePosition = SkillTools.cursorPositionAsPoint();
+          Entity interactable = checkIfClickOnInteractable(mousePosition).orElse(null);
+          if (interactable == null || !interactable.isPresent(InteractionComponent.class)) {
+            HERO_SKILL.execute(hero);
+          } else {
+            handleInteractWithClosestInteractable(hero);
+          }
+        },
+        false,
+        false);
     }
   }
 
@@ -355,14 +357,14 @@ public final class HeroFactory {
   }
 
   private static Optional<Entity> checkIfClickOnInteractable(Point pos)
-      throws MissingComponentException {
+    throws MissingComponentException {
     pos.x = pos.x - 0.5f;
     pos.y = pos.y - 0.25f;
     Tile mouseTile = Game.tileAT(pos);
     if (mouseTile == null) return Optional.empty();
 
     return Game.entityAtTile(mouseTile)
-        .filter(e -> e.isPresent(InteractionComponent.class))
-        .findFirst();
+      .filter(e -> e.isPresent(InteractionComponent.class))
+      .findFirst();
   }
 }

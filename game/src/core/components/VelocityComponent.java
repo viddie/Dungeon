@@ -2,9 +2,14 @@ package core.components;
 
 import core.Component;
 import core.Entity;
+import core.utils.Point;
 import dsl.annotation.DSLType;
 import dsl.annotation.DSLTypeMember;
+
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Allows the associated entity to move in the dungeon.
@@ -41,6 +46,7 @@ public final class VelocityComponent implements Component {
   private Consumer<Entity> onWallHit;
   private boolean canEnterOpenPits;
   private boolean hasNoClip = false;
+  private Function<Point, List<Point>> colliderCorners = Arrays::asList;
 
   /**
    * Create a new VelocityComponent with the given configuration.
@@ -273,5 +279,12 @@ public final class VelocityComponent implements Component {
    */
   public boolean hasNoClip() {
     return this.hasNoClip;
+  }
+
+  public void colliderCorners(Function<Point, List<Point>> supplier) {
+    this.colliderCorners = supplier;
+  }
+  public Function<Point, List<Point>> colliderCorners() {
+    return this.colliderCorners;
   }
 }

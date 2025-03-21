@@ -18,11 +18,6 @@ public class Constants {
     return point.add(X_OFFSET, Y_OFFSET);
   }
 
-  /**
-   * Adds 0.5 to x and 0.25 to y
-   * @param point the point to add the offset to
-   * @return a new Point with the offset applied
-   */
   public static Point ioffset(Point point){
     return new Point(point.x - X_OFFSET, point.y - Y_OFFSET);
   }
@@ -34,6 +29,10 @@ public class Constants {
    */
   public static Point toffset(Point point){
     return point.add(X_OFFSET_TILE, Y_OFFSET_TILE);
+  }
+
+  public static Point itoffset(Point point){
+    return new Point(point.x - X_OFFSET_TILE, point.y - Y_OFFSET_TILE);
   }
 
 }

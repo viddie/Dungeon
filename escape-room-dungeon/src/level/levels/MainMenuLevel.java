@@ -1,30 +1,18 @@
 package level.levels;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import components.Deco;
-import components.DecoFactory;
-import core.Entity;
+import entities.Deco;
+import entities.DecoFactory;
 import core.Game;
-import core.components.DrawComponent;
-import core.components.PositionComponent;
-import core.components.states.AnimationConfig;
 import core.level.elements.tile.ExitTile;
 import core.level.utils.DesignLabel;
 import core.level.utils.LevelElement;
-import core.systems.CameraSystem;
 import core.utils.Point;
 import core.utils.components.draw.DepthLayer;
-import core.utils.components.path.SimpleIPath;
 import entities.DrawTextFactory;
 import entities.TeleporterFactory;
 import level.EscapeRoomLevel;
 import level.utils.LevelLabel;
-import utils.Constants;
 import utils.GameState;
 
 import java.util.Map;
@@ -83,8 +71,11 @@ public class MainMenuLevel extends EscapeRoomLevel {
 
 //    Game.add(DecoFactory.createDeco(new Point(9f, 8f), Deco.Tileset2));
 //    Game.add(DecoFactory.createDeco(new Point(1f, 1f), Deco.Tileset2));
-    Game.add(DecoFactory.createDeco(new Point(19, 9), Deco.SignBig, DepthLayer.Player.depth()));
-    Game.add(DecoFactory.createDeco(new Point(9, 9), Deco.BookshelfLarge, DepthLayer.Player.depth()));
+    Game.add(DecoFactory.createDeco(new Point(19, 9), Deco.SignBig, DepthLayer.Player.depth(), new Point(2, 0.5f)));
+//    Game.add(DecoFactory.createDeco(new Point(8, 9), Deco.BookshelfLarge, DepthLayer.Player.depth(), new Point(4, 1)));
+//    Game.add(DecoFactory.createDeco(new Point(10, 9), Deco.BookshelfLarge, DepthLayer.Player.depth()));
+    Game.add(DecoFactory.createDeco(new Point(8, 9), Deco.BookshelfLarge, DepthLayer.Player.depth(), new Point(2, 1)));
+    Game.add(DecoFactory.createDeco(new Point(10, 9), Deco.BookshelfLarge, DepthLayer.Player.depth(), new Point(2, 1)));
   }
 
   @Override

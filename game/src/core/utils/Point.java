@@ -161,4 +161,19 @@ public final class Point {
   public double distance(Point otherPos) {
     return Math.sqrt(Math.pow(otherPos.x - x, 2) + Math.pow(otherPos.y - y, 2));
   }
+
+  /**
+   * The angle of the vector to the other point
+   * @param other The other point
+   * @return The angle in degrees defined by the vector to the other point
+   */
+  public float angle(Point other) {
+    float dx = other.x - this.x;
+    float dy = other.y - this.y;
+    return (float) Math.toDegrees(Math.atan2(dy, dx));
+  }
+
+  public Point copy(){
+    return new Point(this);
+  }
 }

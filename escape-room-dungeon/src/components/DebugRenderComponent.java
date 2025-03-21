@@ -11,6 +11,7 @@ public class DebugRenderComponent implements Component {
 
   public Color color = new Color(1, 1, 1, 0.5f);
   public boolean drawPosition = false;
+  public boolean drawCollider = false;
   /**
    * Set to >0 if a circle should be rendered, =0 if disabled
    */
@@ -28,6 +29,10 @@ public class DebugRenderComponent implements Component {
 
   public DebugRenderComponent drawPosition(boolean drawPosition){
     this.drawPosition = drawPosition;
+    return this;
+  }
+  public DebugRenderComponent drawCollider(boolean drawCollider){
+    this.drawCollider = drawCollider;
     return this;
   }
 }

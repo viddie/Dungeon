@@ -221,6 +221,7 @@ public abstract class DamageProjectile implements Consumer<Entity> {
     Point aimedOn = new Point(selectionFunction.get());
     Point targetPoint =
         SkillTools.calculateLastPositionInRange(startPoint, aimedOn, projectileRange);
+    projectile.fetchOrThrow(PositionComponent.class).rotation(startPoint.angle(aimedOn));
 
     // Calculate the velocity of the projectile
     Point velocity = SkillTools.calculateVelocity(startPoint, targetPoint, projectileSpeed);

@@ -308,5 +308,15 @@ public abstract class Tile {
     S,
     /** The tile is in the west direction. */
     W,
+    ;
+
+    public Direction invert(){
+      return switch(this){
+        case N -> S;
+        case S -> N;
+        case E -> W;
+        case W -> E;
+      };
+    }
   }
 }

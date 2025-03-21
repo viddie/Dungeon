@@ -15,6 +15,8 @@ import core.utils.components.MissingComponentException;
 import core.utils.components.draw.CoreAnimationPriorities;
 import core.utils.components.draw.CoreAnimations;
 
+import java.util.List;
+
 /**
  * The VelocitySystem controls the movement of the entities in the game.
  *
@@ -71,19 +73,17 @@ public final class VelocitySystem extends System {
     boolean canEnterOpenPits =
         vsd.e.fetch(VelocityComponent.class).map(VelocityComponent::canEnterOpenPits).orElse(false);
     try {
-      if (this.isAccessible(Game.tileAT(new Point(newX, newY)), canEnterOpenPits) || vsd.vc.hasNoClip()) {
+      if (canEnter(vsd, new Point(newX, newY), canEnterOpenPits) || vsd.vc.hasNoClip()) {
         // no change in direction
         vsd.pc.position(new Point(newX, newY));
         this.movementAnimation(vsd);
-      } else if (this.isAccessible(
-          Game.tileAT(new Point(newX, vsd.pc.position().y)), canEnterOpenPits)) {
+      } else if (canEnter(vsd, new Point(newX, vsd.pc.position().y), canEnterOpenPits)) {
         // redirect not moving along y
         hitWall = true;
         vsd.pc.position(new Point(newX, vsd.pc.position().y));
         this.movementAnimation(vsd);
         vsd.vc.currentYVelocity(0.0f);
-      } else if (this.isAccessible(
-          Game.tileAT(new Point(vsd.pc.position().x, newY)), canEnterOpenPits)) {
+      } else if (canEnter(vsd, new Point(vsd.pc.position().x, newY), canEnterOpenPits)) {
         // redirect not moving along x
         hitWall = true;
         vsd.pc.position(new Point(vsd.pc.position().x, newY));
@@ -108,6 +108,11 @@ public final class VelocitySystem extends System {
       vsd.pc().position(PositionComponent.ILLEGAL_POSITION);
       LOGGER.warning("Entity " + e + " is out of bound");
     }
+  }
+
+  private boolean canEnter(VSData vsd, Point pos, boolean canEnterOpenPits){
+    List<Point> corners = vsd.vc.colliderCorners().apply(pos);
+    return corners.stream().allMatch(p -> isAccessible(Game.tileAT(p), canEnterOpenPits));
   }
 
   /**

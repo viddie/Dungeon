@@ -55,7 +55,7 @@ public class Painter {
    * @param texturePath Path to the texture to draw.
    * @param config Painting configuration.
    */
-  public void draw(final Point position, final Sprite sprite, final PainterConfig config) {
+  public void draw(final Point position, final Sprite sprite, final PainterConfig config, float rotation) {
     float realX = position.x + config.xOffset(); // including the drawOffset
     float realY = position.y + config.yOffset(); // including the drawOffset
     if (CameraSystem.isPointInFrustum(realX, realY)) {
@@ -64,6 +64,8 @@ public class Painter {
       // where to draw the sprite
 
       sprite.setPosition(realX, realY);
+      sprite.setOriginCenter();
+      sprite.setRotation(rotation);
 
       // tint the sprite
       if (config.tintColor() != -1) {
@@ -77,5 +79,8 @@ public class Painter {
       // draw sprite
       sprite.draw(batch);
     }
+  }
+  public void draw(final Point position, final Sprite sprite, final PainterConfig config) {
+    draw(position, sprite, config, 0);
   }
 }

@@ -3,13 +3,10 @@ package starter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Music;
+import components.DebugRenderComponent;
 import contrib.components.InventoryComponent;
 import contrib.components.UIComponent;
 import contrib.configuration.KeyboardConfig;
-import contrib.crafting.Crafting;
-import contrib.entities.HeroFactory;
-import contrib.entities.MiscFactory;
-import contrib.entities.MonsterFactory;
 import contrib.hud.DialogUtils;
 import contrib.hud.elements.GUICombination;
 import contrib.hud.inventory.InventoryGUI;
@@ -18,30 +15,22 @@ import contrib.item.concreteItem.ItemPotionHealth;
 import contrib.systems.*;
 import contrib.utils.components.Debugger;
 import contrib.utils.components.interaction.InteractionTool;
-import contrib.utils.components.item.ItemGenerator;
 import contrib.utils.components.skill.SkillTools;
 import core.Entity;
 import core.Game;
 import core.System;
 import core.components.PlayerComponent;
 import core.game.ECSManagment;
-import core.game.GameLoop;
 import core.level.generator.postGeneration.WallGenerator;
 import core.level.generator.randomwalk.RandomWalkGenerator;
-import core.systems.DrawSystem;
-import core.systems.LevelSystem;
-import core.utils.Point;
+import core.systems.*;
 import core.utils.Tuple;
 import core.utils.components.path.SimpleIPath;
 import entities.BurningFireballSkill;
+import entities.HeroFactory;
 import hud.DebugOverlay;
-import item.concreteItem.ItemPotionWater;
-import item.concreteItem.ItemResourceBerry;
-import item.concreteItem.ItemResourceMushroomRed;
 
-import java.io.BufferedOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.Comparator;
 import java.util.logging.*;
 
@@ -138,6 +127,11 @@ public class EscapeRoomDungeon {
 
   private static void createHero() throws IOException {
     Entity hero = HeroFactory.newHero();
+
+    DebugRenderComponent drc = new DebugRenderComponent().drawCollider(true);
+//    drc.customRender = (p) -> DebugOverlay.renderCircle(p.position().add(0, -0.25f), 0.1f);
+    hero.add(drc);
+
     PlayerComponent pc = hero.fetchOrThrow(PlayerComponent.class);
     //Overwrite close UI and interact binds
     pc.registerCallback(KeyboardConfig.CLOSE_UI.value(), EscapeRoomDungeon::onPressedCloseUI, false, true);
@@ -168,26 +162,32 @@ public class EscapeRoomDungeon {
   }
 
   private static void createSystems() {
-    Game.add(new ProjectileSystem());
-    Game.add(new CollisionSystem());
-    Game.add(new HudSystem());
+    LevelSystem levelSystem = Game.getSystem(LevelSystem.class);
+    Game.removeAllSystems();
 
-    Game.add(EventScheduler.getInstance());
+    Game.add(new PositionSystem()); //Update
+    Game.add(new CameraSystem()); //Update
+    Game.add(new VelocitySystem()); //Update
+    Game.add(new PlayerSystem()); //Update
 
-    //Replace with my own DrawSystem
-//    Game.remove(DrawSystem.class);
-//    Game.add(new DrawSystem2());
-//    Game.getSystem(LevelSystem.class).painter(DrawSystem2.painter());
+    Game.add(new ProjectileSystem()); //Update
+    Game.add(new CollisionSystem()); //Update
+    Game.add(new VicinitySystem()); //Update
 
-    Game.add(new TickableSystem());
-    Game.add(new LeverSystem());
-    Game.add(new DrawTextSystem());
-    Game.add(new LevelEditorSystem());
-    Game.add(new VicinitySystem());
-    Game.add(new TransitionSystem());
-    Game.add(new KeypadSystem());
-    Game.add(new ShowImageSystem());
-    Game.add(new DebugRenderSystem());
+    Game.add(new LeverSystem()); //Update
+    Game.add(new LevelEditorSystem()); //Update
+    Game.add(new KeypadSystem()); //Update
+    Game.add(EventScheduler.getInstance()); //Update
+
+
+    Game.add(levelSystem); //Render: Always on bottom
+    Game.add(new DrawSystem()); //Render
+    Game.add(new DrawTextSystem()); //Render
+    Game.add(new DebugRenderSystem()); //Render
+    Game.add(new TickableSystem()); //Update/Render (?)
+    Game.add(new HudSystem()); //Render
+    Game.add(new ShowImageSystem()); //Render
+    Game.add(new TransitionSystem()); //Render
   }
 
   private static void enableCheats() {
@@ -205,7 +205,7 @@ public class EscapeRoomDungeon {
             } else {
               BurningFireballSkill.DAMAGE_AMOUNT = 2;
             }
-            HeroFactory.setHeroSkillCallback(
+            entities.HeroFactory.setHeroSkillCallback(
               new BurningFireballSkill(
                 SkillTools::cursorPositionAsPoint)); // Update the current hero skill
             DialogUtils.showTextPopup(

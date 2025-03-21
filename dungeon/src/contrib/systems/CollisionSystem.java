@@ -3,10 +3,13 @@ package contrib.systems;
 import contrib.components.CollideComponent;
 import core.Entity;
 import core.System;
+import core.components.PositionComponent;
 import core.level.Tile;
+import core.utils.Point;
+import core.utils.Tuple;
 import core.utils.components.MissingComponentException;
-import java.util.HashMap;
-import java.util.Map;
+
+import java.util.*;
 import java.util.stream.Stream;
 
 /**
@@ -106,35 +109,22 @@ public final class CollisionSystem extends System {
 
     if (checkForCollision(cdata.ea, cdata.a, cdata.eb, cdata.b)) {
       // a collision is currently happening
+      Tile.Direction d = checkDirectionOfCollision(cdata.ea, cdata.a, cdata.eb, cdata.b);
       if (!collisions.containsKey(key)) {
         // a new collision should call the onEnter on both entities
         collisions.put(key, cdata);
-        Tile.Direction d = checkDirectionOfCollision(cdata.ea, cdata.a, cdata.eb, cdata.b);
         cdata.a.onEnter(cdata.ea, cdata.eb, d);
-        cdata.b.onEnter(cdata.eb, cdata.ea, inverse(d));
+        cdata.b.onEnter(cdata.eb, cdata.ea, d.invert());
       }
+      cdata.a.onMove(cdata.ea, cdata.eb, d);
+      cdata.b.onMove(cdata.eb, cdata.ea, d.invert());
     } else if (collisions.remove(key) != null) {
       // a collision was happening and the two entities are no longer colliding, on Leave
       // called once
       Tile.Direction d = checkDirectionOfCollision(cdata.ea, cdata.a, cdata.eb, cdata.b);
       cdata.a.onLeave(cdata.ea, cdata.eb, d);
-      cdata.b.onLeave(cdata.eb, cdata.ea, inverse(d));
+      cdata.b.onLeave(cdata.eb, cdata.ea, d.invert());
     }
-  }
-
-  /**
-   * Simple Direction inversion.
-   *
-   * @param d Direction to inverse.
-   * @return The opposite direction.
-   */
-  Tile.Direction inverse(final Tile.Direction d) {
-    return switch (d) {
-      case N -> Tile.Direction.S;
-      case E -> Tile.Direction.W;
-      case S -> Tile.Direction.N;
-      case W -> Tile.Direction.E;
-    };
   }
 
   /**
@@ -158,7 +148,7 @@ public final class CollisionSystem extends System {
   }
 
   /**
-   * Calculates the direction based on a square, can be broken once the hitBoxes are rectangular.
+   * Calculates the direction of a collision.
    *
    * @param h1 WTF? .
    * @param hitBox1 The first hitBox.
@@ -171,21 +161,25 @@ public final class CollisionSystem extends System {
       final CollideComponent hitBox1,
       final Entity h2,
       final CollideComponent hitBox2) {
-    float y = hitBox2.center(h2).y - hitBox1.center(h1).y;
-    float x = hitBox2.center(h2).x - hitBox1.center(h1).x;
-    float rads = (float) Math.atan2(y, x);
-    double piQuarter = Math.PI / 4;
-    if (rads < 3 * -piQuarter) {
-      return Tile.Direction.W;
-    } else if (rads < -piQuarter) {
-      return Tile.Direction.N;
-    } else if (rads < piQuarter) {
-      return Tile.Direction.E;
-    } else if (rads < 3 * piQuarter) {
-      return Tile.Direction.S;
-    } else {
-      return Tile.Direction.W;
-    }
+    Point c1Pos = h1.fetchOrThrow(PositionComponent.class).position().add(hitBox1.offset());
+    Point c1Size = hitBox1.size();
+    Point c2Pos = h2.fetchOrThrow(PositionComponent.class).position().add(hitBox2.offset());
+    Point c2Size = hitBox2.size();
+
+    float x1 = c1Pos.x + c1Size.x - (c2Pos.x);
+    float x2 = c1Pos.x            - (c2Pos.x + c2Size.x);
+    float y1 = c1Pos.y + c1Size.y - (c2Pos.y);
+    float y2 = c1Pos.y            - (c2Pos.y + c2Size.y);
+
+    List<Tuple<Float, Tile.Direction>> directions = new ArrayList<>();
+    //South & North first, so that they take precedence over E/W. This is important for when 2 solids are directly
+    //next to each other horizontally, as with E/W first there would be a seam that you could continuously walk into.
+    directions.add(new Tuple<>(y1, Tile.Direction.S));
+    directions.add(new Tuple<>(y2, Tile.Direction.N));
+    directions.add(new Tuple<>(x1, Tile.Direction.E));
+    directions.add(new Tuple<>(x2, Tile.Direction.W));
+
+    return directions.stream().min(Comparator.comparingDouble(t -> Math.abs(t.a()))).get().b();
   }
 
   private record CollisionKey(int a, int b) {}
