@@ -21,8 +21,8 @@ public class SpritesheetConfig {
   public SpritesheetConfig(int x, int y, int rows, int columns){
     this(16, 16, x, y, rows, columns);
   }
-  public SpritesheetConfig(int rows, int columns){
-    this(16, 16, 0, 0, rows, columns);
+  public SpritesheetConfig(int x, int y){
+    this(16, 16, x, y, 1, 1);
   }
 
   public int spriteWidth() { return spriteWidth; }

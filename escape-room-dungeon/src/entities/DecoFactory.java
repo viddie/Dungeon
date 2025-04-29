@@ -15,7 +15,7 @@ public class DecoFactory {
 
   private static final float COLLIDE_SET_DISTANCE = 0.01f;
 
-  public static Entity createDeco(Point pos, Deco deco, int depth, AnimationConfig config, Point solidCollider){
+  public static Entity createDeco(Point pos, Deco deco, int depth, AnimationConfig config, Point solidCollider, Point colliderOffset){
     Entity entity = new Entity(deco.name());
     entity.add(new PositionComponent(Constants.offset(pos)));
     DrawComponent dc = new DrawComponent(deco.path(), config);
@@ -23,7 +23,8 @@ public class DecoFactory {
     entity.add(dc);
 
     if(solidCollider != null){
-      CollideComponent cc = new CollideComponent(new Point(0, 0), solidCollider.copy(), null, null);
+      colliderOffset = colliderOffset == null ? new Point(0, 0) : colliderOffset;
+      CollideComponent cc = new CollideComponent(colliderOffset, solidCollider.copy(), null, null);
       cc.collideMove(DecoFactory::solidCollide);
       entity.add(cc);
     }
@@ -32,19 +33,22 @@ public class DecoFactory {
     return entity;
   }
   public static Entity createDeco(Point pos, Deco deco, AnimationConfig config){
-    return createDeco(pos, deco, DepthLayer.BackgroundDeco.depth(), config, null);
+    return createDeco(pos, deco, DepthLayer.BackgroundDeco.depth(), config, null, null);
   }
   public static Entity createDeco(Point pos, Deco deco, Point solidCollider){
-    return createDeco(pos, deco, DepthLayer.BackgroundDeco.depth(), deco.config(), solidCollider);
+    return createDeco(pos, deco, DepthLayer.BackgroundDeco.depth(), deco.config(), solidCollider, null);
   }
   public static Entity createDeco(Point pos, Deco deco){
-    return createDeco(pos, deco, DepthLayer.BackgroundDeco.depth(), deco.config(), null);
+    return createDeco(pos, deco, deco.defaultDepth(), deco.config(), deco.defaultCollider(), deco.defaultColliderOffset());
   }
   public static Entity createDeco(Point pos, Deco deco, int depth){
-    return createDeco(pos, deco, depth, deco.config(), null);
+    return createDeco(pos, deco, depth, deco.config(), null, null);
   }
   public static Entity createDeco(Point pos, Deco deco, int depth, Point solidCollider){
-    return createDeco(pos, deco, depth, deco.config(), solidCollider);
+    return createDeco(pos, deco, depth, deco.config(), solidCollider, null);
+  }
+  public static Entity createDeco(Point pos, Deco deco, int depth, Point solidCollider, Point colliderOffset){
+    return createDeco(pos, deco, depth, deco.config(), solidCollider, colliderOffset);
   }
 
   public static void solidCollide(Entity entity, Entity other, Tile.Direction direction){
@@ -58,7 +62,6 @@ public class DecoFactory {
     Point decoSize = decoCollider.size();
     Point otherColliderPos = otherPc.position().add(otherCollider.offset());
     Point otherSize = otherCollider.size();
-//    Point otherPos = otherPc.position();
 
     Point newColliderPos = switch(direction){
       case N -> new Point(otherColliderPos.x, decoColliderPos.y - otherSize.y - COLLIDE_SET_DISTANCE);
@@ -67,18 +70,6 @@ public class DecoFactory {
       case E -> new Point(decoColliderPos.x + decoSize.x + COLLIDE_SET_DISTANCE, otherColliderPos.y);
     };
 
-    Point newPos = newColliderPos.sub(otherCollider.offset());
-
-//    List<String> messages = new ArrayList<>();
-//    messages.add("decoColliderPos: "+decoColliderPos);
-//    messages.add("decoSize: "+decoSize);
-//    messages.add("otherColliderPos: "+otherColliderPos);
-//    messages.add("otherSize: "+otherSize);
-//    messages.add("Current position: "+otherPos);
-//    messages.add("Calculated endpoint: "+newPos);
-//    String joined = String.join("\n\t", messages);
-//    EscapeRoomDungeon.LOGGER.info("Colliding ("+direction.name()+") with entity:\n\t"+joined);
-
-    otherPc.position(newPos);
+    otherPc.position(newColliderPos.sub(otherCollider.offset()));
   }
 }

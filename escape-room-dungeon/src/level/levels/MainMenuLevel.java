@@ -1,16 +1,13 @@
 package level.levels;
 
 import com.badlogic.gdx.graphics.Color;
-import entities.Deco;
-import entities.DecoFactory;
+import entities.*;
 import core.Game;
 import core.level.elements.tile.ExitTile;
 import core.level.utils.DesignLabel;
 import core.level.utils.LevelElement;
 import core.utils.Point;
 import core.utils.components.draw.DepthLayer;
-import entities.DrawTextFactory;
-import entities.TeleporterFactory;
 import level.EscapeRoomLevel;
 import level.utils.LevelLabel;
 import utils.GameState;
@@ -69,13 +66,25 @@ public class MainMenuLevel extends EscapeRoomLevel {
     Game.add(DrawTextFactory.createTextEntity("Tutorial", p.add(0.5f, 2), 1, Color.WHITE, 0, 1));
     Game.add(TeleporterFactory.createTeleporter(p, LevelLabel.Tutorial, null, "-- Tutorial --"));
 
-//    Game.add(DecoFactory.createDeco(new Point(9f, 8f), Deco.Tileset2));
-//    Game.add(DecoFactory.createDeco(new Point(1f, 1f), Deco.Tileset2));
-    Game.add(DecoFactory.createDeco(new Point(19, 9), Deco.SignBig, DepthLayer.Player.depth(), new Point(2, 0.5f)));
-//    Game.add(DecoFactory.createDeco(new Point(8, 9), Deco.BookshelfLarge, DepthLayer.Player.depth(), new Point(4, 1)));
-//    Game.add(DecoFactory.createDeco(new Point(10, 9), Deco.BookshelfLarge, DepthLayer.Player.depth()));
-    Game.add(DecoFactory.createDeco(new Point(8, 9), Deco.BookshelfLarge, DepthLayer.Player.depth(), new Point(2, 1)));
-    Game.add(DecoFactory.createDeco(new Point(10, 9), Deco.BookshelfLarge, DepthLayer.Player.depth(), new Point(2, 1)));
+    Game.add(DecoFactory.createDeco(new Point(19, 9), Deco.SignBig));
+    Game.add(DecoFactory.createDeco(new Point(8, 9), Deco.BookshelfLarge));
+    Game.add(DecoFactory.createDeco(new Point(10, 9), Deco.BookshelfLarge));
+
+    Game.add(DecoFactory.createDeco(new Point(9.75f, 6), Deco.VaseFull));
+    Game.add(DecoFactory.createDeco(new Point(10.25f, 6), Deco.VaseEmpty));
+    Game.add(DecoFactory.createDeco(new Point(10.75f, 6), Deco.VaseFull));
+    Game.add(DecoFactory.createDeco(new Point(11.25f, 6), Deco.VaseEmpty));
+
+    Game.add(DecoFactory.createDeco(new Point(19f, 6), Deco.TreeStump));
+    Game.add(DecoFactory.createDeco(new Point(20f, 6), Deco.Logs));
+    Game.add(DecoFactory.createDeco(new Point(19f, 4), Deco.TreeTrunk));
+    Game.add(DecoFactory.createDeco(new Point(18f, 2), Deco.StonePillar2));
+    Game.add(DecoFactory.createDeco(new Point(19f, 2), Deco.StonePillar1));
+    Game.add(DecoFactory.createDeco(new Point(20f, 2), Deco.StonePillar2, DepthLayer.Player.depth(), null));
+    Game.add(DecoFactory.createDeco(new Point(21f, 2), Deco.StonePillar3));
+    Game.add(DecoFactory.createDeco(new Point(22f, 2), Deco.StonePillar2));
+
+    CompositeDecoFactory.createArch(new Point(9, 2)).forEach(Game::add);
   }
 
   @Override
