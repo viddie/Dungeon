@@ -10,19 +10,19 @@ public class SpritesheetConfig {
   private int columns = 1;
 
   public SpritesheetConfig(){}
-  public SpritesheetConfig(int width, int height, int x, int y, int rows, int columns){
-    this.spriteWidth = width;
-    this.spriteHeight = height;
+  public SpritesheetConfig(int x, int y, int rows, int columns, int width, int height){
     this.x = x;
     this.y = y;
     this.rows = rows;
     this.columns = columns;
+    this.spriteWidth = width;
+    this.spriteHeight = height;
   }
   public SpritesheetConfig(int x, int y, int rows, int columns){
-    this(16, 16, x, y, rows, columns);
+    this(x, y, rows, columns, 16, 16);
   }
   public SpritesheetConfig(int x, int y){
-    this(16, 16, x, y, 1, 1);
+    this(x, y, 1, 1, 16, 16);
   }
 
   public int spriteWidth() { return spriteWidth; }

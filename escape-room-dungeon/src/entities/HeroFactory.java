@@ -57,7 +57,7 @@ public final class HeroFactory {
   private static final IPath HERO_MOVE_LEFT = new SimpleIPath("character/wizard/run_left");
   private static final IPath HERO_MOVE_DOWN = new SimpleIPath("character/wizard/run_down");
   private static final IPath HERO_MOVE_RIGHT = new SimpleIPath("character/wizard/run_right");
-  private static final Vector2 SPEED_HERO = new Vector2(7.5f, 7.5f);
+  private static final Vector2 SPEED_HERO = new Vector2(6.5f, 6.5f);
   private static final int FIREBALL_COOL_DOWN = 500;
   private static final int HERO_HP = 25;
   private static Skill HERO_SKILL =

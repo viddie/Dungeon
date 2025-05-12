@@ -3,19 +3,18 @@ package level;
 import com.badlogic.gdx.graphics.Color;
 import core.level.Tile;
 import core.level.TileLevel;
-import core.level.elements.tile.DoorTile;
-import core.level.elements.tile.ExitTile;
 import core.level.utils.DesignLabel;
 import core.level.utils.LevelElement;
 import core.utils.Point;
+import core.utils.Tuple;
 import core.utils.components.path.IPath;
 import java.io.*;
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 import hud.DebugOverlay;
 import level.levels.*;
-import level.utils.DungeonLoader;
 import level.utils.ITickable;
 import level.utils.LevelLabel;
 import level.utils.MissingLevelException;
@@ -82,6 +81,23 @@ public abstract class EscapeRoomLevel extends TileLevel implements ITickable {
   public Point getPoint(String name){
     return namedPoints.get(name);
   }
+  public int getHighestPointNumber(String baseName){
+    int highestNumber = -1;
+    while(namedPoints.containsKey(baseName + (highestNumber+1))){
+      highestNumber++;
+    }
+    return highestNumber;
+  }
+  public List<Tuple<Point, Integer>> listPoints(String baseName){
+    ArrayList<Tuple<Point, Integer>> toRet = new ArrayList<>();
+    int i = 0;
+    while(namedPoints.containsKey(baseName + i)){
+      toRet.add(new Tuple(getPoint(baseName + i), i));
+      i++;
+    }
+    return toRet;
+  }
+
   public Point getPointOrDefault(String name){
     Point p = namedPoints.get(name);
     return p == null ? new Point(0, 0) : p;

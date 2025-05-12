@@ -1,6 +1,5 @@
 package level.levels;
 
-import com.badlogic.gdx.utils.Array;
 import core.Entity;
 import core.Game;
 import core.level.Tile;
@@ -9,11 +8,13 @@ import core.level.utils.DesignLabel;
 import core.level.utils.LevelElement;
 import core.systems.LevelSystem;
 import core.utils.Point;
+import entities.Deco;
+import entities.DecoFactory;
+import entities.DecoGroup;
 import entities.TriggerFactory;
 import level.EscapeRoomLevel;
 import modules.keypad.KeypadComponent;
 import modules.keypad.KeypadFactory;
-import modules.showimage.ShowImageComponent;
 import modules.showimage.ShowImageFactory;
 import puzzles.floor1.Floor1LeversPuzzle;
 import starter.EscapeRoomDungeon;
@@ -41,7 +42,7 @@ public class Floor1Level extends EscapeRoomLevel {
   protected void onFirstTick() {
     Point pos = getPoint("levers");
     Floor1LeversPuzzle puzzle = new Floor1LeversPuzzle(pos, GameState.playerNumber());
-    puzzle.load();
+    puzzle.load(this);
 
     Point notePos = getPoint("note");
     if(notePos != null){
@@ -74,6 +75,19 @@ public class Floor1Level extends EscapeRoomLevel {
     KeypadComponent kc = keypad.fetchOrThrow(KeypadComponent.class);
     kc.serializeId = "tutorial";
     kc.load();
+
+
+    //Deco
+    if(GameState.playerNumber() == 1){
+
+    } else {
+      listPoints("rubble").forEach(tuple -> Game.add(DecoFactory.createDeco(tuple.a(), DecoGroup.Rubble.getOne(tuple.b()+1))));
+      listPoints("campfire").forEach(tuple -> Game.add(DecoFactory.createDeco(tuple.a(), Deco.Campfire)));
+      listPoints("chains").forEach(tuple -> Game.add(DecoFactory.createDeco(tuple.a(), DecoGroup.Chains.getOne(tuple.b()*2+2))));
+      listPoints("stonepillar").forEach(tuple -> Game.add(DecoFactory.createDeco(tuple.a(), Deco.StonePillar0)));
+      listPoints("fakepillar").forEach(tuple -> Game.add(DecoFactory.createDeco(tuple.a(), DecoGroup.F1FakePillars.getOne(tuple.b()))));
+      Game.add(DecoFactory.createDeco(getPoint("stonealtar"), Deco.StoneAltar));
+    }
   }
 
   @Override

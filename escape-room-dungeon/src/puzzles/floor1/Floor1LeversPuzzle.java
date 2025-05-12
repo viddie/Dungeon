@@ -96,7 +96,7 @@ public class Floor1LeversPuzzle extends PuzzleController implements ITickable {
     List<Point> positions = hintPositions.get(this.player);
     List<String> texts = hintTexts.get(this.player);
     for(int i = 0; i < positions.size(); i++){
-      hints.add(DrawTextFactory.createTextEntity(texts.get(i), positions.get(i).add(this.position), 0.7f, Color.WHITE, 7, 0.3f));
+      hints.add(DrawTextFactory.createTextEntity(texts.get(i), positions.get(i).add(this.position), 0.7f, Color.WHITE, 7.5f, 0.3f));
     }
     hints.forEach(Game::add);
 

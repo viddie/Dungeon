@@ -33,7 +33,7 @@ public class DungeonSaver {
    * lines that only contain Empty Tiles. Finally, it concatenates all this information into a
    * single string and prints it.
    */
-  public static void saveCurrentDungeon() {
+  public static void saveCurrentDungeon(boolean onlyCustomPoints) {
     EscapeRoomLevel level = (EscapeRoomLevel)Game.currentLevel();
 
     // Serialize named points
@@ -43,8 +43,10 @@ public class DungeonSaver {
 //    String dunLayout = reverseLineOrder(compressDungeonLayout(level.printLevel()));
     String dunLayout = reverseLineOrder(level.printLevel());
 
-    String result = namedPoints + "\n"
-      + dunLayout;
+    String result = namedPoints;
+    if(!onlyCustomPoints){
+      result += "\n" + dunLayout;
+    }
 
     System.out.println(result);
 

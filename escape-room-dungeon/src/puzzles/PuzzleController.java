@@ -3,6 +3,7 @@ package puzzles;
 import core.Game;
 import core.System;
 import core.utils.Point;
+import level.EscapeRoomLevel;
 import starter.EscapeRoomDungeon;
 
 import java.util.List;
@@ -19,13 +20,15 @@ public abstract class PuzzleController {
 
   protected Point position;
   protected int player;
+  protected EscapeRoomLevel parent;
 
   public PuzzleController(Point p, int player){
     this.position = p;
     this.player = player;
   }
 
-  public void load(){
+  public void load(EscapeRoomLevel parent){
+    this.parent = parent;
     loadResources(player);
     loadSystems();
     loadEntities(player);

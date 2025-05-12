@@ -114,7 +114,8 @@ public class LevelEditorSystem extends System {
     }
     if (InputHandler.isKeyJustPressed(SAVE_BUTTON)) {
       if (Game.currentLevel() instanceof EscapeRoomLevel) {
-        DungeonSaver.saveCurrentDungeon();
+        boolean isPressingShift = InputHandler.isKeyPressed(Input.Keys.SHIFT_LEFT);
+        DungeonSaver.saveCurrentDungeon(isPressingShift);
       } else {
         java.lang.System.out.println(Game.currentLevel().printLevel());
       }

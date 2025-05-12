@@ -78,11 +78,11 @@ public class MainMenuLevel extends EscapeRoomLevel {
     Game.add(DecoFactory.createDeco(new Point(19f, 6), Deco.TreeStump));
     Game.add(DecoFactory.createDeco(new Point(20f, 6), Deco.Logs));
     Game.add(DecoFactory.createDeco(new Point(19f, 4), Deco.TreeTrunk));
-    Game.add(DecoFactory.createDeco(new Point(18f, 2), Deco.StonePillar2));
-    Game.add(DecoFactory.createDeco(new Point(19f, 2), Deco.StonePillar1));
-    Game.add(DecoFactory.createDeco(new Point(20f, 2), Deco.StonePillar2, DepthLayer.Player.depth(), null));
-    Game.add(DecoFactory.createDeco(new Point(21f, 2), Deco.StonePillar3));
-    Game.add(DecoFactory.createDeco(new Point(22f, 2), Deco.StonePillar2));
+    Game.add(DecoFactory.createDeco(new Point(18f, 2), Deco.StonePillar1));
+    Game.add(DecoFactory.createDeco(new Point(19f, 2), Deco.StonePillar0));
+    Game.add(DecoFactory.createDeco(new Point(20f, 2), Deco.StonePillar1, DepthLayer.Player.depth(), null));
+    Game.add(DecoFactory.createDeco(new Point(21f, 2), Deco.StonePillar2));
+    Game.add(DecoFactory.createDeco(new Point(22f, 2), Deco.StonePillar1));
 
     CompositeDecoFactory.createArch(new Point(9, 2)).forEach(Game::add);
   }

@@ -6,8 +6,7 @@ import core.level.elements.tile.DoorTile;
 import core.level.utils.DesignLabel;
 import core.level.utils.LevelElement;
 import core.utils.Point;
-import entities.DrawTextFactory;
-import entities.TriggerFactory;
+import entities.*;
 import level.EscapeRoomLevel;
 import level.utils.DungeonLoader;
 import level.utils.LevelLabel;
@@ -45,6 +44,24 @@ public class GameCompletedLevel extends EscapeRoomLevel {
     }, (e, o, d) -> {}));
 
     Game.add(DrawTextFactory.createTextEntity("Back to main menu?", getPoint("exit-text"), 1, Color.WHITE, 10f, 1f));
+
+    //Deco
+    for(int i = 0; i < 8; i++){
+      Game.add(DecoFactory.createDeco(getPoint("bushL").add(0, -i), Deco.Bush));
+    }
+    for(int i = 0; i < 8; i++){
+      Game.add(DecoFactory.createDeco(getPoint("bushR").add(0, -i), Deco.Bush));
+    }
+    listPoints("mushrooms").forEach(tuple -> {
+      Game.add(DecoFactory.createDeco(tuple.a(), Deco.Mushrooms0));
+      if(tuple.b() % 2 == 0){
+        Game.add(DecoFactory.createDeco(tuple.a().add(tuple.b() >= 3 ? 1 : -1, 0), Deco.Mushrooms1));
+      }
+    });
+    listPoints("arch").forEach(tuple -> CompositeDecoFactory.createArch(tuple.a()).forEach(Game::add));
+    Game.add(DecoFactory.createDeco(getPoint("bigbush"), Deco.BigBush));
+
+
   }
 
   @Override
