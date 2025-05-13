@@ -78,16 +78,12 @@ public class Floor1Level extends EscapeRoomLevel {
 
 
     //Deco
-    if(GameState.playerNumber() == 1){
-
-    } else {
-      listPoints("rubble").forEach(tuple -> Game.add(DecoFactory.createDeco(tuple.a(), DecoGroup.Rubble.getOne(tuple.b()+1))));
-      listPoints("campfire").forEach(tuple -> Game.add(DecoFactory.createDeco(tuple.a(), Deco.Campfire)));
-      listPoints("chains").forEach(tuple -> Game.add(DecoFactory.createDeco(tuple.a(), DecoGroup.Chains.getOne(tuple.b()*2+2))));
-      listPoints("stonepillar").forEach(tuple -> Game.add(DecoFactory.createDeco(tuple.a(), Deco.StonePillar0)));
-      listPoints("fakepillar").forEach(tuple -> Game.add(DecoFactory.createDeco(tuple.a(), DecoGroup.F1FakePillars.getOne(tuple.b()))));
-      Game.add(DecoFactory.createDeco(getPoint("stonealtar"), Deco.StoneAltar));
-    }
+    listPoints("rubble").forEach(tuple -> Game.add(DecoFactory.createDeco(tuple.a(), DecoGroup.Rubble.getOne(tuple.b()+1))));
+    listPoints("campfire").forEach(tuple -> Game.add(DecoFactory.createDeco(tuple.a(), Deco.Campfire)));
+    listPoints("chains").forEach(tuple -> Game.add(DecoFactory.createDeco(tuple.a(), DecoGroup.Chains.getOne(tuple.b()*2+2))));
+    listPoints("stonepillar").forEach(tuple -> Game.add(DecoFactory.createDeco(tuple.a(), Deco.StonePillar0)));
+    listPoints("fakepillar").forEach(tuple -> Game.add(DecoFactory.createDeco(tuple.a(), DecoGroup.F1FakePillars.getOne(tuple.b()))));
+    Game.add(DecoFactory.createDeco(getPoint("stonealtar"), Deco.StoneAltar));
   }
 
   @Override

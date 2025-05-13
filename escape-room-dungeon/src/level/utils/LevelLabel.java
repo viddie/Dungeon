@@ -9,6 +9,7 @@ public enum LevelLabel {
   Tutorial("tutorial", false, "Tutorial"), //End tile: Back to main menu
   Floor1("floor1", true, "Floor 1"), //To next floor
   Floor2("floor2", true, "Floor 2"), //To next floor
+  Floor3("floor3", true, "Floor 3"), //To next floor
   GameCompleted("game_completed", false, "Game Completed"), //To next floor
   ;
 
@@ -25,7 +26,8 @@ public enum LevelLabel {
     return switch (this){
       case Settings, Tutorial, GameCompleted -> MainMenu;
       case Floor1 -> Floor2;
-      case Floor2 -> GameCompleted;
+      case Floor2 -> Floor3;
+      case Floor3 -> GameCompleted;
       default -> throw new MissingLevelException("No next level");
     };
   }

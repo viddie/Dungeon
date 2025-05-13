@@ -16,6 +16,7 @@ import core.level.elements.tile.DoorTile;
 import core.level.utils.LevelElement;
 import core.systems.LevelSystem;
 import core.utils.Point;
+import core.utils.Tuple;
 import entities.DrawTextFactory;
 import entities.LeverFactory;
 import hud.DebugOverlay;
@@ -36,7 +37,7 @@ public class Floor1LeversPuzzle extends PuzzleController implements ITickable {
 
   private Array<Boolean> resources;
 
-  private static final HashMap<Integer, List<Point>> hintPositions = new HashMap<>();
+  private static final List<Point> hintPositions = new ArrayList<>();
   private static final HashMap<Integer, List<String>> hintTexts = new HashMap<>();
 
   public Floor1LeversPuzzle(Point p, int player) { super(p, player); }
@@ -49,9 +50,8 @@ public class Floor1LeversPuzzle extends PuzzleController implements ITickable {
     }
     resources = GameState.getResourceObject(this.getClass().getSimpleName(), player, defaultResources);
 
-    List<Point> points = Arrays.asList(new Point(18.5f, 9.5f), new Point(25.5f, -3.0f), new Point(18.0f, -17.0f), new Point(-18.0f, -10.0f), new Point(-16.0f, 9.0f));
-    hintPositions.put(1, points);
-    hintPositions.put(2, points);
+    hintPositions.clear();
+    hintPositions.addAll(parent.listPointsRaw("hint"));
 
     String p1Hint1 = "A: 'final' schützt eine Variable vor Änderungen";
     String p1Hint2 = "C = 5";
@@ -93,10 +93,9 @@ public class Floor1LeversPuzzle extends PuzzleController implements ITickable {
     door.close();
 
 
-    List<Point> positions = hintPositions.get(this.player);
     List<String> texts = hintTexts.get(this.player);
-    for(int i = 0; i < positions.size(); i++){
-      hints.add(DrawTextFactory.createTextEntity(texts.get(i), positions.get(i).add(this.position), 0.7f, Color.WHITE, 7.5f, 0.3f));
+    for(int i = 0; i < hintPositions.size(); i++){
+      hints.add(DrawTextFactory.createTextEntity(texts.get(i), hintPositions.get(i), 0.7f, Color.WHITE, 7.5f, 0.3f));
     }
     hints.forEach(Game::add);
 

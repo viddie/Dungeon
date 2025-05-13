@@ -1,6 +1,6 @@
 DEFAULT
 1,2
-note-2:5.0,8.0;note-1:6.0,12.0;door:17.0,10.0;note-0:14.0,8.0;old-door:1.0,1.0;keypad:15.0,13.0;note-6:12.0,12.0;note-5:11.0,8.0;note-4:8.0,8.0;note-3:9.0,12.0
+door:17.0,10.0;campfire0:14.0,10.0;old-door:1.0,1.0;chains3:12.0,13.0;chains2:11.0,13.0;keypad:14.0,13.0;stonepillar1:16.0,12.0;stonepillar0:4.0,12.0;note-2:5.0,8.0;note-1:6.0,12.0;note-0:14.0,8.0;rubble0:1.0,11.0;rubble1:4.0,9.0;rubble2:9.0,8.0;chains1:7.0,13.0;rubble3:11.0,11.0;chains0:1.0,12.0;rubble4:7.0,12.0;rubble5:16.0,8.0;rubble6:20.0,10.0;note-6:12.0,12.0;note-5:11.0,8.0;note-4:8.0,8.0;note-3:9.0,12.0
 SSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
 SSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
 SSSSSSSSSSSSSSSSSSSSSSSSSSSSSS

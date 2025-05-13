@@ -1,6 +1,6 @@
 DEFAULT
 17,3
-keypad:54.0,12.0;note:55.0,9.0;levers:52.0,28.0;keypad-door:52.0,14.0;trigger-test:15.0,18.0
+note:55.0,9.0;keypad:54.0,12.0;stonepillar4:38.0,23.0;rubble10:63.0,21.0;stonepillar3:40.0,32.0;stonepillar2:65.0,33.0;rubble12:64.0,29.0;stonepillar1:70.0,25.0;rubble11:42.0,29.0;stonepillar0:65.0,15.0;chains1:19.0,6.0;chains0:21.0,6.0;hint1:77.0,25.0;hint2:70.0,38.0;trigger-test:52.0,18.0;hint0:69.0,10.0;campfire0:17.0,4.0;stonealtar:54.0,30.0;hint3:36.0,37.0;campfire1:54.0,10.0;hint4:33.0,19.0;chains3:17.0,6.0;chains2:18.0,6.0;chains5:50.0,31.0;chains4:55.0,12.0;chains6:42.0,33.0;keypad-door:52.0,14.0;rubble0:23.0,5.0;rubble1:22.0,2.0;rubble2:20.0,1.0;rubble3:18.0,5.0;fakepillar7:67.0,29.0;levers:52.0,28.0;rubble4:31.0,3.0;fakepillar6:53.0,22.0;rubble5:46.0,3.0;fakepillar5:50.0,23.0;fakepillar4:58.0,32.0;rubble6:53.0,18.0;fakepillar3:61.0,25.0;rubble7:54.0,18.0;fakepillar2:47.0,32.0;rubble8:46.0,22.0;fakepillar1:66.0,20.0;rubble9:57.0,25.0;fakepillar0:42.0,23.0
 SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSWWWSSSSSSSSSSSSSSSSSS
 SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSWEWSSSSSSSSSSSSSSSSSS
 SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSWFWSSSSSSSSSSSSSSSSSS

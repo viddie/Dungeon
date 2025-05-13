@@ -1,6 +1,6 @@
 DEFAULT
 16,2
-door:4.0,9.0;note:10.0,11.0;old-door:16.0,1.0;keypad:6.0,11.0
+door:4.0,9.0;note:10.0,11.0;old-door:16.0,1.0;keypad:6.0,11.0;stonepillar2:11.0,7.0;stonepillar1:10.0,7.0;stonepillar0:9.0,7.0;rubble0:16.0,10.0;rubble1:13.0,8.0;rubble2:7.0,9.0;chains1:13.0,11.0;chains0:14.0,11.0;arch:9.0,11.0
 SSSSSSSSSSSSSSSSSS
 SSSSSSSSSSSSSSSSSS
 SSSSSSSSSSSSSSSSSS

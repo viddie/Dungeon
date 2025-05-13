@@ -97,6 +97,9 @@ public abstract class EscapeRoomLevel extends TileLevel implements ITickable {
     }
     return toRet;
   }
+  public List<Point> listPointsRaw(String baseName){
+    return listPoints(baseName).stream().map(Tuple::a).collect(Collectors.toList());
+  }
 
   public Point getPointOrDefault(String name){
     Point p = namedPoints.get(name);
@@ -324,6 +327,7 @@ public abstract class EscapeRoomLevel extends TileLevel implements ITickable {
       case Tutorial -> new TutorialLevel(layout, designLabel, namedPoints);
       case Floor1 -> new Floor1Level(layout, designLabel, namedPoints);
       case Floor2 -> new Floor2Level(layout, designLabel, namedPoints);
+      case Floor3 -> new Floor3Level(layout, designLabel, namedPoints);
       case GameCompleted -> new GameCompletedLevel(layout, designLabel, namedPoints);
     };
   }

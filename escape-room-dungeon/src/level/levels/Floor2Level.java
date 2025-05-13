@@ -6,6 +6,10 @@ import core.level.elements.tile.DoorTile;
 import core.level.utils.DesignLabel;
 import core.level.utils.LevelElement;
 import core.utils.Point;
+import entities.CompositeDecoFactory;
+import entities.Deco;
+import entities.DecoFactory;
+import entities.DecoGroup;
 import level.EscapeRoomLevel;
 import modules.keypad.KeypadFactory;
 import modules.showimage.ShowImageFactory;
@@ -67,6 +71,15 @@ public class Floor2Level extends EscapeRoomLevel {
         Game.add(ShowImageFactory.createShowImage(pos, "objects/note/note-"+(i+1)+".png", "images/note-horizontal-blank.png", (e, o) ->{}, 1.2f, 1f, sit));
       }
     }
+
+
+    if(getPoint("arch") != null){
+      CompositeDecoFactory.createArch(getPoint("arch")).forEach(Game::add);
+    }
+    listPoints("rubble").forEach(tuple -> Game.add(DecoFactory.createDeco(tuple.a(), DecoGroup.Rubble.getOne(tuple.b()+1))));
+    listPoints("chains").forEach(tuple -> Game.add(DecoFactory.createDeco(tuple.a(), DecoGroup.Chains.getOne(tuple.b()*2+2))));
+    listPoints("stonepillar").forEach(tuple -> Game.add(DecoFactory.createDeco(tuple.a(), DecoGroup.StonePillars.getOne(tuple.b()))));
+    listPoints("campfire").forEach(tuple -> Game.add(DecoFactory.createDeco(tuple.a(), Deco.Campfire)));
   }
 
   @Override

@@ -66,7 +66,7 @@ public class LeverFactory {
             (entity, who) -> {
               LeverComponent lc = entity.fetchOrThrow(LeverComponent.class);
               lc.toggle();
-              entity.fetchOrThrow(DrawComponent.class).sendSignal(lc.isOn() ? "off" : "on");
+              entity.fetchOrThrow(DrawComponent.class).sendSignal(lc.isOn() ? "on" : "off");
               SoundManager.playSound(Sounds.LeverFlipped);
             }));
     return lever;
