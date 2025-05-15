@@ -258,7 +258,7 @@ public class DebugOverlay implements ITickable {
         PositionComponent pc = e.fetchOrThrow(PositionComponent.class);
         Point pos = pc.position();
         DebugOverlay.renderCircle(Constants.itoffset(pos), 0.05f, entityPosColor);
-        DebugOverlay.renderText(Constants.itoffset(pos).add(0, -0.15f), e.name(), entityPosColor, 0.4f);
+//        DebugOverlay.renderText(Constants.itoffset(pos).add(0, -0.15f), e.name(), entityPosColor, 0.4f);
       });
     }
 

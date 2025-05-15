@@ -39,7 +39,7 @@ public class KeypadFactory {
    * @param action The action to execute when the correct digits are entered
    * @return The created keypad entity.
    */
-  public static Entity createKeypad(Point pos, List<Integer> correctDigits, Consumer<Boolean> action, boolean showDigitCount) {
+  public static Entity createKeypad(Point pos, List<Integer> correctDigits, Consumer<Boolean> action, boolean showDigitCount, String serializeId) {
     Entity entity = new Entity("keypad");
 
     entity.add(new PositionComponent(pos.add(Constants.X_OFFSET, Constants.Y_OFFSET)));
@@ -52,14 +52,20 @@ public class KeypadFactory {
     DrawComponent dc = new DrawComponent(sm);
     entity.add(dc);
 
-    entity.add(new KeypadComponent(correctDigits, action, showDigitCount));
+    KeypadComponent kc = new KeypadComponent(correctDigits, action, showDigitCount);
+    kc.serializeId = serializeId;
+    kc.load();
+    if(kc.isUnlocked){
+      dc.sendSignal("open");
+    }
+    entity.add(kc);
+
     entity.add(new VicinityComponent(DEFAULT_INTERACTION_RADIUS, new TintEntityCommand(entity), Game.hero().orElseThrow()));
     entity.add(
       new InteractionComponent(
         DEFAULT_INTERACTION_RADIUS,
         true,
         (e, who) -> {
-          KeypadComponent kc = entity.fetchOrThrow(KeypadComponent.class);
           kc.isUIOpen = true;
           EscapeRoomDungeon.LOGGER.info("Interacted with keypad sprite");
 //          entity.fetchOrThrow(DrawComponent.class).currentAnimation(sic.isUnlocked ? "on" : "off");

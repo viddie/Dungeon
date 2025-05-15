@@ -61,7 +61,7 @@ public class Floor1Level extends EscapeRoomLevel {
     Entity keypad = KeypadFactory.createKeypad(keypadPos, correctDigits, (fromLoad) -> {
       door.open();
       if(!fromLoad) SoundManager.playSound(Sounds.DoorOpened);
-    }, true);
+    }, true, "f1_"+GameState.playerNumber());
     Game.add(keypad);
 
     Game.add(TriggerFactory.createTrigger(getPoint("trigger-test"), 3, 1, (e, o, d) -> {

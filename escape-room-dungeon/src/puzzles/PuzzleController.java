@@ -70,4 +70,8 @@ public abstract class PuzzleController {
       }
     });
   }
+
+  protected Point getPoint(String name){
+    return parent.getPoint(name);
+  }
 }

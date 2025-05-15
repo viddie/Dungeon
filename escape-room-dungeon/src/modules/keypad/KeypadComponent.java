@@ -92,7 +92,9 @@ public class KeypadComponent implements Component, ISavable {
 
   @Override
   public void load() {
+    System.out.println("Trying to load keypad state...");
     if(serializeId == null) return;
+    System.out.println("\tHad serial ID...");
     Array<Integer> empty = new Array<>();
     Array<Integer> digits = GameState.getResourceObject("keypad_"+serializeId, empty);
     digits.forEach(enteredDigits::add);
