@@ -1,5 +1,8 @@
 package level.levels;
 
+import components.VicinityComponent;
+import components.commands.TintEntityCommand;
+import contrib.components.InteractionComponent;
 import core.Entity;
 import core.Game;
 import core.components.PositionComponent;
@@ -9,8 +12,10 @@ import core.level.utils.LevelElement;
 import core.utils.Point;
 import entities.Deco;
 import entities.DecoFactory;
+import entities.SpikesFactory;
 import level.EscapeRoomLevel;
 import modules.keypad.KeypadFactory;
+import modules.showimage.ShowImageComponent;
 import modules.showimage.ShowImageFactory;
 import modules.showimage.ShowImageText;
 import puzzles.floor1.Floor1LeversPuzzle;
@@ -48,22 +53,54 @@ public class Floor3Level extends EscapeRoomLevel {
 
   @Override
   protected void onFirstTick() {
-    Floor3SortingMachinePuzzle f3SortingPuzzle = new Floor3SortingMachinePuzzle(getPoint("sorting-machine"), GameState.playerNumber());
-    f3SortingPuzzle.load(this);
-    TickableSystem.registerInLevel(f3SortingPuzzle);
-
     if(GameState.playerNumber() == 2){
-      for(int i = 0; i < 4; i++){
-        Entity bookshelf = DecoFactory.createDeco(getPoint("bookshelves").add(i*2, 0), Deco.BookshelfLarge);
-        Game.add(bookshelf);
-        if(i == 2) movableBookshelf = bookshelf;
-      }
+      Floor3SortingMachinePuzzle f3SortingPuzzle = new Floor3SortingMachinePuzzle(getPoint("sorting-machine"), GameState.playerNumber());
+      f3SortingPuzzle.load(this);
+      TickableSystem.registerInLevel(f3SortingPuzzle);
 
-      Entity keypad = KeypadFactory.createKeypad(getPoint("bookshelf-keypad"), BOOKSHELF_CODE, (fromLoader) -> {
-        moveBookshelf();
-      }, true, "f3_p2_2");
-      Game.add(keypad);
+    } else {
+      listPoints("bookshelves").forEach((tuple) -> {
+        Point pos = tuple.a();
+        int index = tuple.b();
+        int maxBooks = index == 0 ? 5 : 3;
+        for(int i = 0; i < maxBooks; i++){
+          boolean isKeyBook = index == 2 && i == 2;
+          String img = isKeyBook ? "images/git-book-1.png" : "images/note-horizontal-blank.png";
+          ShowImageText text = isKeyBook ? null : new ShowImageText("In diesem Bücherregal ist\nkein interessantes Buch.");
+          Entity bookshelf = ShowImageFactory.createShowImage(pos.add(i*2, 0), Deco.BookshelfLarge, img, null, 0.95f, 1.25f, text);
+          Game.add(bookshelf);
+        }
+      });
+
+      Point stepStart = getPoint("step-grid-start");
+      Point stepEnd = getPoint("step-grid-end");
+      Point deathPoint = getPoint("step-send");
+      int yDiff = (int)(stepEnd.y - stepStart.y);
+      for(int y = 0; y <= yDiff; y++){
+        for(int x = 0; x < 10; x++){
+          Point spikePos = stepStart.add(x, y);
+//          Game.add(SpikesFactory.createSpikes(spikePos, (x+y) % 2 == 0, true, deathPoint));
+          Game.add(SpikesFactory.createSpikes(spikePos, false, true, deathPoint));
+        }
+      }
     }
+
+    //TODO: change the important book images for both players
+    String importantBookPath = GameState.playerNumber() == 2 ? "images/git-book-1.png" : "images/git-book-1.png";
+    for(int i = 0; i < 4; i++){
+      String img = i == 2 ? importantBookPath : "images/note-horizontal-blank.png";
+      ShowImageText text = i == 2 ? null : new ShowImageText("In diesem Bücherregal ist\nkein interessantes Buch.");
+      Entity bookshelf = ShowImageFactory.createShowImage(getPoint("end-bookshelves").add(i*2, 0), Deco.BookshelfLarge, img, null, 0.95f, 1.25f, text);
+      if(i == 2){
+        movableBookshelf = bookshelf;
+      }
+      Game.add(bookshelf);
+    }
+
+    Entity keypad = KeypadFactory.createKeypad(getPoint("bookshelf-keypad"), BOOKSHELF_CODE, (fromLoader) -> {
+      moveBookshelf();
+    }, true, "f3_p2_2");
+    Game.add(keypad);
   }
 
   @Override
@@ -72,7 +109,7 @@ public class Floor3Level extends EscapeRoomLevel {
 
     bookshelfMoveProgress += 1f / BOOKSHELF_MOVE_FRAMES;
 
-    Point bookshelfPoint = Constants.offset(getPoint("bookshelves"));
+    Point bookshelfPoint = Constants.offset(getPoint("end-bookshelves"));
 
     if(bookshelfMoveProgress < 1f){
       Point startingPos = bookshelfPoint.add(2 * 2, 0);

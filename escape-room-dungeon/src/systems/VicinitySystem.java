@@ -25,8 +25,12 @@ public class VicinitySystem extends System {
 
   public void execute(Data d){
     float radius = d.vc.radius();
+    Point offset = d.vc.offset();
     VicinityComponent.IVicinityCommand command = d.vc.command();
     Entity other = d.vc.watchEntity();
+
+    Point ownPos = d.pc.position();
+    if(offset != null) ownPos = ownPos.add(offset);
 
     Point otherPos = null;
     try{
@@ -35,7 +39,7 @@ public class VicinitySystem extends System {
       return;
     }
 
-    double distance = d.pc.position().distance(otherPos);
+    double distance = ownPos.distance(otherPos);
     boolean isInRange = distance <= radius;
 
     if(d.vc.isInRange() != isInRange){
@@ -47,12 +51,12 @@ public class VicinitySystem extends System {
     }
     d.vc.setInRange(isInRange);
 
-    DebugOverlay.renderCircle(d.pc.position(), radius, isInRange ? Color.GREEN : Color.WHITE);
+    DebugOverlay.renderCircle(ownPos, radius, isInRange ? Color.GREEN : Color.WHITE);
     if(distance <= 10){
 //      DebugOverlay.renderArrow(d.pc.position(), otherPos, Color.WHITE);
 //      DebugOverlay.renderLine(d.pc.position(), otherPos, isInRange ? Color.GREEN : Color.WHITE);
     }
-    DebugOverlay.renderRect(d.pc.position(), 1, 1);
+//    DebugOverlay.renderRect(d.pc.position(), 1, 1);
   }
 
   private VicinitySystem.Data buildDataObject(Entity e){

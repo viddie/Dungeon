@@ -9,6 +9,7 @@ public enum Sounds {
   LeverFlipped("wood-block-1"),
   DoorOpened("creaky-door-open"),
   DoorClosedHard("door-hard-shut"),
+  SpikeTrap("spike-trap"),
   ;
 
   private String path;

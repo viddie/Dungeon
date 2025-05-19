@@ -10,6 +10,8 @@ import core.components.PositionComponent;
 import core.utils.Point;
 import core.utils.components.draw.Animation;
 import core.utils.components.path.SimpleIPath;
+import entities.Deco;
+import entities.DecoFactory;
 import utils.Constants;
 
 import java.util.function.BiConsumer;
@@ -52,5 +54,19 @@ public class ShowImageFactory {
   }
   public static Entity createShowImage(Point pos, String spriteImage, String imagePath) {
     return createShowImage(pos, spriteImage, imagePath, null, 0.85f, INTERACTION_RADIUS, null);
+  }
+
+  public static Entity createShowImage(Point pos, Deco deco, String imagePath, BiConsumer<Entity, Entity> onClose, float maxSize, float radius, ShowImageText text) {
+    Entity entity = DecoFactory.createDeco(pos, deco);
+
+    ShowImageComponent sic = new ShowImageComponent(imagePath);
+    sic.onCloseAction = onClose;
+    sic.maxSize = maxSize;
+    sic.textConfig = text;
+    entity.add(sic);
+
+    entity.add(new VicinityComponent(radius, new TintEntityCommand(entity), Game.hero().orElseThrow()));
+    entity.add(new InteractionComponent(radius, true, (e, who) -> sic.isUIOpen = true));
+    return entity;
   }
 }

@@ -179,6 +179,8 @@ public class EscapeRoomDungeon {
     Game.add(new KeypadSystem()); //Update
     Game.add(EventScheduler.getInstance()); //Update
 
+    Game.add(new SpikesSystem()); //Update
+
 
     Game.add(levelSystem); //Render: Always on bottom
     Game.add(new DrawSystem()); //Render

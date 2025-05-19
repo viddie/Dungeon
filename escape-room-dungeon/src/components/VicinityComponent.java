@@ -5,6 +5,7 @@ import core.Component;
 import core.Entity;
 import core.Game;
 import core.components.DrawComponent;
+import core.utils.Point;
 
 /**
  * This component is used to control bevhavior for two entities getting close to each other.
@@ -14,6 +15,7 @@ public class VicinityComponent implements Component {
   private Entity watchEntity;
   private float radius;
   private IVicinityCommand command;
+  private Point offset;
 
   private boolean inRange = false;
 
@@ -52,6 +54,16 @@ public class VicinityComponent implements Component {
   }
   public void setInRange(boolean inRange) {
     this.inRange = inRange;
+  }
+
+  public void offset(Point offset) {
+    this.offset = offset;
+  }
+  public void offset(float x, float y) {
+    this.offset = new Point(x, y);
+  }
+  public Point offset(){
+    return this.offset;
   }
 
   public interface IVicinityCommand {
