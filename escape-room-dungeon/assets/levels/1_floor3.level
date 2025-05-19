@@ -1,6 +1,6 @@
 DEFAULT
 40,14
-step-send:25.0,13.0;step-grid-end:21.0,23.0;bookshelf-keypad:30.0,28.0;end-bookshelves:21.0,27.0;bookshelves2:25.0,4.0;bookshelves1:9.0,3.0;bookshelves0:10.0,8.0;step-grid-start:21.0,16.0
+step-send:25.0,13.0;step-grid-end:21.0,23.0;bookshelf-keypad:30.0,28.0;end-bookshelves:21.0,27.0;bookshelves2:25.0,4.0;escape-note:30.0,24.0;bookshelves1:9.0,3.0;bookshelves0:10.0,8.0;step-grid-start:21.0,16.0
 WWWSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
 WEWSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
 WWWSSSSSWWWWWWWWWWWWWWWWWWWWWWWWSSSSSSSSSSSSS

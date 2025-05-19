@@ -1,8 +1,5 @@
 package level.levels;
 
-import components.VicinityComponent;
-import components.commands.TintEntityCommand;
-import contrib.components.InteractionComponent;
 import core.Entity;
 import core.Game;
 import core.components.PositionComponent;
@@ -11,34 +8,39 @@ import core.level.utils.DesignLabel;
 import core.level.utils.LevelElement;
 import core.utils.Point;
 import entities.Deco;
-import entities.DecoFactory;
 import entities.SpikesFactory;
 import level.EscapeRoomLevel;
 import modules.keypad.KeypadFactory;
-import modules.showimage.ShowImageComponent;
 import modules.showimage.ShowImageFactory;
 import modules.showimage.ShowImageText;
-import puzzles.floor1.Floor1LeversPuzzle;
 import puzzles.floor3.Floor3SortingMachinePuzzle;
 import systems.TickableSystem;
 import utils.Constants;
 import utils.GameState;
-import utils.SoundManager;
-import utils.Sounds;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 public class Floor3Level extends EscapeRoomLevel {
 
-  private static final List<Integer> BOOKSHELF_CODE = Arrays.asList(1, 2, 3, 4);
+  private static final List<Integer> BOOKSHELF_CODE = Arrays.asList(8, 1, 9, 2);
   private static final int BOOKSHELF_MOVE_FRAMES = 120;
+  private static final int[] STEPPING_PATH = new int[] {
+    1,
+    10, 11, 13, 14, 15, 16, 17, 18, 19,
+    20, 23, 29,
+    30, 31, 32, 33, 35, 36, 37, 39,
+    45, 47, 48, 49,
+    50, 51, 52, 53, 54, 55,
+    60,
+    70
+  };
 
   DoorTile door;
   private Entity movableBookshelf;
   private float bookshelfMoveProgress = -1f;
+  private boolean revealedPassage = false;
 
   /**
    * Constructs a new DevDungeonLevel with the given layout, design label, and custom points.
@@ -63,10 +65,13 @@ public class Floor3Level extends EscapeRoomLevel {
         Point pos = tuple.a();
         int index = tuple.b();
         int maxBooks = index == 0 ? 5 : 3;
+        int startIndex = index == 0 ? 0 : index == 1 ? 5 : 8;
         for(int i = 0; i < maxBooks; i++){
           boolean isKeyBook = index == 2 && i == 2;
-          String img = isKeyBook ? "images/git-book-1.png" : "images/note-horizontal-blank.png";
-          ShowImageText text = isKeyBook ? null : new ShowImageText("In diesem Bücherregal ist\nkein interessantes Buch.");
+          int combinedIndex = startIndex + i;
+          String img = isKeyBook ? "images/sorting-book.png" : "images/fake-books/sorting-book-fake-"+(combinedIndex+1)+".png";
+          ShowImageText text = null;
+//          ShowImageText text = isKeyBook ? null : new ShowImageText("In diesem Bücherregal ist\nkein interessantes Buch.");
           Entity bookshelf = ShowImageFactory.createShowImage(pos.add(i*2, 0), Deco.BookshelfLarge, img, null, 0.95f, 1.25f, text);
           Game.add(bookshelf);
         }
@@ -78,19 +83,24 @@ public class Floor3Level extends EscapeRoomLevel {
       int yDiff = (int)(stepEnd.y - stepStart.y);
       for(int y = 0; y <= yDiff; y++){
         for(int x = 0; x < 10; x++){
+          int index = y*10 + x;
+          boolean isSave = Arrays.stream(STEPPING_PATH).anyMatch((i) -> i == index);
           Point spikePos = stepStart.add(x, y);
-//          Game.add(SpikesFactory.createSpikes(spikePos, (x+y) % 2 == 0, true, deathPoint));
-          Game.add(SpikesFactory.createSpikes(spikePos, false, true, deathPoint));
+          Game.add(SpikesFactory.createSpikes(spikePos, false, !isSave, deathPoint));
         }
       }
     }
 
+    String escapeImage = GameState.playerNumber() == 2 ? "images/path-note.png" : "images/escape-note.png";
+    Entity escapeNote = ShowImageFactory.createShowImage(getPoint("escape-note"), "objects/note/note-sprite.png", escapeImage, null, 1.25f, 1.25f);
+    Game.add(escapeNote);
+
     //TODO: change the important book images for both players
-    String importantBookPath = GameState.playerNumber() == 2 ? "images/git-book-1.png" : "images/git-book-1.png";
+    String importantBookPath = GameState.playerNumber() == 2 ? "images/git-book-1.png" : "images/sorting-book.png";
     for(int i = 0; i < 4; i++){
-      String img = i == 2 ? importantBookPath : "images/note-horizontal-blank.png";
-      ShowImageText text = i == 2 ? null : new ShowImageText("In diesem Bücherregal ist\nkein interessantes Buch.");
-      Entity bookshelf = ShowImageFactory.createShowImage(getPoint("end-bookshelves").add(i*2, 0), Deco.BookshelfLarge, img, null, 0.95f, 1.25f, text);
+      int bookNumber = ((GameState.playerNumber()) % 2) * 4 + i + 1;
+      String img = "images/fake-books/sorting-book-fake-"+bookNumber+".png";
+      Entity bookshelf = ShowImageFactory.createShowImage(getPoint("end-bookshelves").add(i*2, 0), Deco.BookshelfLarge, img, null, 0.95f, 1.25f, null);
       if(i == 2){
         movableBookshelf = bookshelf;
       }
@@ -110,25 +120,34 @@ public class Floor3Level extends EscapeRoomLevel {
     bookshelfMoveProgress += 1f / BOOKSHELF_MOVE_FRAMES;
 
     Point bookshelfPoint = Constants.offset(getPoint("end-bookshelves"));
+    PositionComponent pc = movableBookshelf.fetchOrThrow(PositionComponent.class);
 
     if(bookshelfMoveProgress < 1f){
       Point startingPos = bookshelfPoint.add(2 * 2, 0);
       Point newPos = startingPos.add(0, bookshelfMoveProgress * -1);
-      movableBookshelf.fetchOrThrow(PositionComponent.class).position(newPos);
+      pc.position(newPos);
 
     } else if (bookshelfMoveProgress < 2f){
       Point startingPos = bookshelfPoint.add(2 * 2, -1);
       Point newPos = startingPos.add((bookshelfMoveProgress - 1) * -2, 0);
-      movableBookshelf.fetchOrThrow(PositionComponent.class).position(newPos);
+      pc.position(newPos);
+
+      if(!revealedPassage){
+        revealPassage();
+      }
 
     } else {
       bookshelfMoveProgress = 2f;
       Point endPos = bookshelfPoint.add(2, -1);
-      movableBookshelf.fetchOrThrow(PositionComponent.class).position(endPos);
+      pc.position(endPos);
     }
   }
 
   private void moveBookshelf(){
     bookshelfMoveProgress = 0f;
+  }
+  private void revealPassage(){
+    revealedPassage = true;
+    //Edit level to show passage
   }
 }

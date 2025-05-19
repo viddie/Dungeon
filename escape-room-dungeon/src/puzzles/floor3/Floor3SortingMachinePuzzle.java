@@ -21,7 +21,7 @@ import java.util.List;
 
 public class Floor3SortingMachinePuzzle extends PuzzleController implements ITickable {
 
-  private static final List<Integer> KEYPAD_CODE = Arrays.asList(1, 2, 3, 4, 5);
+  private static final List<Integer> KEYPAD_CODE = Arrays.asList(1, 4, 0, 2, 3, 5);
 
   private DoorTile door;
   private SortingMachine sortingMachine;

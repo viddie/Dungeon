@@ -18,18 +18,18 @@ import java.util.List;
 
 public class SortingMachine implements ITickable {
 
-  private static final int[] SORT_START = new int[] { 6, 3, 1, 7, 2, 5, 4 };
+  private static final int[] SORT_START = new int[] { 8, 6, 3, 1, 7, 2, 5, 4 };
   private static final int FRAMES_PER_STEP = 45;
   private static final int FRAMES_FOR_JUMP = 30;
   private static final List<SortingStrategy> STRATEGIES = new ArrayList<>();
 
   static {
-    STRATEGIES.add(new BubbleSort());
-    STRATEGIES.add(new HeapSort());
-    STRATEGIES.add(new BogoSort());
-    STRATEGIES.add(new QuickSort());
-    STRATEGIES.add(new SelectionSort());
-    STRATEGIES.add(new InsertionSort());
+    STRATEGIES.add(new SelectionSort()); //0
+    STRATEGIES.add(new HeapSort());      //1
+    STRATEGIES.add(new QuickSort());     //2
+    STRATEGIES.add(new BubbleSort());    //3
+    STRATEGIES.add(new BogoSort());      //4
+    STRATEGIES.add(new InsertionSort()); //5
   }
 
   private final Point position;
@@ -44,7 +44,7 @@ public class SortingMachine implements ITickable {
 
   public SortingMachine(Point pos){
     this.position = pos;
-    for(int i = 0; i < 7; i++){
+    for(int i = 0; i < 8; i++){
       int noteNumber = i+1;
       Entity note = new Entity("sort-obj-"+noteNumber);
       note.add(new DrawComponent(new SimpleIPath("objects/note/note-"+noteNumber+".png")));
@@ -64,6 +64,7 @@ public class SortingMachine implements ITickable {
 
   public void startSorting(){
     if(state != State.Waiting) return;
+    if(selectedStrategy >= STRATEGIES.size()) return; //Selected invalid strategy
 
     if(remainingSwaps.size() == 0){
       currentSort = SORT_START.clone();

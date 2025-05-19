@@ -43,7 +43,8 @@ public class SpikesSystem extends System {
 
     PositionComponent heroPc = Game.hero().orElseThrow().fetchOrThrow(PositionComponent.class);
     Point heroPos = heroPc.position();
-    Point spikePos = ssd.pc().position().add(0.5f, 0.5f);
+    Point spikePos = ssd.pc().position();
+//    Point spikePos = ssd.pc().position().add(0.5f, 0.5f);
 
     //Check if player is overlapping
     if(heroPos.distance(spikePos) > 0.5f) return;
