@@ -10,6 +10,8 @@ import entities.*;
 import level.EscapeRoomLevel;
 import level.utils.DungeonLoader;
 import level.utils.LevelLabel;
+import modules.dialog.DialogConfig;
+import modules.dialog.DialogTriggerFactory;
 import systems.TransitionSystem;
 
 import java.util.Map;
@@ -40,10 +42,10 @@ public class GameCompletedLevel extends EscapeRoomLevel {
     Game.add(TriggerFactory.createTrigger(triggerStart, triggerEnd.x - triggerStart.x + 1, 1, (e, o, d) -> {
       TransitionSystem.transition(() -> {
         DungeonLoader.loadLevel(LevelLabel.MainMenu, 0);
-      }, "You escaped!\nThanks for playing!", 0.5f);
+      }, "Erfolgreich Entkommen!\nDanke fürs Spielen!", 0.5f);
     }, (e, o, d) -> {}));
 
-    Game.add(DrawTextFactory.createTextEntity("Back to main menu?", getPoint("exit-text"), 1, Color.WHITE, 10f, 1f));
+//    Game.add(DrawTextFactory.createTextEntity("", getPoint("exit-text"), 1, Color.WHITE, 10f, 1f));
 
     //Deco
     for(int i = 0; i < 8; i++){
@@ -61,7 +63,8 @@ public class GameCompletedLevel extends EscapeRoomLevel {
     listPoints("arch").forEach(tuple -> CompositeDecoFactory.createArch(tuple.a()).forEach(Game::add));
     Game.add(DecoFactory.createDeco(getPoint("bigbush"), Deco.BigBush));
 
-
+    //Dialog
+    Game.add(DialogTriggerFactory.createDialogTrigger(getPoint("dialog0"), 5, 1, new DialogConfig("Du", "Endlich etwas Tageslicht!", "Aber wo ist mein Partner?", "Wahrscheinlich durch einen anderen Ausgang entkommen...", "Nichts wie weg hier!")));
   }
 
   @Override

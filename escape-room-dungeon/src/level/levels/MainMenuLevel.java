@@ -1,6 +1,10 @@
 package level.levels;
 
 import com.badlogic.gdx.graphics.Color;
+import components.VicinityComponent;
+import components.commands.TintEntityCommand;
+import contrib.components.InteractionComponent;
+import core.Entity;
 import entities.*;
 import core.Game;
 import core.level.elements.tile.ExitTile;
@@ -10,6 +14,9 @@ import core.utils.Point;
 import core.utils.components.draw.DepthLayer;
 import level.EscapeRoomLevel;
 import level.utils.LevelLabel;
+import modules.dialog.DialogConfig;
+import modules.dialog.DialogSystem;
+import modules.dialog.DialogTriggerFactory;
 import utils.GameState;
 
 import java.util.Map;
@@ -55,6 +62,8 @@ public class MainMenuLevel extends EscapeRoomLevel {
       Game.add(DrawTextFactory.createTextEntity(continueText, p.add(0.5f, 1.35f), 0.5f, Color.LIGHT_GRAY, 0, 1));
     }
     Game.add(TeleporterFactory.createTeleporter(p, levelContinue, null, levelContinue.displayName, 1, 2, disable2));
+//    Game.add(DialogTriggerFactory.createDialogTrigger(p, 1, 1, new DialogConfig("Ich", "Hmmm, was haben wir denn hier?", "Das sieht aber komisch aus...")));
+
 
     p = getPoint("settings");
     Game.add(DrawTextFactory.createTextEntity("Einstellungen", p.add(0.5f, 2), 1, Color.WHITE, 0, 1));
@@ -66,25 +75,40 @@ public class MainMenuLevel extends EscapeRoomLevel {
     Game.add(DrawTextFactory.createTextEntity("Tutorial", p.add(0.5f, 2), 1, Color.WHITE, 0, 1));
     Game.add(TeleporterFactory.createTeleporter(p, LevelLabel.Tutorial, null, "-- Tutorial --"));
 
-    Game.add(DecoFactory.createDeco(new Point(19, 9), Deco.SignBig));
-    Game.add(DecoFactory.createDeco(new Point(8, 9), Deco.BookshelfLarge));
-    Game.add(DecoFactory.createDeco(new Point(10, 9), Deco.BookshelfLarge));
+    Entity deco;
+    Game.add(deco = DecoFactory.createDeco(getPoint("sign"), Deco.SignBig));
+    deco.add(new VicinityComponent(1.5f, new TintEntityCommand(deco)));
+    deco.fetchOrThrow(VicinityComponent.class).offset(0.5f, 0);
+    InteractionComponent ic = new InteractionComponent(1.5f, true, (e, o) -> {
+      DialogSystem.startDialog(new DialogConfig("-----", "Dieses Spiel soll zu zweit gespielt werden.", "Es ist ein asynchroner multiplayer, das heißt, dass ihr euch gegenseitig nicht sehen werdet im Spiel.", "Zu beginn wählt ihr, wer von euch Spieler 1 und wer Spieler 2 sein möchte.", "Die Puzzle sind aufeinander abgestimmt, sodass ihr zusammen arbeiten müsst, um sie lösen zu können!"));
+    });
+    ic.offset(new Point(0.5f, 0));
+    deco.add(ic);
 
-    Game.add(DecoFactory.createDeco(new Point(9.75f, 6), Deco.VaseFull));
-    Game.add(DecoFactory.createDeco(new Point(10.25f, 6), Deco.VaseEmpty));
-    Game.add(DecoFactory.createDeco(new Point(10.75f, 6), Deco.VaseFull));
-    Game.add(DecoFactory.createDeco(new Point(11.25f, 6), Deco.VaseEmpty));
 
-    Game.add(DecoFactory.createDeco(new Point(19f, 6), Deco.TreeStump));
-    Game.add(DecoFactory.createDeco(new Point(20f, 6), Deco.Logs));
-    Game.add(DecoFactory.createDeco(new Point(19f, 4), Deco.TreeTrunk));
-    Game.add(DecoFactory.createDeco(new Point(18f, 2), Deco.StonePillar1));
-    Game.add(DecoFactory.createDeco(new Point(19f, 2), Deco.StonePillar0));
-    Game.add(DecoFactory.createDeco(new Point(20f, 2), Deco.StonePillar1, DepthLayer.Player.depth(), null));
-    Game.add(DecoFactory.createDeco(new Point(21f, 2), Deco.StonePillar2));
-    Game.add(DecoFactory.createDeco(new Point(22f, 2), Deco.StonePillar1));
+//    Game.add(DecoFactory.createDeco(new Point(8, 9), Deco.BookshelfLarge));
+//    Game.add(DecoFactory.createDeco(new Point(10, 9), Deco.BookshelfLarge));
+//
+//    Game.add(DecoFactory.createDeco(new Point(9.75f, 6), Deco.VaseFull));
+//    Game.add(DecoFactory.createDeco(new Point(10.25f, 6), Deco.VaseEmpty));
+//    Game.add(DecoFactory.createDeco(new Point(10.75f, 6), Deco.VaseFull));
+//    Game.add(DecoFactory.createDeco(new Point(11.25f, 6), Deco.VaseEmpty));
+//
+//    Game.add(DecoFactory.createDeco(new Point(19f, 6), Deco.TreeStump));
+//    Game.add(DecoFactory.createDeco(new Point(20f, 6), Deco.Logs));
+//    Game.add(DecoFactory.createDeco(new Point(19f, 4), Deco.TreeTrunk));
+//    Game.add(DecoFactory.createDeco(new Point(18f, 2), Deco.StonePillar1));
+//    Game.add(DecoFactory.createDeco(new Point(19f, 2), Deco.StonePillar0));
+//    Game.add(DecoFactory.createDeco(new Point(20f, 2), Deco.StonePillar1, DepthLayer.Player.depth(), null));
+//    Game.add(DecoFactory.createDeco(new Point(21f, 2), Deco.StonePillar2));
+//    Game.add(DecoFactory.createDeco(new Point(22f, 2), Deco.StonePillar1));
+//
+//    CompositeDecoFactory.createArch(new Point(9, 2)).forEach(Game::add);
 
-    CompositeDecoFactory.createArch(new Point(9, 2)).forEach(Game::add);
+    listPoints("rubble").forEach(tuple -> Game.add(DecoFactory.createDeco(tuple.a(), DecoGroup.Rubble.getOne(tuple.b()))));
+    listPoints("chains").forEach(tuple -> Game.add(DecoFactory.createDeco(tuple.a(), DecoGroup.Chains.getOne(tuple.b()*2+2))));
+    listPoints("campfire").forEach(tuple -> Game.add(DecoFactory.createDeco(tuple.a(), Deco.Campfire)));
+    listPoints("bookshelf").forEach(tuple -> Game.add(DecoFactory.createDeco(tuple.a(), Deco.BookshelfLarge)));
   }
 
   @Override

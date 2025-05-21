@@ -13,6 +13,8 @@ import entities.DecoFactory;
 import entities.DecoGroup;
 import entities.TriggerFactory;
 import level.EscapeRoomLevel;
+import modules.dialog.DialogConfig;
+import modules.dialog.DialogTriggerFactory;
 import modules.keypad.KeypadComponent;
 import modules.keypad.KeypadFactory;
 import modules.showimage.ShowImageFactory;
@@ -84,6 +86,27 @@ public class Floor1Level extends EscapeRoomLevel {
     listPoints("stonepillar").forEach(tuple -> Game.add(DecoFactory.createDeco(tuple.a(), Deco.StonePillar0)));
     listPoints("fakepillar").forEach(tuple -> Game.add(DecoFactory.createDeco(tuple.a(), DecoGroup.F1FakePillars.getOne(tuple.b()))));
     Game.add(DecoFactory.createDeco(getPoint("stonealtar"), Deco.StoneAltar));
+
+    //Dialog
+    DialogConfig dialog1 = new DialogConfig();
+    dialog1.addLine("-----", "Die wichtigste Code-Bibliothek... verschwunden. Ohne sie steht unsere gesamte Infrastruktur still. Der Angreifer war clever, aber nicht clever genug - unsere Spurensicherung konnte ihn zurückverfolgen. Ein einsamer Hacker, irgendwo tief in einem alten Bunkersystem, das nur noch als 'der Dungeon' bekannt ist.");
+    dialog1.addLine("-----", "Ihr - das Emergency Response Team - habt den USB-Stick mit der Bibliothek gefunden. Doch bevor ihr entkommen konntet, schnappten die Fallen des Dungeons zu. Jetzt seid ihr gefangen... auf der untersten Ebene.");
+    dialog1.addLine("-----", "Über euch: versiegelte Türen, verschlüsselte Systeme, tödliche Firewalls, vergessene Code-Rätsel. Eure Aufgabe: Kämpft euch nach oben. Etage für Etage. Nur wenn ihr die Herausforderungen meistert und das Dungeon-System überlistet, werdet ihr es lebend an die Oberfläche schaffen - mit der Bibliothek in der Hand.");
+    dialog1.addLine("-----", "...");
+    dialog1.addLine("-----", "Nun wurdest du aber auch noch von deinem Partner getrennt! Ganz allein hier rauszukommen wird aber unmöglich sein...");
+    dialog1.addLine("Du", "Was ein Schlamassel. Ein Glück das wir Funkgeräte mitgenommen haben...");
+    if(GameState.playerNumber() == 1){
+      dialog1.addLine("Du", "*krz* Hallo Partner, hörst du mich? *krz*");
+      dialog1.addLine("Partner", "*krz* Klar und deutlich! *krz*");
+      dialog1.addLine("Du", "*krz* Dann lass uns mal etwas umherschauen. Irgendwie muss es einen Weg hier raus geben! *krz*");
+      dialog1.addLine("Partner", "*krz* Auf gehts! *krz*");
+    } else {
+      dialog1.addLine("Partner", "*krz* Hallo Partner, hörst du mich? *krz*");
+      dialog1.addLine("Du", "*krz* Klar und deutlich! *krz*");
+      dialog1.addLine("Partner", "*krz* Dann lass uns mal etwas umherschauen. Irgendwie muss es einen Weg hier raus geben! *krz*");
+      dialog1.addLine("Du", "*krz* Auf gehts! *krz*");
+    }
+    Game.add(DialogTriggerFactory.createDialogTrigger(getPoint("dialog0"), 1, 5, dialog1));
   }
 
   @Override

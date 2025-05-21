@@ -47,20 +47,15 @@ public final class InteractionTool {
   private static InteractionData convertToData(
       final Entity entity, final PositionComponent heroPosition) {
 
-    InteractionComponent ic =
-        entity
-            .fetch(InteractionComponent.class)
-            .orElseThrow(() -> MissingComponentException.build(entity, InteractionComponent.class));
-    PositionComponent pc =
-        entity
-            .fetch(PositionComponent.class)
-            .orElseThrow(() -> MissingComponentException.build(entity, PositionComponent.class));
+    InteractionComponent ic = entity.fetchOrThrow(InteractionComponent.class);
+
+    PositionComponent pc = entity.fetchOrThrow(PositionComponent.class);
     return new InteractionData(
         entity,
         pc,
         ic,
-        Point.calculateDistance(heroPosition.position(), pc.position()),
-        Point.unitDirectionalVector(heroPosition.position(), pc.position()));
+        Point.calculateDistance(heroPosition.position(), pc.position().add(ic.offset())),
+        Point.unitDirectionalVector(heroPosition.position(), pc.position().add(ic.offset())));
   }
 
   private record InteractionData(

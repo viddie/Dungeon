@@ -2,6 +2,7 @@ package contrib.components;
 
 import core.Component;
 import core.Entity;
+import core.utils.Point;
 import dsl.annotation.DSLCallback;
 import dsl.annotation.DSLType;
 import dsl.annotation.DSLTypeMember;
@@ -35,6 +36,7 @@ public final class InteractionComponent implements Component {
   @DSLTypeMember private final float radius;
   private final boolean repeatable;
   @DSLCallback private final BiConsumer<Entity, Entity> onInteraction;
+  private Point offset = new Point(0, 0);
 
   /**
    * Create a new {@link InteractionComponent}.
@@ -82,5 +84,12 @@ public final class InteractionComponent implements Component {
    */
   public float radius() {
     return radius;
+  }
+
+  public Point offset(){
+    return offset;
+  }
+  public void offset(Point offset){
+    this.offset = offset;
   }
 }

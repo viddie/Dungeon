@@ -104,6 +104,7 @@ public final class Point {
    * @return Point where the values for x and y are added
    */
   public Point add(final Point other) {
+    if(other == null) return new Point(this.x, this.y);
     return new Point(this.x + other.x, this.y + other.y);
   }
 

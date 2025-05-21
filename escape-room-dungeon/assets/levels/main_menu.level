@@ -1,6 +1,6 @@
 DEFAULT
 9.5,7.25
-settings:15.0,2.0;exit-text:26.0,8.0;player1:15.0,10.0;player2:15.0,6.0;tutorial:4.0,2.0
+sign:9.0,9.0;chains1:3.0,5.0;chains0:2.0,5.0;tutorial:4.0,2.0;settings:15.0,2.0;exit-text:26.0,8.0;bookshelf0:19.0,12.0;player1:15.0,10.0;campfire0:11.0,7.0;player2:15.0,6.0;chains3:13.0,13.0;chains2:7.0,13.0;chains5:20.0,13.0;chains4:14.0,13.0;chains7:22.0,13.0;chains6:21.0,13.0;rubble0:8.0,1.0;rubble1:2.0,3.0;rubble2:7.0,8.0;rubble3:12.0,11.0;rubble4:11.0,4.0;rubble5:18.0,1.0;rubble6:22.0,4.0;rubble7:19.0,8.0;rubble8:22.0,11.0;bookshelf2:8.0,12.0;bookshelf1:17.0,12.0;bookshelf3:10.0,12.0
 SSSSSSWWWWWWWWWWWWWWWWWWSSSSS
 SSSSSSWFFFFFFFFFFFFFFFFWSSSSS
 SSSSSSWFFFFFFFFFFFFFFFFWSSSSS

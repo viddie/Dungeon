@@ -32,6 +32,12 @@ com.badlogic.gdx.graphics.Color: {
 		b: 0
 		a: 1
 	}
+	table-back: {
+		r: 0
+		g: 0
+		b: 0
+		a: 0.3539326
+	}
 	green: {
 		r: 0.09019608
 		g: 0.8039216
@@ -133,6 +139,10 @@ com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
 		minWidth: 1
 		minHeight: 10
 	}
+	table-background: {
+		name: white-pixel
+		color: table-back
+	}
 }
 com.badlogic.gdx.scenes.scene2d.utils.TiledDrawable: {
 	healthbar: {
@@ -197,6 +207,11 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	}
 	keypad: {
 		font: segoe_64
+	}
+	dialog: {
+		font: segoe_64
+		fontColor: black
+		background: round-white
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle: {

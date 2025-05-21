@@ -8,8 +8,12 @@ import core.level.utils.DesignLabel;
 import core.level.utils.LevelElement;
 import core.utils.Point;
 import entities.Deco;
+import entities.DecoFactory;
+import entities.DecoGroup;
 import entities.SpikesFactory;
 import level.EscapeRoomLevel;
+import modules.dialog.DialogConfig;
+import modules.dialog.DialogTriggerFactory;
 import modules.keypad.KeypadFactory;
 import modules.showimage.ShowImageFactory;
 import modules.showimage.ShowImageText;
@@ -89,6 +93,9 @@ public class Floor3Level extends EscapeRoomLevel {
           Game.add(SpikesFactory.createSpikes(spikePos, false, !isSave, deathPoint));
         }
       }
+
+      //Dialog
+      Game.add(DialogTriggerFactory.createDialogTrigger(getPoint("dialog0"), 1, 4, new DialogConfig("-----", "Als du den Raum betrittst, bemerkst du rechts von dir eine grosse, schwarze Fläche auf dem Boden.", "Du weisst nicht, was es ist, aber es sieht gefährlich aus...")));
     }
 
     String escapeImage = GameState.playerNumber() == 2 ? "images/path-note.png" : "images/escape-note.png";
@@ -111,6 +118,14 @@ public class Floor3Level extends EscapeRoomLevel {
       moveBookshelf();
     }, true, "f3_p2_2");
     Game.add(keypad);
+
+
+    //Deco
+    listPoints("rubble").forEach(tuple -> Game.add(DecoFactory.createDeco(tuple.a(), DecoGroup.Rubble.getOne(tuple.b()))));
+    listPoints("chains").forEach(tuple -> Game.add(DecoFactory.createDeco(tuple.a(), DecoGroup.Chains.getOne(tuple.b()*2+2))));
+    listPoints("campfire").forEach(tuple -> Game.add(DecoFactory.createDeco(tuple.a(), Deco.Campfire)));
+    listPoints("bookshelf").forEach(tuple -> Game.add(DecoFactory.createDeco(tuple.a(), Deco.BookshelfLarge)));
+    listPoints("stonepillar").forEach(tuple -> Game.add(DecoFactory.createDeco(tuple.a(), DecoGroup.StonePillars.getOne(tuple.b()))));
   }
 
   @Override
@@ -149,5 +164,30 @@ public class Floor3Level extends EscapeRoomLevel {
   private void revealPassage(){
     revealedPassage = true;
     //Edit level to show passage
+    Point anchor = getPoint("passage-anchor");
+
+    //Update all other tiles except the first 2 wall tiles twice
+    changeTileElementType(tileAt(anchor.add(-1, 0)), LevelElement.WALL);
+    changeTileElementType(tileAt(anchor.add(1, 0)), LevelElement.WALL);
+
+    for(int i = 0; i < 2; i++){
+      changeTileElementType(tileAt(anchor), LevelElement.FLOOR);
+
+      changeTileElementType(tileAt(anchor.add(-1, 1)), LevelElement.WALL);
+      changeTileElementType(tileAt(anchor.add(0, 1)), LevelElement.FLOOR);
+      changeTileElementType(tileAt(anchor.add(1, 1)), LevelElement.WALL);
+
+      changeTileElementType(tileAt(anchor.add(-1, 2)), LevelElement.WALL);
+      changeTileElementType(tileAt(anchor.add(0, 2)), LevelElement.FLOOR);
+      changeTileElementType(tileAt(anchor.add(1, 2)), LevelElement.WALL);
+
+      changeTileElementType(tileAt(anchor.add(-1, 3)), LevelElement.WALL);
+      changeTileElementType(tileAt(anchor.add(0, 3)), LevelElement.EXIT);
+      changeTileElementType(tileAt(anchor.add(1, 3)), LevelElement.WALL);
+
+      changeTileElementType(tileAt(anchor.add(-1, 4)), LevelElement.WALL);
+      changeTileElementType(tileAt(anchor.add(0, 4)), LevelElement.WALL);
+      changeTileElementType(tileAt(anchor.add(1, 4)), LevelElement.WALL);
+    }
   }
 }

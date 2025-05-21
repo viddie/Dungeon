@@ -1,6 +1,8 @@
 DEFAULT
 40,14
-step-send:25.0,13.0;step-grid-end:21.0,23.0;bookshelf-keypad:30.0,28.0;end-bookshelves:21.0,27.0;bookshelves2:25.0,4.0;escape-note:30.0,24.0;bookshelves1:9.0,3.0;bookshelves0:10.0,8.0;step-grid-start:21.0,16.0
+step-send:25.0,13.0;bookshelf-keypad:30.0,28.0;rubble10:24.0,1.0;rubble12:14.0,1.0;rubble11:29.0,3.0;dialog0:29.0,12.0;rubble13:10.0,6.0;step-grid-end:21.0,23.0;chains0:29.0,28.0;campfire0:30.0,7.0;step-grid-start:21.0,16.0;passage-anchor:26.0,28.0;rubble0:28.0,25.0;rubble1:23.0,24.0;end-bookshelves:21.0,27.0;rubble2:34.0,14.0;rubble3:28.0,10.0;rubble4:24.0,13.0;rubble5:25.0,14.0;rubble6:26.0,13.0;rubble7:25.0,12.0;bookshelves2:25.0,4.0;escape-note:30.0,24.0;rubble8:22.0,9.0;bookshelves1:9.0,3.0;rubble9:21.0,4.0;bookshelves0:10.0,8.0
+SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
+SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
 WWWSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
 WEWSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
 WWWSSSSSWWWWWWWWWWWWWWWWWWWWWWWWSSSSSSSSSSSSS

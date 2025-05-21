@@ -36,6 +36,7 @@ import java.util.logging.*;
 
 import level.utils.DungeonLoader;
 import level.utils.LevelLabel;
+import modules.dialog.DialogSystem;
 import modules.keypad.KeypadSystem;
 import modules.showimage.ShowImageSystem;
 import systems.*;
@@ -180,6 +181,7 @@ public class EscapeRoomDungeon {
     Game.add(EventScheduler.getInstance()); //Update
 
     Game.add(new SpikesSystem()); //Update
+    Game.add(new DialogSystem()); //Update
 
 
     Game.add(levelSystem); //Render: Always on bottom
