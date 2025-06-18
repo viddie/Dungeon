@@ -1,56 +1,20 @@
 package level.levels;
 
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.scenes.scene2d.Group;
-import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import components.DrawTextComponent;
-import contrib.components.HealthComponent;
-import contrib.components.InventoryComponent;
-import contrib.components.UIComponent;
-import contrib.configuration.KeyboardConfig;
-import contrib.entities.MiscFactory;
-import contrib.hud.DialogUtils;
-import contrib.hud.UIUtils;
-import contrib.hud.elements.GUICombination;
-import contrib.item.HealthPotionType;
-import contrib.item.concreteItem.ItemPotionHealth;
-import contrib.utils.components.skill.SkillTools;
 import core.Entity;
 import core.Game;
-import core.components.DrawComponent;
-import core.components.PositionComponent;
-import core.level.Tile;
 import core.level.elements.tile.DoorTile;
-import core.level.elements.tile.ExitTile;
-import core.level.elements.tile.PitTile;
-import core.level.utils.Coordinate;
 import core.level.utils.DesignLabel;
 import core.level.utils.LevelElement;
-import core.utils.MissingHeroException;
 import core.utils.Point;
-import core.utils.components.MissingComponentException;
 import entities.DrawTextFactory;
 import entities.LeverFactory;
-import entities.MonsterType;
 import entities.TeleporterFactory;
-import hud.DebugOverlay;
-import hud.HUDText;
-import item.concreteItem.ItemPotionWater;
-import item.concreteItem.ItemResourceMushroomRed;
-import java.io.IOException;
-import java.util.List;
+
 import java.util.Map;
 
 import level.EscapeRoomLevel;
-import level.utils.DungeonLoader;
 import level.utils.LevelLabel;
-import puzzles.simpleLevers.SimpleLeverPuzzle;
-import systems.TickableSystem;
-import utils.EntityUtils;
 import utils.ICommand;
 
 /** The Tutorial Level. */

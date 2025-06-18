@@ -39,8 +39,8 @@ public class DebugOverlay implements ITickable {
 
   private static SpriteBatch BATCH = new SpriteBatch();
   private static ShapeRenderer renderer = new ShapeRenderer();
-  private static final IPath FONT_FNT = new SimpleIPath("fonts/segoe_32.fnt");
-  private static final IPath FONT_PNG = new SimpleIPath("fonts/segoe_32.png");
+  private static final IPath FONT_FNT = new SimpleIPath("fonts/noto-sans_32.fnt");
+  private static final IPath FONT_PNG = new SimpleIPath("fonts/noto-sans_32.png");
   private static final BitmapFont bitmapFont;
   private static final float OUTLINE_WIDTH = 1;
   private static final float MARGIN = 10;

@@ -1,0 +1,44 @@
+spritesheets/FD_Dungeon_Free.png
+url: https://elvgames.itch.io/free-fantasy-dreamland-dungeon
+license: https://elvgames.itch.io/terms
+credit: not needed
+
+spritesheets/TilesetNatures.png
+spritesheets/TilesetProps.png
+url: https://gfragger.itch.io/magic-market
+license: CC BY-ND 4.0, edit/modify explicitly allowed to match the project
+credit: GFragger
+
+objects/teleporter/*
+url: https://kenney-assets.itch.io/tiny-dungeon
+license: CC0 1.0 Universal
+credit: not needed
+
+objects/note/*
+url: https://dantepixels.itch.io/key-items-16x16
+license: custom (Usage for commercial projects granted, Adapt and/or modify to match project allowed, Credit required)
+credit: @pixelahead (https://twitter.com/Pixelahead)
+
+sounds/retro-event-wrong.wav -> Reto Event Wrong Simple 03.wav
+sounds/retro-event-ui-01.wav
+sounds/spike-trap.wav
+url: https://kronbits.itch.io/freesfx
+license: CC0
+credit: not needed
+
+sounds/wood-block-1.wav
+sounds/retro-beep-01.wav -> Retro11.wav
+sounds/retro-beep-02.wav -> Retro12.wav
+url: https://cyrex-studios.itch.io/universal-ui-soundpack
+license: CC BY 4.0
+credit: Cyrex Studios
+
+sounds/creaky-door-open.wav
+sounds/door-hard-shut.wav
+url: https://mixkit.co/free-sound-effects/doors/
+license: custom: https://mixkit.co/license/#sfxFree (Usage for commercial projects granted, Credit not required)
+
+fonts/noto-sans
+url: https://fonts.google.com/noto/specimen/Noto+Sans
+license: Open Font License (OFL): https://fonts.google.com/noto/specimen/Noto+Sans/license
+credit: not needed

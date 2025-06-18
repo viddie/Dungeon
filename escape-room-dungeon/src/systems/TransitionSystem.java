@@ -29,8 +29,8 @@ public class TransitionSystem extends System {
   //Test rendering
   private static final SpriteBatch BATCH = new SpriteBatch();
   //TODO: use different font thats redistributable
-  private static final IPath FONT_FNT = new SimpleIPath("fonts/segoe_64.fnt");
-  private static final IPath FONT_PNG = new SimpleIPath("fonts/segoe_64.png");
+  private static final IPath FONT_FNT = new SimpleIPath("fonts/noto-sans_64.fnt");
+  private static final IPath FONT_PNG = new SimpleIPath("fonts/noto-sans_64.png");
   private static final BitmapFont bitmapFont;
   static {
     bitmapFont =

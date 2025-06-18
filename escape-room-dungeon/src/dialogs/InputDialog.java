@@ -1,6 +1,7 @@
 package dialogs;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Interpolation;
@@ -47,11 +48,14 @@ public class InputDialog extends Group {
     table.setFillParent(true);
     this.addActor(table);
 
-    Label label = new Label(title, SkinUtils.customSkin());
-    label.setFontScale(1.3f);
-    table.add(label).row();
+    Label lbTitle = new Label(title, SkinUtils.customSkin());
+    lbTitle.setFontScale(1.3f);
+    lbTitle.setColor(Color.WHITE);
+    table.add(lbTitle).row();
 
-    table.add(new Label(message, SkinUtils.customSkin())).row();
+    Label lbMessage = new Label(message, SkinUtils.customSkin());
+    lbMessage.setFontScale(0.75f);
+    table.add(lbMessage).row();
 
     textfield = new TextField("", SkinUtils.customSkin());
     Game.stage().orElseThrow().setKeyboardFocus(textfield);

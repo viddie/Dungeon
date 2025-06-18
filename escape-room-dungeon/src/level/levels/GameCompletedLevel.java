@@ -45,13 +45,9 @@ public class GameCompletedLevel extends EscapeRoomLevel {
       }, "Erfolgreich Entkommen!\nDanke fürs Spielen!", 0.5f);
     }, (e, o, d) -> {}));
 
-//    Game.add(DrawTextFactory.createTextEntity("", getPoint("exit-text"), 1, Color.WHITE, 10f, 1f));
-
     //Deco
     for(int i = 0; i < 8; i++){
       Game.add(DecoFactory.createDeco(getPoint("bushL").add(0, -i), Deco.Bush));
-    }
-    for(int i = 0; i < 8; i++){
       Game.add(DecoFactory.createDeco(getPoint("bushR").add(0, -i), Deco.Bush));
     }
     listPoints("mushrooms").forEach(tuple -> {
@@ -68,7 +64,5 @@ public class GameCompletedLevel extends EscapeRoomLevel {
   }
 
   @Override
-  protected void onTick() {
-
-  }
+  protected void onTick() {}
 }

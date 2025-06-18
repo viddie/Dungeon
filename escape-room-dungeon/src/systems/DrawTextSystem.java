@@ -26,8 +26,8 @@ import utils.Constants;
 public class DrawTextSystem extends System {
 
   private static final SpriteBatch BATCH = new SpriteBatch();
-  private static final IPath FONT_FNT = new SimpleIPath("fonts/segoe_32.fnt");
-  private static final IPath FONT_PNG = new SimpleIPath("fonts/segoe_32.png");
+  private static final IPath FONT_FNT = new SimpleIPath("fonts/noto-sans_32.fnt");
+  private static final IPath FONT_PNG = new SimpleIPath("fonts/noto-sans_32.png");
   private static final BitmapFont bitmapFont;
   private static final float OUTLINE_WIDTH = 1f;
   private static final float SCALE_CORRECTION = 0.05f;

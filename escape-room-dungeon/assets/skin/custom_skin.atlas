@@ -4,16 +4,16 @@ size: 2048, 2048
 format: RGBA8888
 filter: Linear, Linear
 repeat: none
-segoe_32
+noto-sans_16
   rotate: false
-  xy: 1, 868
+  xy: 515, 1382
   size: 512, 512
   orig: 512, 512
   offset: 0, 0
   index: -1
-segoe_64
+noto-sans_64
   rotate: false
-  xy: 515, 1382
+  xy: 1, 868
   size: 512, 512
   orig: 512, 512
   offset: 0, 0

@@ -11,16 +11,16 @@ public class SkinUtils {
 
   private static final IPath SKIN_PATH = new SimpleIPath("skin/custom_skin.json");
 
-  private static final IPath FONT_SMALL_FNT = new SimpleIPath("fonts/segoe_16.fnt");
-  private static final IPath FONT_SMALL_PNG = new SimpleIPath("fonts/segoe_16.png");
+  private static final IPath FONT_SMALL_FNT = new SimpleIPath("fonts/noto-sans_16.fnt");
+  private static final IPath FONT_SMALL_PNG = new SimpleIPath("fonts/noto-sans_16.png");
   private static final BitmapFont FONT_SMALL;
 
-  private static final IPath FONT_MEDIUM_FNT = new SimpleIPath("fonts/segoe_32.fnt");
-  private static final IPath FONT_MEDIUM_PNG = new SimpleIPath("fonts/segoe_32.png");
+  private static final IPath FONT_MEDIUM_FNT = new SimpleIPath("fonts/noto-sans_32.fnt");
+  private static final IPath FONT_MEDIUM_PNG = new SimpleIPath("fonts/noto-sans_32.png");
   private static final BitmapFont FONT_MEDIUM;
 
-  private static final IPath FONT_LARGE_FNT = new SimpleIPath("fonts/segoe_64.fnt");
-  private static final IPath FONT_LARGE_PNG = new SimpleIPath("fonts/segoe_64.png");
+  private static final IPath FONT_LARGE_FNT = new SimpleIPath("fonts/noto-sans_64.fnt");
+  private static final IPath FONT_LARGE_PNG = new SimpleIPath("fonts/noto-sans_64.png");
   private static final BitmapFont FONT_LARGE;
 
   static {

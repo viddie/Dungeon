@@ -6,14 +6,14 @@ com.badlogic.gdx.graphics.g2d.BitmapFont: {
 		markupEnabled: true
 		flip: false
 	}
-	segoe_32: {
-		file: segoe_32.fnt
+	noto-sans_32: {
+		file: noto-sans_32.fnt
 		scaledSize: -1
 		markupEnabled: false
 		flip: false
 	}
-	segoe_64: {
-		file: segoe_64.fnt
+	noto-sans_64: {
+		file: noto-sans_64.fnt
 		scaledSize: -1
 		markupEnabled: false
 		flip: false
@@ -202,14 +202,14 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle: {
 }
 com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	default: {
-		font: segoe_32
+		font: noto-sans_64
 		fontColor: black
 	}
 	keypad: {
-		font: segoe_64
+		font: noto-sans_64
 	}
 	dialog: {
-		font: segoe_64
+		font: noto-sans_64
 		fontColor: black
 		background: round-white
 	}
