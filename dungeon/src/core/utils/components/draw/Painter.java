@@ -1,13 +1,13 @@
 package core.utils.components.draw;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Affine2;
-import core.systems.CameraSystem;
 import core.utils.Point;
 import core.utils.components.path.IPath;
-import java.util.List;
 
 /**
  * Handles drawing of sprites to a {@link SpriteBatch} with configurable options.
@@ -31,6 +31,11 @@ public class Painter {
   /** The SpriteBatch used for drawing all sprites. */
   private final SpriteBatch batch;
 
+  private static final float TARGET_HUE = 0.67f;
+  private static final float NEW_HUE = 0.2f;
+  private static final float TOLERANCE = 0.05f;
+  private ShaderProgram shader;
+
   /**
    * Creates a new Painter instance.
    *
@@ -38,6 +43,19 @@ public class Painter {
    */
   public Painter(final SpriteBatch batch) {
     this.batch = batch;
+  }
+
+  public void create() {
+    ShaderProgram.pedantic = false;
+    shader = new ShaderProgram(
+      Gdx.files.internal("hueRemap.vert"),
+      Gdx.files.internal("hueRemap.frag")
+//      Gdx.files.internal("passthrough.frag")
+    );
+
+    if (!shader.isCompiled()) {
+      Gdx.app.error("Shader", "Compilation failed:\n" + shader.getLog());
+    }
   }
 
   /**
@@ -50,41 +68,42 @@ public class Painter {
    * @param config the {@link PainterConfig} controlling scaling, tint, and offset
    */
   public void draw(final Point position, final Sprite sprite, final PainterConfig config) {
+    if(shader == null) {
+      create();
+    }
 
-    // Apply offset from configuration
-    Point realPos = position.translate(config.offset());
-    List<Point> corners =
-        List.of(
-            realPos.translate(0, 0),
-            realPos.translate(config.scale().x(), 0),
-            realPos.translate(0, config.scale().y()),
-            realPos.translate(config.scale().x(), config.scale().y()));
+    batch.setShader(shader);
+    shader.setUniformf("u_targetHue", TARGET_HUE);
+    shader.setUniformf("u_newHue", NEW_HUE);
+    shader.setUniformf("u_tolerance", TOLERANCE);
 
     // Only draw if visible in the camera frustum
-    if (corners.stream().allMatch(CameraSystem::isPointInFrustum)) {
-      sprite.setFlip(config.mirrored(), false);
+    sprite.setFlip(config.mirrored(), false);
 
-      // Calculate transformations
-      Affine2 transform = new Affine2();
+    // Calculate transformations
+    Affine2 transform = new Affine2();
 
-      transform.setToTranslation(position.x(), position.y());
+    transform.setToTranslation(position.x(), position.y());
 
-      // Scale first while origin is in the bottom-left
-      transform.scale(config.scale().x(), config.scale().y());
+    // Scale first while origin is in the bottom-left
+    transform.scale(config.scale().x(), config.scale().y());
 
-      // Then rotate around the middle
-      transform.translate(config.size().x() / 2f, config.size().y() / 2f);
-      transform.rotate(config.rotation());
-      transform.translate(-config.size().x() / 2f, -config.size().y() / 2f);
+    // Then rotate around the middle
+    transform.translate(config.size().x() / 2f, config.size().y() / 2f);
+    transform.rotate(config.rotation());
+    transform.translate(-config.size().x() / 2f, -config.size().y() / 2f);
 
-      // Apply tint color if specified
-      if (config.tintColor() != -1) {
-        batch.setColor(new Color(config.tintColor()));
-      } else {
-        batch.setColor(Color.WHITE);
-      }
-      batch.draw(sprite, config.size().x(), config.size().y(), transform);
-    }
+    // Apply tint color if specified
+//    if (config.tintColor() != -1) {
+//      batch.setColor(new Color(config.tintColor()));
+//    } else {
+//      batch.setColor(Color.WHITE);
+//    }
+
+    batch.setColor(Color.WHITE);
+    sprite.setColor(Color.WHITE);
+    batch.draw(sprite, config.size().x(), config.size().y(), transform);
+    batch.setShader(null);
   }
 
   /**
