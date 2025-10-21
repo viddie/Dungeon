@@ -34,7 +34,8 @@ public class Painter {
   private static final float TARGET_HUE = 0.67f;
   private static final float NEW_HUE = 0.2f;
   private static final float TOLERANCE = 0.05f;
-  private ShaderProgram shader;
+  public static ShaderProgram shader;
+  public static ShaderProgram post;
 
   /**
    * Creates a new Painter instance.
@@ -48,9 +49,13 @@ public class Painter {
   public void create() {
     ShaderProgram.pedantic = false;
     shader = new ShaderProgram(
-      Gdx.files.internal("hueRemap.vert"),
-      Gdx.files.internal("hueRemap.frag")
-//      Gdx.files.internal("passthrough.frag")
+      Gdx.files.internal("shaders/passthrough.vert"),
+      Gdx.files.internal("shaders/hueRemap.frag")
+    );
+
+    post = new ShaderProgram(
+      Gdx.files.internal("shaders/passthrough.vert"),
+      Gdx.files.internal("shaders/post.frag")
     );
 
     if (!shader.isCompiled()) {

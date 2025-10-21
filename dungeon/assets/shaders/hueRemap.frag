@@ -2,7 +2,7 @@
 precision mediump float;
 #endif
 
-varying vec2 v_texCoord;
+varying vec2 v_texCoords;
 uniform sampler2D u_texture;
 
 uniform float u_targetHue;   // [0..1]
@@ -57,7 +57,7 @@ float hueDistance(float a, float b) {
 }
 
 void main() {
-    vec4 tex = texture2D(u_texture, v_texCoord);
+    vec4 tex = texture2D(u_texture, v_texCoords);
     vec3 hsv = rgb2hsv(tex.rgb);
 
     // Optional hue remap

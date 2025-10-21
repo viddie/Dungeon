@@ -1,7 +1,16 @@
 package core.systems;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector3;
+import contrib.systems.DebugDrawSystem;
+import contrib.utils.EntityUtils;
 import core.Entity;
 import core.Game;
 import core.System;
@@ -12,6 +21,7 @@ import core.level.Tile;
 import core.level.elements.ILevel;
 import core.level.elements.tile.PitTile;
 import core.level.utils.LevelElement;
+import core.utils.Point;
 import core.utils.components.MissingComponentException;
 import core.utils.components.draw.Painter;
 import core.utils.components.draw.PainterConfig;
@@ -47,6 +57,8 @@ public final class DrawSystem extends System {
    * batch.
    */
   private static final SpriteBatch BATCH = new SpriteBatch();
+  private static final SpriteBatch POST_BATCH = new SpriteBatch();
+  private static FrameBuffer FBO;
 
   /** Draws objects. */
   private static final Painter PAINTER = new Painter(BATCH);
@@ -131,6 +143,14 @@ public final class DrawSystem extends System {
    */
   @Override
   public void execute() {
+    if (FBO != null) {
+      FBO.dispose();
+    }
+    FBO = new FrameBuffer(Pixmap.Format.RGBA8888, Game.windowWidth(), Game.windowHeight(), false);
+    FBO.begin();
+    Gdx.gl.glClearColor(0,0,0,1);
+    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
     BATCH.begin();
 
     Game.currentLevel().ifPresent(this::drawLevel);
@@ -144,6 +164,30 @@ public final class DrawSystem extends System {
     }
 
     BATCH.end();
+
+    FBO.end();
+
+    POST_BATCH.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
+    POST_BATCH.setShader(Painter.post);
+    POST_BATCH.begin();
+    Painter.post.setUniformi("u_texture", 0); // FBO texture is bound to unit 0 by default
+    Painter.post.setUniformf("u_resolution", Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+    Point heroPos = EntityUtils.getHeroPosition();
+    Vector3 vector3 = CameraSystem.camera().project(new Vector3(heroPos.x()+0.5f, heroPos.y()+0.5f, 0));
+    Painter.post.setUniformf("u_center", vector3.x, vector3.y);
+    Painter.post.setUniformf("u_radius", 150f);
+    Painter.post.setUniformf("u_falloff", 180f);
+    Painter.post.setUniformf("u_darkenAmount", 0.8f);
+
+    POST_BATCH.draw(
+      FBO.getColorBufferTexture(),
+      0, 0,
+      Gdx.graphics.getWidth(), Gdx.graphics.getHeight(),
+      0, 0, 1, 1
+    );
+
+    POST_BATCH.end();
+    POST_BATCH.setShader(null);
   }
 
   /**
