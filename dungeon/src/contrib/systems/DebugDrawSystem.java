@@ -29,7 +29,10 @@ import core.utils.components.MissingComponentException;
 import core.utils.components.draw.BlendUtils;
 import core.utils.components.draw.ColorUtils;
 import core.utils.components.draw.animation.Animation;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -67,6 +70,9 @@ public class DebugDrawSystem extends System {
 
   private static final int CIRCLE_SEGMENTS = 60; // resolution of circles (higher = smoother)
   private static final BitmapFont FONT = FontHelper.getDefaultFont();
+
+  private static final Map<Entity, String> quickInfoCache = new HashMap<Entity, String>();
+
   private boolean render = false;
 
   /** Creates a new DebugDrawSystem. */
@@ -351,6 +357,11 @@ public class DebugDrawSystem extends System {
             .sorted(String::compareToIgnoreCase)
             .toList();
 
+    // Quick info from cache
+    if (quickInfoCache.containsKey(entity)) {
+      info.append(quickInfoCache.get(entity)).append("\n");
+    }
+
     // If holding Shift, show all components; otherwise hint how to show them
     if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)
         || Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT)) {
@@ -409,6 +420,10 @@ public class DebugDrawSystem extends System {
     SHAPE_RENDERER.setProjectionMatrix(CameraSystem.camera().combined);
 
     drawText(text, new Point(textX, textY));
+  }
+
+  public static void setEntityQuickInfo(Entity entity, String info) {
+    quickInfoCache.put(entity, info);
   }
 
   /** Whether this debug system is currently active and drawing the overlays. */
