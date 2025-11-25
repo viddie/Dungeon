@@ -295,8 +295,7 @@ public abstract class AbstractShader implements Disposable {
    * @param texture The Texture object to bind.
    * @param unit OpenGL texture unit (must be >= 1, 0 is reserved for SpriteBatch).
    */
-  public record TextureUniform(String name, Texture texture, int unit)
-      implements UniformBinding {
+  public record TextureUniform(String name, Texture texture, int unit) implements UniformBinding {
     /**
      * Binds a texture uniform to a specified texture unit.
      *
