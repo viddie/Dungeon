@@ -251,6 +251,11 @@ public abstract class AbstractShader implements Disposable {
    * @param value The Vector2 value to bind.
    */
   public record Vector2Uniform(String name, Vector2 value) implements UniformBinding {
+
+    public Vector2Uniform(String name, float x, float y) {
+      this(name, new Vector2(x, y));
+    }
+
     @Override
     public void bind(ShaderProgram program) {
       program.setUniformf(name, value);
