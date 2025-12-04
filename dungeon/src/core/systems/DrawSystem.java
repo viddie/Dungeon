@@ -93,6 +93,11 @@ public final class DrawSystem extends System implements Disposable {
   private int unstableHeight = -1;
   private int stableResizeFrames = -1;
 
+  /**
+   * Gets the singleton instance of the DrawSystem, creating it if it does not exist.
+   *
+   * @return The singleton DrawSystem instance
+   */
   public static DrawSystem getInstance() {
     if (INSTANCE == null) {
       INSTANCE = new DrawSystem();
@@ -502,10 +507,25 @@ public final class DrawSystem extends System implements Disposable {
     }
   }
 
+  /**
+   * Processes a series of shaders on a given texture region using ping-pong FBO rendering.
+   *
+   * @param region The texture region to process
+   * @param shaders The list of shaders to apply
+   * @return The FBO containing the final processed result
+   */
   public FrameBuffer processShaders(TextureRegion region, ShaderList shaders) {
     return processShaders(region, shaders, null);
   }
 
+  /**
+   * Processes a series of shaders on a given texture region using ping-pong FBO rendering.
+   *
+   * @param region The texture region to process
+   * @param shaders The list of shaders to apply
+   * @param pc The position component of the entity (for world bounds calculation), can be null
+   * @return The FBO containing the final processed result
+   */
   public FrameBuffer processShaders(
       TextureRegion region, ShaderList shaders, PositionComponent pc) {
     // --- 1. Calculate FBO Size and Obtain Buffers ---
@@ -606,7 +626,7 @@ public final class DrawSystem extends System implements Disposable {
       currentTarget.end();
 
       currentSourceTexture = currentTarget.getColorBufferTexture();
-      useFboAAsSource = !useFboAAsSource; // Swap the source flag
+      useFboAAsSource = !useFboAAsSource;
     }
 
     // --- 4. Final Result and Free the other FBO ---

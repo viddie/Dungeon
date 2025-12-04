@@ -158,6 +158,7 @@ public class DebugDrawSystem extends System {
    * Draws named points from the current level.
    *
    * @param highlightPoint The name of the point to highlight, or null for none.
+   * @param pointModeActive Whether point mode is active, affecting the color used.
    */
   public static void drawNamedPoints(String highlightPoint, boolean pointModeActive) {
     ILevel l = Game.currentLevel().orElse(null);
@@ -421,6 +422,12 @@ public class DebugDrawSystem extends System {
     drawText(text, new Point(textX, textY));
   }
 
+  /**
+   * Sets quick info text for the given entity to be displayed in the debug overlay.
+   *
+   * @param entity The entity to set quick info for.
+   * @param info The quick info text.
+   */
   public static void setEntityQuickInfo(Entity entity, String info) {
     quickInfoCache.put(entity, info);
   }

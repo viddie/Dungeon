@@ -252,6 +252,13 @@ public abstract class AbstractShader implements Disposable {
    */
   public record Vector2Uniform(String name, Vector2 value) implements UniformBinding {
 
+    /**
+     * Constructs from individual x and y float components.
+     *
+     * @param name The uniform name in the shader.
+     * @param x The x component of the vector.
+     * @param y The y component of the vector.
+     */
     public Vector2Uniform(String name, float x, float y) {
       this(name, new Vector2(x, y));
     }
@@ -283,6 +290,12 @@ public abstract class AbstractShader implements Disposable {
    */
   public record Vector4Uniform(String name, Vector4 value) implements UniformBinding {
 
+    /**
+     * Constructs from a {@link Rectangle}.
+     *
+     * @param name The uniform name in the shader.
+     * @param rect The {@link Rectangle} to convert to a Vector4.
+     */
     public Vector4Uniform(String name, Rectangle rect) {
       this(name, new Vector4(rect.x(), rect.y(), rect.width(), rect.height()));
     }
