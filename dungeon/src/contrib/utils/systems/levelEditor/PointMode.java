@@ -12,6 +12,7 @@ import contrib.hud.dialogs.DialogType;
 import contrib.systems.DebugDrawSystem;
 import contrib.systems.LevelEditorSystem;
 import core.level.utils.Coordinate;
+import core.utils.InputHandler;
 import core.utils.Point;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -38,7 +39,7 @@ public class PointMode extends LevelEditorMode {
   @Override
   public void execute() {
 
-    if (Gdx.input.isKeyJustPressed(SECONDARY_UP)) {
+    if (InputHandler.isKeyJustPressed(SECONDARY_UP)) {
       snapMode = snapMode.nextMode();
     }
 
@@ -79,7 +80,7 @@ public class PointMode extends LevelEditorMode {
         String newPointName = baseName + (getLevel().getHighestPointNumber(baseName) + 1);
         getLevel().addNamedPoint(newPointName, snapPos);
       }
-    } else if (Gdx.input.isKeyPressed(TERTIARY)) {
+    } else if (InputHandler.isKeyPressed(TERTIARY)) {
       // Delete deco on cursor
       getOnPosition(cursorPos).ifPresent(getLevel()::removeNamedPoint);
     }

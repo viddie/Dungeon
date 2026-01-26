@@ -14,6 +14,7 @@ import core.Game;
 import core.components.DrawComponent;
 import core.components.PositionComponent;
 import core.level.DungeonLevel;
+import core.utils.InputHandler;
 import core.utils.Point;
 import core.utils.Rectangle;
 import core.utils.Vector2;
@@ -41,16 +42,16 @@ public class DecoMode extends LevelEditorMode {
   @Override
   public void execute() {
     // Change selected deco
-    if (Gdx.input.isKeyJustPressed(PRIMARY_UP)) {
+    if (InputHandler.isKeyJustPressed(PRIMARY_UP)) {
       selectedDecoIndex = Math.floorMod(selectedDecoIndex + 1, Deco.values().length);
       previewEntityChanged();
-    } else if (Gdx.input.isKeyJustPressed(PRIMARY_DOWN)) {
+    } else if (InputHandler.isKeyJustPressed(PRIMARY_DOWN)) {
       selectedDecoIndex = Math.floorMod(selectedDecoIndex - 1, Deco.values().length);
       previewEntityChanged();
     }
 
     // Change snap mode
-    if (Gdx.input.isKeyJustPressed(SECONDARY_UP)) {
+    if (InputHandler.isKeyJustPressed(SECONDARY_UP)) {
       decoSnapMode = decoSnapMode.nextMode();
     }
 
@@ -80,12 +81,12 @@ public class DecoMode extends LevelEditorMode {
         decoHeldEntity = clickedDeco.get();
         removePreviewEntity();
       }
-    } else if (Gdx.input.isKeyPressed(TERTIARY)) {
+    } else if (InputHandler.isKeyPressed(TERTIARY)) {
       rapidFireActive = false;
       // Delete deco on cursor
       getDecoOnPosition(cursorPos).map(DecoEntityData::entity).ifPresent(Game::remove);
       syncPlacedDecos();
-    } else if (Gdx.input.isKeyJustPressed(QUARTERNARY)) {
+    } else if (InputHandler.isKeyJustPressed(QUARTERNARY)) {
       rapidFireActive = false;
       // Pipette tool to pick deco type on cursor
       Optional<DecoEntityData> clickedDeco = getDecoOnPosition(cursorPos);

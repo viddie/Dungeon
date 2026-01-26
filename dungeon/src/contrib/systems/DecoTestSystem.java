@@ -12,6 +12,7 @@ import core.Game;
 import core.System;
 import core.components.PositionComponent;
 import core.utils.FontHelper;
+import core.utils.InputHandler;
 import core.utils.Point;
 import core.utils.Vector2;
 import core.utils.logging.DungeonLogger;
@@ -46,29 +47,29 @@ public class DecoTestSystem extends System {
   public void execute() {
     drawStatus();
 
-    if (Gdx.input.isKeyJustPressed(CHANGE_MODE)) {
+    if (InputHandler.isKeyJustPressed(CHANGE_MODE)) {
       currentMode = currentMode.next();
       return;
     }
 
-    if (Gdx.input.isKeyJustPressed(MODE_MODIFY_PLUS)) {
+    if (InputHandler.isKeyJustPressed(MODE_MODIFY_PLUS)) {
       rapidFireCounter = RAPID_FIRE_THRESHOLD;
       executeMode(1);
     }
-    if (Gdx.input.isKeyJustPressed(MODE_MODIFY_MINUS)) {
+    if (InputHandler.isKeyJustPressed(MODE_MODIFY_MINUS)) {
       rapidFireCounter = RAPID_FIRE_THRESHOLD;
       executeMode(-1);
     }
 
-    if (Gdx.input.isKeyPressed(MODE_MODIFY_MINUS) || Gdx.input.isKeyPressed(MODE_MODIFY_PLUS)) {
+    if (InputHandler.isKeyPressed(MODE_MODIFY_MINUS) || InputHandler.isKeyPressed(MODE_MODIFY_PLUS)) {
       if (rapidFireCounter <= 0) {
         rapidFireCounter = RAPID_FIRE_THRESHOLD;
-        executeMode(Gdx.input.isKeyPressed(MODE_MODIFY_PLUS) ? 1 : -1);
+        executeMode(InputHandler.isKeyPressed(MODE_MODIFY_PLUS) ? 1 : -1);
       }
       rapidFireCounter--;
     }
 
-    if (Gdx.input.isKeyPressed(MOVE_DECO)) {
+    if (InputHandler.isKeyPressed(MOVE_DECO)) {
       if (testEntity == null) createTestEntity();
       testEntity.fetch(PositionComponent.class).ifPresent(pos -> pos.position(getMousePos()));
       PositionSync.syncPosition(testEntity);

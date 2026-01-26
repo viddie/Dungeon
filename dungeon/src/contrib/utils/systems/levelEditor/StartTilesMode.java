@@ -13,6 +13,7 @@ import core.level.Tile;
 import core.level.utils.LevelElement;
 import core.systems.CameraSystem;
 import core.utils.FontHelper;
+import core.utils.InputHandler;
 import core.utils.Point;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -47,9 +48,9 @@ public class StartTilesMode extends LevelEditorMode {
     // Primary Up/Down to change selected start tile index. The index can be between 0 and the lists
     // size. if its equal to the lists size, it adds a new point to the list.
     int maxIndex = getLevel().startTiles().size();
-    if (Gdx.input.isKeyJustPressed(PRIMARY_UP)) {
+    if (InputHandler.isKeyJustPressed(PRIMARY_UP)) {
       currentStartTileIndex = (currentStartTileIndex + 1) % (maxIndex + 1);
-    } else if (Gdx.input.isKeyJustPressed(PRIMARY_DOWN)) {
+    } else if (InputHandler.isKeyJustPressed(PRIMARY_DOWN)) {
       currentStartTileIndex = Math.floorMod(currentStartTileIndex - 1, maxIndex + 1);
     }
 

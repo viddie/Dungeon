@@ -30,6 +30,7 @@ import core.level.utils.LevelElement;
 import core.systems.CameraSystem;
 import core.utils.Direction;
 import core.utils.IVoidFunction;
+import core.utils.InputHandler;
 import core.utils.Point;
 import core.utils.components.MissingComponentException;
 import core.utils.components.path.SimpleIPath;
@@ -245,29 +246,29 @@ public class Debugger extends System {
    * function if detected.
    */
   public void execute() {
-    if (Gdx.input.isKeyJustPressed(KeyboardConfig.DEBUG_ZOOM_OUT.value()))
+    if (InputHandler.isKeyJustPressed(KeyboardConfig.DEBUG_ZOOM_OUT.value()))
       Debugger.ZOOM_CAMERA(-0.2f);
-    if (Gdx.input.isKeyJustPressed(KeyboardConfig.DEBUG_ZOOM_IN.value()))
+    if (InputHandler.isKeyJustPressed(KeyboardConfig.DEBUG_ZOOM_IN.value()))
       Debugger.ZOOM_CAMERA(0.2f);
 
-    if (Gdx.input.isKeyJustPressed(KeyboardConfig.DEBUG_TELEPORT_TO_CURSOR.value()))
+    if (InputHandler.isKeyJustPressed(KeyboardConfig.DEBUG_TELEPORT_TO_CURSOR.value()))
       Debugger.TELEPORT_TO_CURSOR();
-    if (Gdx.input.isKeyJustPressed(KeyboardConfig.DEBUG_TELEPORT_TO_END.value()))
+    if (InputHandler.isKeyJustPressed(KeyboardConfig.DEBUG_TELEPORT_TO_END.value()))
       Debugger.TELEPORT_TO_END();
-    if (Gdx.input.isKeyJustPressed(KeyboardConfig.DEBUG_TELEPORT_TO_START.value()))
+    if (InputHandler.isKeyJustPressed(KeyboardConfig.DEBUG_TELEPORT_TO_START.value()))
       Debugger.TELEPORT_TO_START();
-    if (Gdx.input.isKeyJustPressed(KeyboardConfig.DEBUG_TELEPORT_ON_END.value()))
+    if (InputHandler.isKeyJustPressed(KeyboardConfig.DEBUG_TELEPORT_ON_END.value()))
       Debugger.LOAD_NEXT_LEVEL();
-    if (Gdx.input.isKeyJustPressed(KeyboardConfig.DEBUG_SPAWN_MONSTER.value())
+    if (InputHandler.isKeyJustPressed(KeyboardConfig.DEBUG_SPAWN_MONSTER.value())
         && !LevelEditorSystem.active()) Debugger.SPAWN_MONSTER_ON_CURSOR();
-    if (Gdx.input.isKeyJustPressed(KeyboardConfig.DEBUG_OPEN_DOORS.value())) Debugger.OPEN_DOORS();
-    if (Gdx.input.isKeyJustPressed(core.configuration.KeyboardConfig.PAUSE.value()))
+    if (InputHandler.isKeyJustPressed(KeyboardConfig.DEBUG_OPEN_DOORS.value())) Debugger.OPEN_DOORS();
+    if (InputHandler.isKeyJustPressed(core.configuration.KeyboardConfig.PAUSE.value()))
       Debugger.PAUSE_GAME();
-    if (Gdx.input.isKeyJustPressed(core.configuration.KeyboardConfig.ADVANCE_FRAME.value()))
+    if (InputHandler.isKeyJustPressed(core.configuration.KeyboardConfig.ADVANCE_FRAME.value()))
       Debugger.ADVANCE_FRAME();
-    if (Gdx.input.isKeyJustPressed(KeyboardConfig.DEBUG_TOGGLE_HUD.value()))
+    if (InputHandler.isKeyJustPressed(KeyboardConfig.DEBUG_TOGGLE_HUD.value()))
       Game.system(DebugDrawSystem.class, DebugDrawSystem::toggleHUD);
-    if (Gdx.input.isKeyJustPressed(KeyboardConfig.DEBUG_TOGGLE_SCENE_HUD.value()))
+    if (InputHandler.isKeyJustPressed(KeyboardConfig.DEBUG_TOGGLE_SCENE_HUD.value()))
       Game.stage().ifPresent(stage -> stage.setDebugAll(!stage.isDebugAll()));
     checkFrameAdvance();
   }

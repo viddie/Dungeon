@@ -26,6 +26,7 @@ import core.level.DungeonLevel;
 import core.level.elements.ILevel;
 import core.systems.CameraSystem;
 import core.utils.FontHelper;
+import core.utils.InputHandler;
 import core.utils.Point;
 import core.utils.Vector2;
 import core.utils.components.MissingComponentException;
@@ -391,8 +392,8 @@ public class DebugDrawSystem extends System {
     }
 
     // If holding Shift, show all components; otherwise hint how to show them
-    if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)
-        || Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT)) {
+    if (InputHandler.isKeyPressed(Input.Keys.SHIFT_LEFT)
+        || InputHandler.isKeyPressed(Input.Keys.SHIFT_RIGHT)) {
       info.append(componentNames.size())
           .append(" component")
           .append(componentNames.size() == 1 ? "" : "s")

@@ -7,6 +7,7 @@ import contrib.systems.DebugDrawSystem;
 import contrib.utils.CheckPatternPainter;
 import core.level.utils.Coordinate;
 import core.level.utils.LevelElement;
+import core.utils.InputHandler;
 import core.utils.Point;
 import core.utils.Vector2;
 import java.util.LinkedHashMap;
@@ -46,26 +47,26 @@ public class TilesMode extends LevelEditorMode {
 
   @Override
   public void execute() {
-    if (Gdx.input.isKeyJustPressed(PRIMARY_DOWN)) {
+    if (InputHandler.isKeyJustPressed(PRIMARY_DOWN)) {
       if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
         selectedTileIndexR -= 1;
       } else {
         selectedTileIndexL -= 1;
       }
-    } else if (Gdx.input.isKeyJustPressed(PRIMARY_UP)) {
+    } else if (InputHandler.isKeyJustPressed(PRIMARY_UP)) {
       if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
         selectedTileIndexR += 1;
       } else {
         selectedTileIndexL += 1;
       }
     }
-    if (Gdx.input.isKeyJustPressed(SECONDARY_UP)) {
+    if (InputHandler.isKeyJustPressed(SECONDARY_UP)) {
       brushSize = Math.min(MAX_BRUSH_SIZE, brushSize + 1);
-    } else if (Gdx.input.isKeyJustPressed(SECONDARY_DOWN)) {
+    } else if (InputHandler.isKeyJustPressed(SECONDARY_DOWN)) {
       brushSize = Math.max(1, brushSize - 1);
     }
 
-    if (Gdx.input.isKeyJustPressed(QUARTERNARY)) {
+    if (InputHandler.isKeyJustPressed(QUARTERNARY)) {
       // Pick tile under cursor to LMB
       Point cursorPos = getCursorPosition();
       getLevel()
@@ -96,7 +97,7 @@ public class TilesMode extends LevelEditorMode {
             Optional.of(
                 LevelElement.values()[
                     Math.floorMod(selectedTileIndexR, LevelElement.values().length)]);
-      } else if (Gdx.input.isKeyPressed(TERTIARY)) {
+      } else if (InputHandler.isKeyPressed(TERTIARY)) {
         levelElement = Optional.of(LevelElement.SKIP);
       }
     }

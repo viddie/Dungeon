@@ -170,7 +170,7 @@ public class LevelEditorSystem extends System {
 
   @Override
   public void execute() {
-    if (Gdx.input.isKeyJustPressed(TOGGLE_ACTIVE)) {
+    if (InputHandler.isKeyJustPressed(TOGGLE_ACTIVE)) {
       active(!active);
     }
 
@@ -181,24 +181,24 @@ public class LevelEditorSystem extends System {
       return;
     }
 
-    if (Gdx.input.isKeyJustPressed(TOGGLE_DEBUG_SHADER)) {
+    if (InputHandler.isKeyJustPressed(TOGGLE_DEBUG_SHADER)) {
       toggleDebugShader();
     }
 
     Mode previousMode = currentMode;
-    if (Gdx.input.isKeyPressed(MODE_1)) {
+    if (InputHandler.isKeyPressed(MODE_1)) {
       currentMode = Mode.getMode(0);
-    } else if (Gdx.input.isKeyPressed(MODE_2)) {
+    } else if (InputHandler.isKeyPressed(MODE_2)) {
       currentMode = Mode.getMode(1);
-    } else if (Gdx.input.isKeyPressed(MODE_3)) {
+    } else if (InputHandler.isKeyPressed(MODE_3)) {
       currentMode = Mode.getMode(2);
-    } else if (Gdx.input.isKeyPressed(MODE_4)) {
+    } else if (InputHandler.isKeyPressed(MODE_4)) {
       currentMode = Mode.getMode(3);
-    } else if (Gdx.input.isKeyPressed(MODE_5)) {
+    } else if (InputHandler.isKeyPressed(MODE_5)) {
       currentMode = Mode.getMode(4);
-    } else if (Gdx.input.isKeyPressed(MODE_6)) {
+    } else if (InputHandler.isKeyPressed(MODE_6)) {
       currentMode = Mode.getMode(5);
-    } else if (Gdx.input.isKeyPressed(MODE_7)) {
+    } else if (InputHandler.isKeyPressed(MODE_7)) {
       currentMode = Mode.getMode(6);
     }
 
