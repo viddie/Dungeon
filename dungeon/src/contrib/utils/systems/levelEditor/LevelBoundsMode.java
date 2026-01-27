@@ -1,13 +1,11 @@
 package contrib.utils.systems.levelEditor;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import contrib.systems.LevelEditorSystem;
 import core.level.DungeonLevel;
 import core.level.Tile;
 import core.level.utils.LevelElement;
 import core.utils.InputHandler;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
 

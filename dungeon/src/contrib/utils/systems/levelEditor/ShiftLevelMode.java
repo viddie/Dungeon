@@ -1,6 +1,5 @@
 package contrib.utils.systems.levelEditor;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import contrib.systems.LevelEditorSystem;
 import contrib.systems.PositionSync;

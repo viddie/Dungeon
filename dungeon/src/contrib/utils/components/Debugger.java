@@ -53,9 +53,7 @@ public class Debugger extends System {
   private static Entity pauseMenu;
   private static int advanceTimer = 0;
 
-  /**
-   * Use this value to quickly test different states or values in any other part of the game.
-   */
+  /** Use this value to quickly test different states or values in any other part of the game. */
   public static int multiPurposeDebugValue = 0;
 
   /** Creates a new Debugger system. */
@@ -266,20 +264,21 @@ public class Debugger extends System {
       Debugger.LOAD_NEXT_LEVEL();
     if (InputHandler.isKeyJustPressed(KeyboardConfig.DEBUG_SPAWN_MONSTER.value())
         && !LevelEditorSystem.active()) Debugger.SPAWN_MONSTER_ON_CURSOR();
-    if (InputHandler.isKeyJustPressed(KeyboardConfig.DEBUG_OPEN_DOORS.value())) Debugger.OPEN_DOORS();
+    if (InputHandler.isKeyJustPressed(KeyboardConfig.DEBUG_OPEN_DOORS.value()))
+      Debugger.OPEN_DOORS();
     if (InputHandler.isKeyJustPressed(core.configuration.KeyboardConfig.PAUSE.value()))
       Debugger.PAUSE_GAME();
     if (InputHandler.isKeyJustPressed(core.configuration.KeyboardConfig.ADVANCE_FRAME.value()))
       Debugger.ADVANCE_FRAME();
     if (InputHandler.isKeyJustPressed(KeyboardConfig.DEBUG_TOGGLE_HUD.value()))
       Game.system(DebugDrawSystem.class, DebugDrawSystem::toggleHUD);
-    if (InputHandler.isKeyJustPressed(KeyboardConfig.DEBUG_TOGGLE_SCENE_HUD.value()))
+    if (Gdx.input.isKeyJustPressed(KeyboardConfig.DEBUG_TOGGLE_SCENE_HUD.value()))
       Game.stage().ifPresent(stage -> stage.setDebugAll(!stage.isDebugAll()));
     if (InputHandler.isKeyJustPressed(KeyboardConfig.DEBUG_VALUE_UP.value())) {
       multiPurposeDebugValue += 1;
       LOGGER.info("multiPurposeDebugValue: " + multiPurposeDebugValue);
     }
-    if (InputHandler.isKeyJustPressed(KeyboardConfig.DEBUG_VALUE_DOWN.value())){
+    if (InputHandler.isKeyJustPressed(KeyboardConfig.DEBUG_VALUE_DOWN.value())) {
       multiPurposeDebugValue -= 1;
       LOGGER.info("multiPurposeDebugValue: " + multiPurposeDebugValue);
     }
