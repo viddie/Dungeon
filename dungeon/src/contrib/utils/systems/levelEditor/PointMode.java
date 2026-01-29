@@ -52,21 +52,12 @@ public class PointMode extends LevelEditorMode {
         heldPointName = null;
       } else {
         // Place new point instance
-        UIComponent dialogUI =
-            DialogFactory.show(
-                DialogContext.builder()
-                    .type(DialogType.DefaultTypes.FREE_INPUT)
-                    .put(DialogContextKeys.TITLE, "Add Named Point")
-                    .put(DialogContextKeys.QUESTION, "Name of new point")
-                    .build());
-        dialogUI.registerCallback(
-            DialogContextKeys.INPUT_CALLBACK,
-            data -> {
-              if (data instanceof String string && !string.isBlank()) {
-                getLevel().addNamedPoint(string, snapPos);
-              }
-              UIUtils.closeDialog(dialogUI, true);
-            });
+        DialogFactory.showInputDialog("", "Add Named Point", null, "Name of point", "Add", "Cancel", data -> {
+          if (data instanceof String string && !string.isBlank()) {
+            getLevel().addNamedPoint(string, snapPos);
+          }
+//          UIUtils.closeDialog(dialogUI, true);
+        }, null);
       }
     } else if (Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT)) {
       Optional<String> clickedPoint = getOnPosition(cursorPos);
