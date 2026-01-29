@@ -13,7 +13,6 @@ import core.Entity;
 import core.Game;
 import core.utils.IVoidFunction;
 import core.utils.logging.DungeonLogger;
-
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -257,7 +256,8 @@ public class DialogFactory {
   }
 
   /**
-   * Shows a dialog for a text message. Similar to an OK dialog, but designed for bigger texts that need scrolling.
+   * Shows a dialog for a text message. Similar to an OK dialog, but designed for bigger texts that
+   * need scrolling.
    *
    * @param text The message to display in the dialog body
    * @param title The dialog window title
@@ -267,16 +267,16 @@ public class DialogFactory {
    * @return The {@link UIComponent} containing the dialog
    */
   public static UIComponent showTextDialog(
-    String text,
-    String title,
-    IVoidFunction onConfirm,
-    String confirmLabel,
-    int... targetEntityIds) {
+      String text,
+      String title,
+      IVoidFunction onConfirm,
+      String confirmLabel,
+      int... targetEntityIds) {
     DialogContext.Builder builder =
-      DialogContext.builder()
-        .type(DialogType.DefaultTypes.TEXT)
-        .put(DialogContextKeys.TITLE, title)
-        .put(DialogContextKeys.MESSAGE, text);
+        DialogContext.builder()
+            .type(DialogType.DefaultTypes.TEXT)
+            .put(DialogContextKeys.TITLE, title)
+            .put(DialogContextKeys.MESSAGE, text);
     if (confirmLabel != null) builder.put(DialogContextKeys.CONFIRM_LABEL, confirmLabel);
 
     UIComponent ui = show(builder.build(), targetEntityIds);
@@ -284,18 +284,19 @@ public class DialogFactory {
     // Register callbacks
     if (onConfirm != null) {
       ui.registerCallback(
-        DialogContextKeys.ON_CONFIRM,
-        data -> {
-          onConfirm.execute();
-          UIUtils.closeDialog(ui, true);
-        });
+          DialogContextKeys.ON_CONFIRM,
+          data -> {
+            onConfirm.execute();
+            UIUtils.closeDialog(ui, true);
+          });
     }
 
     return ui;
   }
 
   /**
-   * Shows a dialog for a text message. Similar to an OK dialog, but designed for bigger texts that need scrolling.
+   * Shows a dialog for a text message. Similar to an OK dialog, but designed for bigger texts that
+   * need scrolling.
    *
    * @param text The message to display in the dialog body
    * @param title The dialog window title
@@ -319,30 +320,30 @@ public class DialogFactory {
             .type(DialogType.DefaultTypes.FREE_INPUT)
             .put(DialogContextKeys.TITLE, title)
             .put(DialogContextKeys.MESSAGE, text)
-          .put(DialogContextKeys.INPUT_PREFILL, inputPrefill)
-          .put(DialogContextKeys.INPUT_PLACEHOLDER, inputPlaceholder)
-          .put(DialogContextKeys.CONFIRM_LABEL, confirmLabel)
-          .put(DialogContextKeys.CANCEL_LABEL, cancelLabel);
+            .put(DialogContextKeys.INPUT_PREFILL, inputPrefill)
+            .put(DialogContextKeys.INPUT_PLACEHOLDER, inputPlaceholder)
+            .put(DialogContextKeys.CONFIRM_LABEL, confirmLabel)
+            .put(DialogContextKeys.CANCEL_LABEL, cancelLabel);
 
     UIComponent ui = show(builder.build(), targetEntityIds);
 
     // Register callbacks
     ui.registerCallback(
-      DialogContextKeys.INPUT_CALLBACK,
-      data -> {
-        if (onConfirm != null) {
-          onConfirm.accept(data);
-        }
-        UIUtils.closeDialog(ui, true);
-      });
+        DialogContextKeys.INPUT_CALLBACK,
+        data -> {
+          if (onConfirm != null) {
+            onConfirm.accept(data);
+          }
+          UIUtils.closeDialog(ui, true);
+        });
     ui.registerCallback(
-      DialogContextKeys.ON_CANCEL,
-      data -> {
-        if (onCancel != null) {
-          onCancel.execute();
-        }
-        UIUtils.closeDialog(ui, true);
-      });
+        DialogContextKeys.ON_CANCEL,
+        data -> {
+          if (onCancel != null) {
+            onCancel.execute();
+          }
+          UIUtils.closeDialog(ui, true);
+        });
 
     return ui;
   }
