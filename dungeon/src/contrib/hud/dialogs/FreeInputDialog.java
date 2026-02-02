@@ -4,6 +4,7 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import contrib.hud.UIUtils;
 import core.Game;
+import core.utils.BaseContainerUI;
 import core.utils.Scene2dElementFactory;
 
 /**
@@ -47,9 +48,7 @@ final class FreeInputDialog {
     }
 
     Skin skin = UIUtils.defaultSkin();
-    Dialog dialog = buildDialog(title, question, skin, ctx);
-    dialog.pack();
-    return dialog;
+    return buildDialog(title, question, skin, ctx);
   }
 
   /**
@@ -61,7 +60,7 @@ final class FreeInputDialog {
    * @param context The dialog context containing additional settings and preferences.
    * @return The configured, centered Dialog ready to be displayed.
    */
-  private static Dialog buildDialog(
+  private static Group buildDialog(
       String title, String question, Skin skin, DialogContext context) {
 
     TextField input =
@@ -110,6 +109,8 @@ final class FreeInputDialog {
     dialog.button(
         cancelLabel, cancelLabel, skin.get("clean-red-outline", TextButton.TextButtonStyle.class));
 
-    return dialog;
+    dialog.pack();
+
+    return new BaseContainerUI(dialog);
   }
 }
