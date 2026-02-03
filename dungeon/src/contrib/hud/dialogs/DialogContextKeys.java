@@ -49,6 +49,12 @@ public class DialogContextKeys {
   /** The key for the callback function to execute on cancellation. */
   public static final String ON_CANCEL = "onCancel";
 
+  /** The key for the callback function to execute on a "Resume" response. */
+  public static final String ON_RESUME = "onResume";
+
+  /** The key for the callback function to execute on a "Quit" response. */
+  public static final String ON_QUIT = "onQuit";
+
   /**
    * The key for the callback function to handle input submission.
    *
