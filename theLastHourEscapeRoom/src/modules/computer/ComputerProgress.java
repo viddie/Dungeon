@@ -1,13 +1,14 @@
 package modules.computer;
 
-public enum ComputerState {
-  PRE_LOGIN(0),
-  LOGGED_IN(1),
+public enum ComputerProgress {
+  OFF(0),
+  ON(1),
+  LOGGED_IN(2),
   ;
 
   private final int progress;
 
-  ComputerState(int progress) {
+  ComputerProgress(int progress) {
     this.progress = progress;
   }
 
@@ -15,7 +16,7 @@ public enum ComputerState {
     return progress;
   }
 
-  public boolean hasReached(ComputerState other) {
+  public boolean hasReached(ComputerProgress other) {
     return this.progress >= other.progress;
   }
 }
