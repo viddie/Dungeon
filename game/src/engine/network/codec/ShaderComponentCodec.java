@@ -4,6 +4,7 @@ import engine.network.messages.s2c.ShaderComponentState;
 import engine.network.messages.s2c.ShaderComponentState.ShaderEntryState;
 import engine.utils.components.draw.shader.AbstractShader;
 import engine.utils.components.draw.shader.ColorGradeShader;
+import engine.utils.components.draw.shader.CrtShader;
 import engine.utils.components.draw.shader.EnergyFillShader;
 import engine.utils.components.draw.shader.HueRemapShader;
 import engine.utils.components.draw.shader.LevelHideShader;
@@ -17,6 +18,7 @@ import java.util.List;
 public final class ShaderComponentCodec {
   private static final String TYPE_OUTLINE = "outline";
   private static final String TYPE_COLOR_GRADE = "color_grade";
+  private static final String TYPE_CRT = "crt";
   private static final String TYPE_HUE_REMAP = "hue_remap";
   private static final String TYPE_ENERGY_FILL = "energy_fill";
   private static final String TYPE_SHINE = "shine";
@@ -118,6 +120,8 @@ public final class ShaderComponentCodec {
       type = TYPE_OUTLINE;
     } else if (shader instanceof ColorGradeShader) {
       type = TYPE_COLOR_GRADE;
+    } else if (shader instanceof CrtShader) {
+      type = TYPE_CRT;
     } else if (shader instanceof HueRemapShader) {
       type = TYPE_HUE_REMAP;
     } else if (shader instanceof EnergyFillShader) {
@@ -141,6 +145,7 @@ public final class ShaderComponentCodec {
         switch (entry.type()) {
           case TYPE_OUTLINE -> new OutlineShader();
           case TYPE_COLOR_GRADE -> new ColorGradeShader();
+          case TYPE_CRT -> new CrtShader();
           case TYPE_HUE_REMAP -> new HueRemapShader();
           case TYPE_ENERGY_FILL -> new EnergyFillShader();
           case TYPE_SHINE -> new ShineShader();

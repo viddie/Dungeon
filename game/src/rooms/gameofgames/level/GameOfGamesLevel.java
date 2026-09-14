@@ -8,6 +8,7 @@ import engine.level.utils.DesignLabel;
 import engine.level.utils.LevelElement;
 import engine.utils.Point;
 import engine.utils.Tuple;
+import engine.utils.components.draw.shader.CrtShader;
 import engine.utils.components.draw.shader.EnergyFillShader;
 import engine.utils.components.draw.shader.HueRemapShader;
 import feature.components.DecoComponent;
@@ -71,10 +72,17 @@ public class GameOfGamesLevel extends DungeonLevel {
     Game.allPlayers()
         .filter(player -> !player.isPresent(ShaderComponent.class))
         .forEach(
-            player ->
-                player.add(
-                    new ShaderComponent(
-                        "gameofgames-player-hue", 0, new HueRemapShader(0.66f, 0.0f))));
+            player -> {
+              player.add(
+                  new ShaderComponent(
+              "gameofgames-player-hue", 0, new HueRemapShader(0.66f, 0.0f)));
+              ShaderSystem.getInstance()
+                  .addSceneShader(
+                      "crt",
+                      0,
+                      new CrtShader().lineWidth(4).warpStrength(0.4f),
+                      player.id());
+            });
   }
 
   private void setupCanvasTerminal() {
@@ -100,13 +108,14 @@ public class GameOfGamesLevel extends DungeonLevel {
 
                   if (unlocked) {
                     ShaderSystem.getInstance()
-                        .addLevelShader(
-                            "level",
+                        .addSceneShader(
+                            "crt",
                             0,
-                            new EnergyFillShader(0.9f, Color.RED, "items/rpg/food_bananas.png"),
+                            new CrtShader().lineWidth(2f).warpStrength(0.6f),
+//                            new EnergyFillShader(0.9f, Color.RED, "items/rpg/food_bananas.png"),
                             who.id());
                   } else {
-                    ShaderSystem.getInstance().removeLevelShader("level", who.id());
+                    ShaderSystem.getInstance().removeSceneShader("crt", who.id());
                   }
 
                   GameOfGamesCanvas.unlockExtraNodes(unlocked);
