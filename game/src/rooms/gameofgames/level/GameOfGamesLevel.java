@@ -8,6 +8,7 @@ import engine.level.DungeonLevel;
 import engine.level.utils.DesignLabel;
 import engine.level.utils.LevelElement;
 import engine.utils.Point;
+import engine.utils.Rectangle;
 import engine.utils.Tuple;
 import engine.utils.components.draw.shader.HueRemapShader;
 import engine.utils.components.draw.shader.MagicBallShader;
@@ -105,12 +106,13 @@ public class GameOfGamesLevel extends DungeonLevel {
                             "level",
                             0,
                             new MagicBallShader(
-                                "items/rpg/food_bananas.png",
-                                0.9f,
-                                new Vector2(),
+                                "images/shader-bg.png",
+                                0.95f,
+                                new Vector2(-0.018f, 0.00f),
                                 Color.valueOf("95b8f0"),
                                 1.0f,
-                                Color.WHITE),
+                                Color.WHITE,
+                                new Rectangle(0.8f, 1.0f, 0.1f, 0.0f)),
                             who.id());
                   } else {
                     ShaderSystem.getInstance().removeSceneShader("level", who.id());

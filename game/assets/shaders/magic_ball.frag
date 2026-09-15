@@ -22,6 +22,7 @@ uniform vec4 u_entityBounds;
 uniform sampler2D u_bgTexture;
 uniform float u_ballSize;
 uniform vec2 u_ballOffset;
+uniform vec4 u_textureRegion;
 uniform vec4 u_ballColor;
 uniform float u_glowStrength;
 uniform vec4 u_glowColor;
@@ -72,7 +73,8 @@ void main() {
               asin(clamp(spherePosition.y, -textureLimit, textureLimit))
                       / (2.0 * maxLatitude)
                   + 0.5);
-      vec4 sceneColor = unPma(texture2D(u_texture, sceneUv));
+      vec2 mappedSceneUv = u_textureRegion.xy + sceneUv * u_textureRegion.zw;
+      vec4 sceneColor = unPma(texture2D(u_texture, mappedSceneUv));
       if (sceneColor.a > 0.0) {
         ballColor = sceneColor;
       }
