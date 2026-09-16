@@ -40,7 +40,25 @@ public class KeypadFactory {
    */
   public static Entity createKeypad(
       Point pos, List<Integer> correctDigits, Runnable action, boolean showDigitCount) {
-    Entity entity = new Entity("keypad");
+    return createKeypad(new Entity("keypad"), pos, correctDigits, action, showDigitCount);
+  }
+
+  /**
+   * Configures a supplied entity as a keypad.
+   *
+   * @param entity entity to configure
+   * @param pos position where the keypad is created
+   * @param correctDigits correct digits that trigger the action
+   * @param action action executed for a correct code
+   * @param showDigitCount whether the required digit count is shown
+   * @return the supplied configured entity
+   */
+  public static Entity createKeypad(
+      Entity entity,
+      Point pos,
+      List<Integer> correctDigits,
+      Runnable action,
+      boolean showDigitCount) {
 
     entity.add(new PositionComponent(pos));
 
