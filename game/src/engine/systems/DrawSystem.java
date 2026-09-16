@@ -806,7 +806,27 @@ public final class DrawSystem extends System implements Disposable {
       int textureHeight,
       Rectangle worldBounds,
       float rotation) {
-    shader.setUniformf("u_time", secondsElapsed);
+    setGeneralShaderUniforms(shader, textureWidth, textureHeight);
+
+    shader.setUniformf(
+        "u_entityBounds",
+        worldBounds.x(),
+        worldBounds.y(),
+        worldBounds.width(),
+        worldBounds.height());
+    shader.setUniformf("u_rotation", rotation);
+  }
+
+  /**
+   * Sets the general uniforms shared by all shader passes.
+   *
+   * @param shader the shader program to set uniforms for
+   * @param textureWidth the width of the texture being processed
+   * @param textureHeight the height of the texture being processed
+   */
+  public static void setGeneralShaderUniforms(
+      ShaderProgram shader, int textureWidth, int textureHeight) {
+    shader.setUniformf("u_time", secondsElapsed());
     shader.setUniformf("u_resolution", textureWidth, textureHeight);
     shader.setUniformf("u_texelSize", 1.0f / textureWidth, 1.0f / textureHeight);
     shader.setUniformf("u_aspect", 1.0f, (float) textureWidth / (float) textureHeight);
@@ -816,14 +836,6 @@ public final class DrawSystem extends System implements Disposable {
     Vector3 unprojected = CameraSystem.camera().project(new Vector3(mousePos.x(), mousePos.y(), 0));
     shader.setUniformf(
         "u_mouse", unprojected.x / Game.windowWidth(), unprojected.y / Game.windowHeight());
-
-    shader.setUniformf(
-        "u_entityBounds",
-        worldBounds.x(),
-        worldBounds.y(),
-        worldBounds.width(),
-        worldBounds.height());
-    shader.setUniformf("u_rotation", rotation);
   }
 
   private Rectangle getFboWorldBounds(DSData dsd) {

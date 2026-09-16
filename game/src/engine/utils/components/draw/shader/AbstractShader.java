@@ -4,7 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -90,12 +90,12 @@ public abstract class AbstractShader implements Disposable {
   }
 
   /**
-   * Instructs SpriteBatch to use this shader program and binds all custom uniforms.
+   * Instructs the batch to use this shader program and binds all custom uniforms.
    *
-   * @param batch The SpriteBatch instance.
+   * @param batch The batch instance.
    * @param actualUpscale The actual upscaling factor currently applied to the render target.
    */
-  public void bind(SpriteBatch batch, int actualUpscale) {
+  public void bind(Batch batch, int actualUpscale) {
     ensureCompiled();
     batch.setShader(program);
 
@@ -110,9 +110,9 @@ public abstract class AbstractShader implements Disposable {
   /**
    * Resets the batch shader to null after the pass is complete.
    *
-   * @param batch The SpriteBatch instance.
+   * @param batch The batch instance.
    */
-  public void unbind(SpriteBatch batch) {
+  public void unbind(Batch batch) {
     batch.setShader(null);
   }
 
