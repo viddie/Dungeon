@@ -80,11 +80,23 @@ final class MultipleChoiceDialog {
   static Group build(DialogContext ctx) {
     String title = ctx.find(DialogContextKeys.TITLE, String.class).orElse(TITLE_DEFAULT);
     String script = ctx.require(DialogContextKeys.DIALOG, String.class);
+    ChoiceOptions choiceOptions = ctx.require(DialogContextKeys.OPTIONS, ChoiceOptions.class);
+    List<ChoiceOption> options = choiceOptions.values();
+    String[] placeholders =
+        ctx.find(DialogContextKeys.PLACEHOLDERS, String[].class).orElse(new String[0]);
+    if (placeholders.length > 1) {
+      script = replacePlaceholders(script, placeholders);
+      options =
+          options.stream()
+              .map(
+                  option ->
+                      ChoiceOption.of(
+                          replacePlaceholders(option.label(), placeholders), option.value()))
+              .toList();
+    }
     if (script.isBlank()) {
       throw new DialogCreationException("MultipleChoiceDialog requires a non-blank dialog script");
     }
-    ChoiceOptions choiceOptions = ctx.require(DialogContextKeys.OPTIONS, ChoiceOptions.class);
-    List<ChoiceOption> options = choiceOptions.values();
     boolean canCancel = ctx.find(DialogContextKeys.CAN_CANCEL, Boolean.class).orElse(false);
     String cancelLabel = trans.text(T_CANCEL);
 
@@ -99,6 +111,13 @@ final class MultipleChoiceDialog {
     }
 
     return buildDialog(title, script, options, canCancel, cancelLabel, ctx);
+  }
+
+  private static String replacePlaceholders(String text, String[] placeholders) {
+    for (int index = 0; index + 1 < placeholders.length; index += 2) {
+      text = text.replace("{" + placeholders[index] + "}", placeholders[index + 1]);
+    }
+    return text;
   }
 
   /**
