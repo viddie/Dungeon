@@ -96,6 +96,7 @@ import feature.prefabs.PrefabSpawner;
 import feature.puzzle.PuzzleNetworkSync;
 import feature.questlog.QuestLogHudSystem;
 import feature.questlog.QuestLogUtil;
+import feature.save.GameSaves;
 import feature.shader.ShaderSyncSystem;
 import feature.shader.ShaderSystem;
 import feature.systems.AttributeBarSystem;
@@ -199,6 +200,7 @@ public final class GameLoop extends ScreenAdapter {
         Game.currentLevel()
             .ifPresent(
                 level -> {
+                  GameSaves.beforePrefabSpawn(level);
                   PrefabSpawner.spawn(level, PrefabSide.SERVER);
                   level
                       .decorations()
@@ -206,6 +208,7 @@ public final class GameLoop extends ScreenAdapter {
                   if (Game.isSingleplayer()) {
                     PrefabSpawner.spawn(level, PrefabSide.CLIENT);
                   }
+                  GameSaves.afterPrefabSpawn(level);
                 });
 
         PreRunConfiguration.userOnLevelLoad().accept(true);
@@ -548,6 +551,7 @@ public final class GameLoop extends ScreenAdapter {
       showStandaloneCharacterSelection = true;
     }
     PreRunConfiguration.userOnSetup().execute();
+    GameSaves.onSetup();
     if (startNetwork && !showStandaloneCharacterSelection) {
       // Clients without a configured address wait for the connection dialog to start networking.
       if (!Game.isMultiplayerClient()) {
@@ -565,7 +569,10 @@ public final class GameLoop extends ScreenAdapter {
     // Multiplayer clients receive level state from the server instead of loading it locally.
     if (!Game.isMultiplayerClient()) {
       if (!DungeonLoader.levelOrder().isEmpty()) {
-        if (Game.currentLevel().isEmpty()) DungeonLoader.loadLevel(0); // load the first level
+        // Continue from a save where it left off, otherwise start at the first level.
+        if (Game.currentLevel().isEmpty() && !GameSaves.loadSavedLevel()) {
+          DungeonLoader.loadLevel(0);
+        }
       } else {
         LOGGER.warn("No levels found to load!");
       }

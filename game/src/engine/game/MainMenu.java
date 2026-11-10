@@ -6,6 +6,7 @@ import engine.configuration.KeyboardConfig;
 import engine.level.loader.DungeonLoader;
 import feature.components.Debugger;
 import feature.entities.HeroBuilder;
+import feature.save.GameSaves;
 import feature.systems.DebugDrawSystem;
 import feature.systems.LevelEditorSystem;
 import java.io.IOException;
@@ -69,6 +70,7 @@ public final class MainMenu {
     if (shouldRunMpServer(args)) {
       Game.windowTitle(game.title());
       Game.localization().currentLanguage(game.language());
+      game.saveGameId().ifPresent(id -> GameSaves.startServer(id, args));
       server.apply();
       ServerLifecycle.install(game.title() + " server stopped");
       Game.run();
@@ -107,6 +109,7 @@ public final class MainMenu {
   private static void run(GameStarter game, ClientStarter client, ServerStarter server) {
     Game.windowTitle(game.title());
     Game.localization().currentLanguage(game.language());
+    game.saveGameId().ifPresent(GameSaves::prefillPlayerName);
     client.apply();
     Runnable levelEditorLauncher =
         server == null
