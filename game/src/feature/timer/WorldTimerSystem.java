@@ -63,7 +63,10 @@ public class WorldTimerSystem extends System {
 
   /** Create a new WorldTimerSystem. */
   public WorldTimerSystem() {
-    super(AuthoritativeSide.CLIENT, 5, WorldTimerComponent.class, PositionComponent.class);
+    // Every frame: a joining client shows the right time as soon as its play clock is synchronized.
+    super(AuthoritativeSide.CLIENT, 1, WorldTimerComponent.class, PositionComponent.class);
+    // Drawn right away, so the placeholder texture of a new timer never shows.
+    onEntityAdd = e -> show(Data.of(e));
     onEntityRemove =
         e -> {
           shown.remove(e);
@@ -92,16 +95,17 @@ public class WorldTimerSystem extends System {
   }
 
   private void update(Data data) {
-    int secondsLeft = (int) ((data.tc.remainingMs() + 999) / 1000);
-
-    if (secondsLeft <= 0 && !expiredFired) {
+    if (secondsLeft(data) <= 0 && !expiredFired) {
       expiredFired = true;
       if (onTimerExpired != null) {
         onTimerExpired.run();
       }
     }
+    show(data);
+  }
 
-    int displaySeconds = Math.max(0, secondsLeft);
+  private void show(Data data) {
+    int displaySeconds = Math.max(0, secondsLeft(data));
     // Root locale: the display only has the digits 0 to 9.
     String timerString =
         String.format(Locale.ROOT, "%02d:%02d", displaySeconds / 60, displaySeconds % 60);
@@ -118,6 +122,10 @@ public class WorldTimerSystem extends System {
 
     data.e.remove(DrawComponent.class);
     data.e.add(new DrawComponent(new Animation(ipath, new AnimationConfig().scaleX(0.5f))));
+  }
+
+  private static int secondsLeft(Data data) {
+    return (int) ((data.tc.remainingMs() + 999) / 1000);
   }
 
   private static IPath texture(Entity e) {

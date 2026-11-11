@@ -20,7 +20,6 @@ import engine.utils.CursorUtil;
 import engine.utils.Tuple;
 import engine.utils.components.path.SimpleIPath;
 import engine.utils.logging.DungeonLoggerConfig;
-import escaperoom.foundation.ui.BlackFadeCutscene;
 import feature.entities.CharacterClass;
 import feature.entities.HeroController;
 import feature.questlog.QuestLogUI;
@@ -158,7 +157,6 @@ public final class Soulweaver {
   }
 
   private static void serverSetup() {
-    BlackFadeCutscene.register();
     QuestLogUI.register();
     SoulweaverTerminal.register();
     SoulweaverMethods.register();
@@ -174,7 +172,6 @@ public final class Soulweaver {
 
   private static void clientSetup() {
     Game.stage().ifPresent(CursorUtil::initListener);
-    BlackFadeCutscene.register();
     QuestLogUI.register();
     SoulweaverTerminal.register();
     SoulweaverMethods.register();

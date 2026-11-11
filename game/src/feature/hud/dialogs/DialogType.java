@@ -73,7 +73,13 @@ public interface DialogType {
     CLIENT_CONNECTION("CLIENT_CONNECTION"),
 
     /** Combination lock with digit wheels. */
-    COMBINATION_LOCK("COMBINATION_LOCK");
+    COMBINATION_LOCK("COMBINATION_LOCK"),
+
+    /** Text pages on a black screen that fade in and out, e.g. an intro. */
+    TEXT_CUTSCENE("TEXT_CUTSCENE"),
+
+    /** Minigame searching a trash can for a hidden item. */
+    TRASHCAN("TRASHCAN");
 
     private final String type;
 

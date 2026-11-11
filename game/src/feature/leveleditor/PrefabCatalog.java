@@ -44,9 +44,17 @@ public final class PrefabCatalog {
               "item-receptacle",
               "door-lock",
               "air-vent",
-              "pushable-stone"),
+              "pushable-stone",
+              "trash-minigame",
+              "timer"),
           new CategoryDefinition(
-              "Effects", "door-control", "dialog", "choice-dialog", "show-image", "sound-effect"),
+              "Effects",
+              "door-control",
+              "dialog",
+              "choice-dialog",
+              "show-image",
+              "sound-effect",
+              "background-music"),
           new CategoryDefinition(
               "Logic",
               "random-code",
@@ -58,6 +66,7 @@ public final class PrefabCatalog {
               "flag-trigger",
               "flag-and-trigger",
               "flag-switch"),
+          new CategoryDefinition("Game Flow", "intro-text", "outro-text", "quit-game"),
           new CategoryDefinition("Visuals", "water", "shader", "level-hider"),
           new CategoryDefinition(
               "Level Setup", "invisible-wall", "available-character", "design-label-region"));
@@ -73,6 +82,7 @@ public final class PrefabCatalog {
           Map.entry("npc", () -> spritesheet("character/char03", "idle_down", null)),
           Map.entry("image-puzzle", () -> texture("items/puzzle-piece.png", null)),
           Map.entry("item-receptacle", () -> deco(Deco.Cabinet, null)),
+          Map.entry("trash-minigame", () -> deco(Deco.TrashCanBlue, null)),
           Map.entry("item-spawner", () -> texture("items/rpg/item_sack.png", null)),
           Map.entry("door-lock", () -> texture("other/chain_lock.png", null)),
           Map.entry("air-vent", () -> deco(Deco.FloorBarsSmall, null)),

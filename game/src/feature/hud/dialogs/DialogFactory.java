@@ -19,6 +19,7 @@ import feature.interaction.keypad.KeypadUI;
 import feature.inventory.ui.InventoryGUI;
 import feature.presentation.ShowImageUI;
 import feature.puzzle.PuzzleDialog;
+import feature.trash.TrashMinigameUI;
 import feature.utils.Translator;
 import java.util.Arrays;
 import java.util.Collections;
@@ -73,6 +74,8 @@ public class DialogFactory {
     register(DialogType.DefaultTypes.CANVAS, CanvasDialog::build);
     register(DialogType.DefaultTypes.CLIENT_CONNECTION, ClientConnectionDialog::build);
     register(DialogType.DefaultTypes.COMBINATION_LOCK, CombinationLockUI::build);
+    register(DialogType.DefaultTypes.TEXT_CUTSCENE, BlackFadeCutscene::build);
+    register(DialogType.DefaultTypes.TRASHCAN, TrashMinigameUI::build);
     LOGGER.debug("Registered built-in dialog types");
   }
 

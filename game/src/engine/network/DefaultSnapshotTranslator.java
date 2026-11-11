@@ -28,6 +28,7 @@ import feature.puzzle.PuzzleNetworkSync;
 import feature.save.SaveSync;
 import feature.shader.ShaderComponent;
 import feature.systems.PositionSync;
+import feature.timer.WorldTimerSync;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -146,6 +147,7 @@ public final class DefaultSnapshotTranslator implements SnapshotTranslator {
               metadata.putAll(KeypadSync.metadata(e));
               metadata.putAll(CombinationLockSync.metadata(e));
               metadata.putAll(SaveSync.metadata(e));
+              WorldTimerSync.append(e, metadata);
               if (e.isPresent(InteractionComponent.class)) {
                 metadata.put(DefaultEntitySpawnStrategy.METADATA_INTERACTABLE, "true");
               }
@@ -212,6 +214,7 @@ public final class DefaultSnapshotTranslator implements SnapshotTranslator {
                 KeypadSync.apply(entity, metadata);
                 CombinationLockSync.apply(entity, metadata);
                 SaveSync.apply(metadata);
+                WorldTimerSync.apply(entity, metadata);
 
                 entity
                     .fetch(PositionComponent.class)

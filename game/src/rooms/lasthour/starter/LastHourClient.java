@@ -25,13 +25,11 @@ import engine.utils.settings.ButtonBindingSetting;
 import engine.utils.settings.ClientSettings;
 import engine.utils.settings.DescriptionSetting;
 import engine.utils.settings.SectionDividerSetting;
-import escaperoom.foundation.ui.BlackFadeCutscene;
 import feature.components.Debugger;
 import feature.credits.CreditsFeature;
 import feature.entities.CharacterClass;
 import feature.entities.HeroBuilder;
 import feature.hud.AutoSaveIndicator;
-import feature.hud.dialogs.DialogFactory;
 import feature.input.configuration.KeyboardConfig;
 import feature.input.systems.ControlsDialogSystem;
 import feature.interaction.InteractionComponent;
@@ -49,8 +47,6 @@ import java.util.Objects;
 import rooms.lasthour.level.LastHourLevel;
 import rooms.lasthour.modules.computer.ComputerFactory;
 import rooms.lasthour.modules.computer.ComputerStateSyncSystem;
-import rooms.lasthour.modules.computer.LastHourDialogTypes;
-import rooms.lasthour.modules.trash.TrashMinigameUI;
 import rooms.lasthour.modules.usbstick.UsbStickItem;
 import rooms.lasthour.network.LastHourEntitySpawnStrategy;
 import rooms.lasthour.network.LastHourSnapshotTranslator;
@@ -103,8 +99,6 @@ public final class LastHourClient {
 
   private static void registerCustomDialogs() {
     ComputerFactory.ensureRegistration();
-    DialogFactory.register(LastHourDialogTypes.TRASHCAN, TrashMinigameUI::build);
-    BlackFadeCutscene.register();
     CreditsFeature.register();
     SurveyFeature.register();
   }

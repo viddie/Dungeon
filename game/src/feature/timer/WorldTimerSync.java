@@ -1,25 +1,26 @@
-package rooms.systemRecovery.network;
+package feature.timer;
 
 import engine.Entity;
-import feature.timer.WorldTimerComponent;
+import engine.Game;
 import java.util.Map;
 
 /**
- * Carries the countdown's fixed values through spawns and snapshots. Clients compute the remaining
- * time from their synchronized play clock, so only a start, a duration and a freeze point travel.
+ * Carries the fixed values of a {@link WorldTimerComponent} through spawns and snapshots. Clients
+ * compute the remaining time from their synchronized play clock, so only a start, a duration and a
+ * freeze point travel.
  */
-public final class SystemRecoveryTimerSync {
+public final class WorldTimerSync {
 
   /** Active play time at which the countdown began. */
-  public static final String STARTED_AT = "systemRecovery.timer.startedAt";
+  public static final String STARTED_AT = "worldTimer.startedAt";
 
   /** Countdown length in seconds. */
-  public static final String DURATION = "systemRecovery.timer.duration";
+  public static final String DURATION = "worldTimer.duration";
 
   /** Active play time at which the countdown froze, absent while it runs. */
-  public static final String STOPPED_AT = "systemRecovery.timer.stoppedAt";
+  public static final String STOPPED_AT = "worldTimer.stoppedAt";
 
-  private SystemRecoveryTimerSync() {}
+  private WorldTimerSync() {}
 
   /**
    * Appends the countdown state.
@@ -61,6 +62,8 @@ public final class SystemRecoveryTimerSync {
       if (entity.fetch(WorldTimerComponent.class).filter(received::equals).isEmpty()) {
         entity.add(received);
       }
+      // Games that do not set up timers themselves still draw them.
+      if (!Game.systems().containsKey(WorldTimerSystem.class)) Game.add(new WorldTimerSystem());
     } catch (NumberFormatException ignored) {
       // A malformed packet must not remove the last valid countdown.
     }

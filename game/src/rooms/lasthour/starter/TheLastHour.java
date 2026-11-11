@@ -23,7 +23,6 @@ import engine.utils.NetworkUtils;
 import engine.utils.Tuple;
 import engine.utils.components.path.SimpleIPath;
 import engine.utils.logging.DungeonLoggerConfig;
-import escaperoom.foundation.ui.BlackFadeCutscene;
 import feature.components.Debugger;
 import feature.credits.CreditsFeature;
 import feature.emote.EmoteSystem;
@@ -151,7 +150,6 @@ public class TheLastHour {
             .onConfigure(
                 () -> {
                   LastHourAchievements.register();
-                  BlackFadeCutscene.register();
                   CreditsFeature.register();
                   SurveyFeature.register();
                   UsbStickItem.ensureRegistration();
