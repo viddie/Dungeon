@@ -329,7 +329,8 @@ public final class PrefabMode extends LevelEditorMode {
                   () -> linkDisplay.label(),
                   () -> linkDisplay = next(linkDisplay),
                   "Selection: links of the selected and the hovered prefab. All: every link,"
-                      + " the ones of the selection highlighted.")
+                      + " the ones of the selection highlighted. Hold Ctrl to see all links for a"
+                      + " moment.")
               .option(
                   "Logic",
                   () -> logicDisplay.label(),
@@ -491,6 +492,11 @@ public final class PrefabMode extends LevelEditorMode {
         priority,
         instance.active() ? "" : "  (inactive)",
         highlighted);
+  }
+
+  /* Whether all links are drawn, see linkDisplay; holding Ctrl draws them too. */
+  private static boolean allLinksShown() {
+    return linkDisplay == LinkDisplay.ALL || controlPressed();
   }
 
   /* Whether the names of all instances are shown, see nameDisplay; holding Alt shows them too. */
@@ -795,7 +801,7 @@ public final class PrefabMode extends LevelEditorMode {
       boolean ofSelection =
           Objects.equals(selectedName, source) || Objects.equals(selectedName, receiver);
       boolean ofHovered = Objects.equals(hovered, source) || Objects.equals(hovered, receiver);
-      if (!ofSelection && !ofHovered && linkDisplay != LinkDisplay.ALL) continue;
+      if (!ofSelection && !ofHovered && !allLinksShown()) continue;
       PrefabInstance sourceInstance = byName.get(source);
       if (sourceInstance == null) continue;
       Optional<Point> from = linkAnchor(sourceInstance);
@@ -1037,6 +1043,7 @@ public final class PrefabMode extends LevelEditorMode {
     controls.put(TERTIARY, "Pick last point again");
     controls.put(Input.Buttons.RIGHT, "Cancel link pick");
     controls.put(Input.Keys.ALT_LEFT, "Show all names");
+    controls.put(Input.Keys.CONTROL_LEFT, "Show all links");
     controls.put(FRAME_SELECTION, "Center selection");
     controls.put(Input.Keys.ESCAPE, "Deselect");
     return controls;
