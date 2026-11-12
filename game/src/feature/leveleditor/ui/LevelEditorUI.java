@@ -1,12 +1,14 @@
 package feature.leveleditor.ui;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -58,6 +60,7 @@ public class LevelEditorUI extends Group {
   private Table toolbar;
   private Table viewOptions;
   private Table modal;
+  private Runnable modalOnClose;
 
   /** Creates a new level editor UI group. */
   public LevelEditorUI() {
@@ -195,13 +198,15 @@ public class LevelEditorUI extends Group {
 
   /**
    * Shows a panel centered above the editor, on a dimmed backdrop that blocks the level and the
-   * other panels. While it is shown, the cursor counts as being over the editor UI, so the level
-   * does not react to clicks or the mouse wheel.
+   * other panels. Escape or a click on the backdrop next to the panel closes it.
+   *
+   * <p>While it is shown, the backdrop has the keyboard focus and the cursor counts as being over
+   * the editor UI, so the level does not react to keys, clicks or the mouse wheel.
    *
    * @param panel panel to show
-   * @param onOutsideClick called when the backdrop next to the panel is clicked
+   * @param onClose called once when the panel is closed, in any way; may be {@code null}
    */
-  public void showModal(Actor panel, Runnable onOutsideClick) {
+  public void showModal(Actor panel, Runnable onClose) {
     closeModal();
     EditorTheme.hideTooltips();
     Table backdrop = new Table();
@@ -212,20 +217,48 @@ public class LevelEditorUI extends Group {
         new ClickListener() {
           @Override
           public void clicked(InputEvent event, float x, float y) {
-            if (event.getTarget() == backdrop) onOutsideClick.run();
+            if (event.getTarget() == backdrop) closeModal();
+          }
+        });
+    backdrop.addListener(
+        new InputListener() {
+          @Override
+          public boolean keyDown(InputEvent event, int keycode) {
+            if (keycode != Input.Keys.ESCAPE) return false;
+            closeModal();
+            return true;
           }
         });
     modal = backdrop;
+    modalOnClose = onClose;
     addActor(backdrop);
     backdrop.setBounds(0f, 0f, getWidth(), getHeight());
     backdrop.validate();
+    if (getStage() != null) getStage().setKeyboardFocus(backdrop);
   }
 
-  /** Removes the panel shown by {@link #showModal}, if there is one. */
+  /**
+   * Returns whether a panel of {@link #showModal} is shown.
+   *
+   * @return true while a modal panel is shown
+   */
+  public boolean hasModal() {
+    return modal != null;
+  }
+
+  /** Closes the panel shown by {@link #showModal}, if there is one. */
   public void closeModal() {
     if (modal == null) return;
-    modal.remove();
+    Table closed = modal;
+    Runnable onClose = modalOnClose;
     modal = null;
+    modalOnClose = null;
+    Stage stage = closed.getStage();
+    if (stage != null && stage.getKeyboardFocus() != null) {
+      if (stage.getKeyboardFocus().isDescendantOf(closed)) stage.setKeyboardFocus(null);
+    }
+    closed.remove();
+    if (onClose != null) onClose.run();
   }
 
   /** Keeps the group and its panels aligned with the current stage size. */

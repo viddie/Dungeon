@@ -100,7 +100,7 @@ public class LevelEditorSystem extends System {
 
   private static LevelEditorUI ui = null;
   private static boolean cursorCapturedByUI = false;
-  private static boolean textFieldFocusedLastFrame = false;
+  private static boolean keysCapturedLastFrame = false;
 
   /**
    * Creates a new LevelEditorSystem.
@@ -247,6 +247,7 @@ public class LevelEditorSystem extends System {
         playerControlsDeactivatedBeforeEditor = null;
       }
       player.fetch(HealthComponent.class).ifPresent(hc -> hc.godMode(false));
+      if (ui != null) ui.closeModal();
       currentModeInstance.onExit();
       Game.stage().ifPresent(Stage::unfocusAll);
       Game.hud().dialogsSuppressed(false);
@@ -456,13 +457,15 @@ public class LevelEditorSystem extends System {
       return;
     }
 
-    // Do not react to editor keys while the user types into a text field of the editor UI. Keys
-    // that ended the typing, e.g. Escape clearing a search field, are not shortcuts either.
+    // Do not react to editor keys while the user types into a text field of the editor UI or a
+    // modal panel is shown. Keys that ended either, e.g. Escape clearing a search field or closing
+    // a panel, are not shortcuts either.
     boolean textFocused =
         Game.stage().map(stage -> stage.getKeyboardFocus() instanceof TextField).orElse(false);
-    boolean textFocusedBefore = textFieldFocusedLastFrame;
-    textFieldFocusedLastFrame = textFocused;
-    if (textFocused) {
+    boolean keysCaptured = textFocused || (ui != null && ui.hasModal());
+    boolean keysCapturedBefore = keysCapturedLastFrame;
+    keysCapturedLastFrame = keysCaptured;
+    if (keysCaptured) {
       currentModeInstance.onCursorLeaveWorld();
       return;
     }
@@ -475,7 +478,7 @@ public class LevelEditorSystem extends System {
     if (cursorCaptured) {
       currentModeInstance.onCursorLeaveWorld();
     }
-    if (!internalStopped && !textFocusedBefore) currentModeInstance.executeShortcuts();
+    if (!internalStopped && !keysCapturedBefore) currentModeInstance.executeShortcuts();
     updateFreeCamera(editorCamera, !cursorCaptured);
 
     Mode previousMode = currentMode;
