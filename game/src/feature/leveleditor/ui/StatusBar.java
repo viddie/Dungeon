@@ -9,6 +9,7 @@ import com.badlogic.gdx.utils.Align;
 import feature.hud.elements.RichLabel;
 import feature.leveleditor.LevelEditorMode;
 import feature.systems.LevelEditorSystem;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +35,7 @@ public final class StatusBar extends Table {
   private final RichLabel hints = new RichLabel("", FONT_SIZE, EditorTheme.TEXT_MUTED, false);
   private LevelEditorMode mode;
   private String hintText = "";
-  private final java.util.List<String> hintItems = new java.util.ArrayList<>();
+  private final List<String> hintItems = new ArrayList<>();
   private float fittedWidth = -1f;
 
   /** Creates an empty status bar. */
